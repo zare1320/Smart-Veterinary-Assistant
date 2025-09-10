@@ -1,0 +1,313 @@
+import React, { useState, useMemo, useEffect } from 'react';
+import { useLocale } from '../context/LocaleContext';
+import { usePatient } from '../context/PatientContext';
+import type { ScreenProps, Drug, DrugFormulation, DrugDosage } from '../types';
+import { allDrugs, drugCategories } from '../data/drug_data';
+import { PillIcon, SearchIcon } from '../components/Icons';
+import { LabeledSelect } from '../components/forms';
+// FIX: Imported Variants type from framer-motion for type safety.
+import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { BackButton } from '../components/Button';
+import MissingPatientWeightBanner from '../components/MissingPatientWeightBanner';
+import PatientInfoDisplay from '../components/PatientInfoDisplay';
+
+const speciesGroupMap: { [key: string]: string[] } = {
+    dog: ['dog', 'dog_cat'],
+    cat: ['cat', 'dog_cat'],
+    bird: ['Birds', 'Raptors', 'Parrots', 'Pigeons', 'Waterfowl', 'Passerines'],
+    mammal: ['Ferrets', 'Rabbits', 'Primates', 'Sugar gliders', 'Hedgehogs', 'Rats, Mice', 'Rodents', 'Contraindicated Rodents'],
+    reptile: ['Reptiles', 'Chelonians'],
+    fish: ['Fish'],
+    amphibian: ['Amphibians'],
+};
+
+// Helper to format the drug formulation description
+const formatFormulationDescription = (formulation: DrugFormulation, t: (key: string) => string, localizeNumber: (s: string | number) => string) => {
+    const { strength, strengthUnit, volume, volumeUnit, form } = formulation;
+
+    const formKey = `drugCalculator.simpleForm.${form === 'injectable' ? 'injection' : form}`;
+    const translatedForm = t(formKey);
+    
+    let strengthDisplay = '';
+
+    if (volume && volumeUnit) {
+        // This is for concentrations like mg/5ml
+        const unitPart = t(`units.${volumeUnit.toLowerCase()}`);
+        const strengthUnitPart = t(`units.${strengthUnit.toLowerCase()}`);
+        strengthDisplay = `${localizeNumber(strength)} ${strengthUnitPart}/${localizeNumber(volume)} ${unitPart}`;
+    } else {
+        // This is for simple units like mg for tablets, capsules, sachets
+        const unitPart = t(`units.${strengthUnit.toLowerCase()}`);
+        strengthDisplay = `${localizeNumber(strength)} ${unitPart}`;
+    }
+    
+    return `${translatedForm} ${strengthDisplay}`;
+};
+
+const CalculatorPanel: React.FC<{ drug: Drug; weightKg: number; speciesKey: string | null }> = ({ drug, weightKg, speciesKey }) => {
+    const { t, locale, localizeNumber } = useLocale();
+
+    // State
+    const [selectedFormulationId, setSelectedFormulationId] = useState<string>('');
+    const [dosePerKg, setDosePerKg] = useState<number>(0);
+
+    // Derived State
+    const selectedFormulation = useMemo(() => {
+        return drug.formulations.find(f => f.id === selectedFormulationId);
+    }, [drug.formulations, selectedFormulationId]);
+
+    const relevantDosage = useMemo(() => {
+        if (!speciesKey || !selectedFormulation) return null;
+
+        const speciesInGroup = speciesGroupMap[speciesKey];
+        if (!speciesInGroup) return null;
+
+        const formType = selectedFormulation.form;
+        const isOral = formType === 'tablet' || formType === 'suspension' || formType === 'capsule' || formType === 'sachet';
+        const isInjectable = formType === 'injectable';
+        
+        const filterByRoute = (d: DrugDosage) => {
+            if (!d.route) return false;
+            const route = d.route.toUpperCase();
+            const routeMatch = (isOral && route.includes('PO')) || 
+                               (isInjectable && (route.includes('IM') || route.includes('IV') || route.includes('SC')));
+            const isSpecialOral = isOral && (route.includes('FEED') || route.includes('WATER'));
+            return routeMatch || isSpecialOral;
+        };
+
+        const dosagesForFormulation = drug.dosages.filter(filterByRoute);
+
+        const exactMatch = dosagesForFormulation.find(d => d.species.toLowerCase() === speciesKey.toLowerCase());
+        if (exactMatch) return exactMatch;
+
+        const groupMatch = dosagesForFormulation.find(d => speciesInGroup.some(s => d.species.toLowerCase().includes(s.toLowerCase())));
+        return groupMatch || null;
+
+    }, [drug.dosages, speciesKey, selectedFormulation]);
+
+    // Effects
+    useEffect(() => {
+        if (drug) {
+            setSelectedFormulationId(drug.formulations[0]?.id || '');
+        }
+    }, [drug]);
+    
+    useEffect(() => {
+        if (relevantDosage?.doseRange) {
+            setDosePerKg(relevantDosage.doseRange.min);
+        } else {
+            setDosePerKg(0);
+        }
+    }, [relevantDosage]);
+
+    const { totalDoseMg, amountToAdminister } = useMemo(() => {
+        if (!weightKg || !dosePerKg || !selectedFormulation) {
+            return { totalDoseMg: null, amountToAdminister: null };
+        }
+        
+        const totalDose = dosePerKg * weightKg;
+        
+        let amount: number | null = null;
+        let unit = '';
+
+        if (selectedFormulation.form === 'tablet' || selectedFormulation.form === 'capsule' || selectedFormulation.form === 'sachet') {
+            amount = totalDose / selectedFormulation.strength;
+            if (selectedFormulation.form === 'tablet') unit = t('units.tablet');
+            else if (selectedFormulation.form === 'capsule') unit = t('units.capsule');
+            else unit = t('units.sachet');
+        } else if (selectedFormulation.form === 'suspension' || selectedFormulation.form === 'injectable') {
+            const concentration = selectedFormulation.strength / (selectedFormulation.volume || 1);
+            if (concentration > 0) {
+                amount = totalDose / concentration;
+                unit = t('units.ml');
+            }
+        }
+
+        return {
+            totalDoseMg: localizeNumber(totalDose.toFixed(2)),
+            amountToAdminister: amount ? `${localizeNumber(amount.toFixed(2))} ${unit}` : null
+        };
+    }, [weightKg, dosePerKg, selectedFormulation, t, localizeNumber]);
+
+    return (
+        <div className="p-6 space-y-6 flex flex-col h-full">
+            <h3 className="text-2xl font-bold text-inherit text-start">{drug.name[locale as keyof typeof drug.name]}</h3>
+            
+            <div className="flex-grow space-y-4">
+                <LabeledSelect label={t('drugCalculator.formulation')} id="formulation" value={selectedFormulationId} onChange={e => setSelectedFormulationId(e.target.value)}>
+                    {drug.formulations.map(f => <option key={f.id} value={f.id}>{formatFormulationDescription(f, t, localizeNumber)}</option>)}
+                </LabeledSelect>
+                
+                {relevantDosage ? (
+                    <div className="space-y-2">
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div className="w-full sm:w-auto flex-grow">
+                                <input
+                                    id="dosePerKg"
+                                    type="number"
+                                    value={String(dosePerKg)}
+                                    onChange={(e) => setDosePerKg(Number(e.target.value))}
+                                    min={relevantDosage.doseRange?.min}
+                                    max={relevantDosage.doseRange?.max}
+                                    step="0.1"
+                                    className="form-input text-center w-full"
+                                    aria-label={t('drugCalculator.dosePerKg')}
+                                />
+                            </div>
+                            <div className="flex items-center gap-2 justify-end shrink-0 text-end">
+                                <label htmlFor="dosePerKg" className="block text-sm font-medium text-inherit/80 whitespace-nowrap">
+                                    {t('drugCalculator.rangeRoute')}
+                                </label>
+                                <div className="text-xs text-inherit/70 whitespace-nowrap" dir="ltr">
+                                     ({localizeNumber(relevantDosage.doseRange?.min || 0)} - {localizeNumber(relevantDosage.doseRange?.max || 0)}) {relevantDosage.unit} {relevantDosage.route && `(${relevantDosage.route})`}
+                                </div>
+                            </div>
+                        </div>
+
+                        {relevantDosage.note && (
+                            <p className="text-sm text-inherit/70 p-2 bg-black/5 dark:bg-white/5 rounded-md text-start whitespace-pre-wrap">
+                                {t(relevantDosage.note)}
+                            </p>
+                        )}
+                    </div>
+                ) : (
+                    <div className="text-center p-4 bg-yellow-400/10 rounded-lg text-yellow-800 dark:text-yellow-200">
+                        {t('drugCalculator.noDoseForSpecies')}
+                    </div>
+                )}
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                <div className="bg-gradient-to-br from-sky-500 to-indigo-500 rounded-2xl p-4 text-white shadow-lg shadow-sky-500/30 text-center">
+                    <p className="text-sm opacity-80">{t('drugCalculator.amountToAdminister')}</p>
+                    <p className="text-3xl font-bold font-mono">{amountToAdminister || '---'}</p>
+                </div>
+                 <div className="bg-gradient-to-br from-[#2DD4BF] to-[#29a594] rounded-2xl p-4 text-white shadow-lg shadow-[#2DD4BF]/30 text-center">
+                    <p className="text-sm opacity-80">{t('drugCalculator.totalDose')}</p>
+                    <p className="text-3xl font-bold font-mono">{totalDoseMg || '---'} <span className="text-lg opacity-80">mg</span></p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// FIX: Refactored framer-motion props to use variants to resolve TypeScript error.
+const panelVariants: Variants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+};
+
+const DrugDoseCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
+    const { t, locale } = useLocale();
+    const { patientInfo } = usePatient();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeCategoryId, setActiveCategoryId] = useState('all');
+    const [selectedDrugId, setSelectedDrugId] = useState<string | null>(null);
+
+    const speciesKeyMap: { [key: string]: string } = {
+        [t('speciesCat')]: 'cat',
+        [t('speciesDog')]: 'dog',
+        [t('speciesBird')]: 'bird',
+        [t('speciesMammal')]: 'mammal',
+        [t('speciesReptile')]: 'reptile',
+        [t('speciesFish')]: 'fish',
+        [t('speciesAmphibian')]: 'amphibian',
+    };
+    const patientSpeciesKey = patientInfo.species ? speciesKeyMap[patientInfo.species] : null;
+
+    const filteredDrugs = useMemo(() => {
+        const query = searchQuery.toLowerCase();
+        return allDrugs.filter(drug => {
+            const inCategory = activeCategoryId === 'all' || drug.categoryId === activeCategoryId;
+            const matchesSearch = query === '' ||
+                drug.name.en.toLowerCase().includes(query) ||
+                drug.name.fa.toLowerCase().includes(query) ||
+                drug.brandNames.some(b => b.toLowerCase().includes(query));
+            return inCategory && matchesSearch;
+        });
+    }, [searchQuery, activeCategoryId, locale]);
+    
+    const selectedDrug = useMemo(() => {
+        return allDrugs.find(d => d.id === selectedDrugId) || null;
+    }, [selectedDrugId]);
+    
+    const hasWeight = patientInfo.weightInKg && patientInfo.weightInKg > 0;
+
+    return (
+        <>
+            {!hasWeight && <MissingPatientWeightBanner />}
+            <main className="container mx-auto p-4 md:p-6">
+                <div className="flex justify-between items-center mb-4">
+                    <BackButton onClick={() => onNavigate('home')} />
+                    <PatientInfoDisplay />
+                </div>
+                <header className="text-center mb-6">
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-inherit">{t('drugCalculator.title')}</h2>
+                </header>
+
+                <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 ${!hasWeight ? 'opacity-50 pointer-events-none' : ''}`}>
+                    {/* Left Panel: Drug List */}
+                    <div className="lg:col-span-1 space-y-4">
+                        <div className="search-input-container">
+                            <SearchIcon className="search-input-icon" />
+                            <input
+                                type="search"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder={t('drugCalculator.searchPlaceholder')}
+                                className="search-input"
+                            />
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                             <button onClick={() => setActiveCategoryId('all')} className={`px-3 py-1 text-sm font-semibold rounded-full transition-colors ${activeCategoryId === 'all' ? 'bg-[var(--primary-500)] text-white' : 'bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20'}`}>{t('drugCalculator.allCategories')}</button>
+                            {drugCategories.map(cat => (
+                                 <button key={cat.id} onClick={() => setActiveCategoryId(cat.id)} className={`px-3 py-1 text-sm font-semibold rounded-full transition-colors ${activeCategoryId === cat.id ? 'bg-[var(--primary-500)] text-white' : 'bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20'}`}>{cat.name[locale as keyof typeof cat.name]}</button>
+                            ))}
+                        </div>
+                        <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+                           {filteredDrugs.length > 0 ? filteredDrugs.map(drug => (
+                               <div
+                                    key={drug.id}
+                                    onClick={() => setSelectedDrugId(drug.id)}
+                                    className={`w-full text-start p-3 rounded-lg transition-all duration-200 cursor-pointer border ${selectedDrugId === drug.id ? 'bg-[var(--primary-500)]/10 border-[var(--primary-500)]' : 'bg-black/5 dark:bg-white/5 border-transparent hover:border-black/20 dark:hover:border-white/20'}`}
+                               >
+                                   <h4 className="font-bold text-inherit">{drug.name[locale as keyof typeof drug.name]}</h4>
+                                   <p className="text-xs text-inherit/70" dir="ltr">{drug.brandNames.join(', ')}</p>
+                               </div>
+                           )) : (
+                               <p className="text-center text-inherit/70 p-4">{t('drugCalculator.notFound')}</p>
+                           )}
+                        </div>
+                    </div>
+
+                    {/* Right Panel: Calculator */}
+                    <div className="lg:col-span-2 glass-card min-h-[400px]">
+                         <AnimatePresence mode="wait">
+                            <motion.div
+                                key={selectedDrugId || 'prompt'}
+                                variants={panelVariants}
+                                initial="initial"
+                                animate="animate"
+                                exit="exit"
+                                transition={{ duration: 0.3 }}
+                                className="h-full"
+                            >
+                                {selectedDrug ? (
+                                    <CalculatorPanel drug={selectedDrug} weightKg={patientInfo.weightInKg || 0} speciesKey={patientSpeciesKey} />
+                                ) : (
+                                    <div className="h-full flex flex-col items-center justify-center text-center p-8">
+                                        <PillIcon className="text-6xl text-inherit/20" />
+                                        <p className="mt-4 text-lg font-medium text-slate-500 dark:text-slate-400">{t('drugCalculator.selectDrugPrompt')}</p>
+                                    </div>
+                                )}
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+                </div>
+            </main>
+        </>
+    );
+};
+
+export default DrugDoseCalculatorScreen;

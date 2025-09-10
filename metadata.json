@@ -1,0 +1,5 @@
+{
+  "name": "Smart Veterinary Assistant",
+  "description": "A web application designed to assist veterinarians with patient information, species selection, and calculators, inspired by a user-provided UI mockup. The app features a clean, dark-mode interface for ease of use in various lighting conditions.",
+  "requestFramePermissions": []
+}

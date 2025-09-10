@@ -1,11 +1,254 @@
-import React from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import type { Medication, MedicationProfile } from '../types';
+import { useLocale } from '../context/LocaleContext';
+import { PillIcon, PlusIcon, ChevronRightIcon, EllipsisVerticalIcon, PawIcon, ExchangeIcon, BellIcon, FileMedicalIcon, PencilIcon, DeleteIcon } from '../components/Icons';
+import { Button } from '../components/Button';
+import ProfileModal from '../components/ProfileModal';
+import MedicationModal from '../components/MedicationModal';
 
 const MyDrugsScreen: React.FC = () => {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold text-gray-400">My Drugs Screen</h1>
-    </div>
-  );
+    const { t } = useLocale();
+
+    // Mock Data converted to state
+    const [profiles, setProfiles] = useState<MedicationProfile[]>([
+        { id: 1, name: t('myMedList.maxGoldenRetriever'), imageUrl: 'https://i.postimg.cc/4x28nG8x/dog-2.png' },
+        { id: 2, name: t('myMedList.lunaPersianCat'), imageUrl: 'https://i.postimg.cc/VNSKChTB/cat-2.png' },
+    ]);
+
+    const [medications, setMedications] = useState<Medication[]>([
+        { id: 1, profileId: 1, name: 'Meloxicam', formulation: t('myMedList.meloxicamSuspension'), instructions: t('myMedList.meloxicamInstructions') },
+        { id: 2, profileId: 1, name: 'Clavamox', formulation: t('myMedList.clavamoxTablets'), instructions: t('myMedList.clavamoxInstructions') },
+        { id: 3, profileId: 2, name: 'Amoxicillin', formulation: '250mg Tablet', instructions: '1 tablet BID for 7 days' },
+    ]);
+    
+    const [activeProfileId, setActiveProfileId] = useState<number | null>(profiles.length > 0 ? profiles[0].id : null);
+
+    // Modal States
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [editingProfile, setEditingProfile] = useState<MedicationProfile | null>(null);
+    const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
+    const [editingMedication, setEditingMedication] = useState<Medication | null>(null);
+    
+    // Action Menu State
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+    const menuRef = useRef<HTMLDivElement>(null);
+
+     // Close menu on outside click
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (openMenuId && menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setOpenMenuId(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [openMenuId]);
+
+    const activeMedications = useMemo(() => {
+        return medications.filter(med => med.profileId === activeProfileId);
+    }, [activeProfileId, medications]);
+
+    // Profile CRUD Handlers
+    const handleSaveProfile = (data: { id?: number; name: string; imageUrl: string }) => {
+        if (data.id) { // Editing
+            setProfiles(profiles.map(p => p.id === data.id ? { ...p, name: data.name, imageUrl: data.imageUrl || p.imageUrl } : p));
+        } else { // Creating
+            const newProfile: MedicationProfile = {
+                id: Date.now(),
+                name: data.name,
+                imageUrl: data.imageUrl || 'https://i.postimg.cc/P5gLp2f0/default-pet.png',
+            };
+            setProfiles([...profiles, newProfile]);
+            setActiveProfileId(newProfile.id);
+        }
+        setIsProfileModalOpen(false);
+        setEditingProfile(null);
+    };
+
+    const handleDeleteProfile = (profileId: number) => {
+        if (window.confirm(t('myMedList.deleteProfileConfirm'))) {
+            const newProfiles = profiles.filter(p => p.id !== profileId);
+            setProfiles(newProfiles);
+            setMedications(medications.filter(m => m.profileId !== profileId));
+            if (activeProfileId === profileId) {
+                setActiveProfileId(newProfiles.length > 0 ? newProfiles[0].id : null);
+            }
+        }
+        setOpenMenuId(null);
+    };
+    
+    // Medication CRUD Handlers
+    const handleSaveMedication = (data: { id?: number; name: string; formulation: string; instructions: string }) => {
+        if (data.id) { // Editing
+            setMedications(medications.map(m => m.id === data.id ? { ...m, ...data } : m));
+        } else { // Creating
+            const newMedication: Medication = {
+                id: Date.now(),
+                profileId: activeProfileId!,
+                name: data.name,
+                formulation: data.formulation,
+                instructions: data.instructions,
+            };
+            setMedications([...medications, newMedication]);
+        }
+        setIsMedicationModalOpen(false);
+        setEditingMedication(null);
+    };
+
+    const handleDeleteMedication = (medicationId: number) => {
+        if (window.confirm(t('myMedList.deleteMedConfirm'))) {
+            setMedications(medications.filter(m => m.id !== medicationId));
+        }
+        setOpenMenuId(null);
+    };
+    
+    // UI Helpers
+    const openProfileModal = (profile: MedicationProfile | null) => {
+        setEditingProfile(profile);
+        setIsProfileModalOpen(true);
+        setOpenMenuId(null);
+    };
+    const openMedicationModal = (med: Medication | null) => {
+        setEditingMedication(med);
+        setIsMedicationModalOpen(true);
+        setOpenMenuId(null);
+    };
+
+    const featureTools = [
+        { title: t('myMedList.featureInteractionsTitle'), description: t('myMedList.featureInteractionsDesc'), icon: <ExchangeIcon className="text-2xl" />, color: 'text-blue-500' },
+        { title: t('myMedList.featureAlertsTitle'), description: t('myMedList.featureAlertsDesc'), icon: <BellIcon className="text-2xl" />, color: 'text-amber-500' },
+        { title: t('myMedList.featureReportsTitle'), description: t('myMedList.featureReportsDesc'), icon: <FileMedicalIcon className="text-2xl" />, color: 'text-emerald-500' }
+    ];
+
+    return (
+        <div className="min-h-screen">
+             <header className="sticky top-0 z-10 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm">
+                <div className="flex items-center p-4 justify-between">
+                    <h1 className="text-xl font-bold leading-tight tracking-tight">{t('myMedList.title')}</h1>
+                    <button 
+                        onClick={() => openProfileModal(null)}
+                        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--primary-500)] text-white hover:bg-[var(--primary-600)] transition-colors shadow-md"
+                        aria-label={t('profileModal.title')}
+                    >
+                        <PlusIcon className="text-xl" />
+                    </button>
+                </div>
+            </header>
+            
+            <main className="p-4 space-y-8">
+                {/* Profile Selector */}
+                <section>
+                    <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
+                        {profiles.map(profile => (
+                            <div key={profile.id} className="relative shrink-0">
+                                <button
+                                    onClick={() => setActiveProfileId(profile.id)}
+                                    className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 w-full ${activeProfileId === profile.id ? 'bg-white dark:bg-slate-800 shadow-lg scale-105' : 'bg-slate-200/80 dark:bg-slate-800/50 hover:bg-slate-300/80 dark:hover:bg-slate-700/80'}`}
+                                >
+                                    <img src={profile.imageUrl} alt={profile.name} className="w-10 h-10 rounded-full object-cover" />
+                                    <div className="text-start">
+                                        <p className="text-xs text-slate-500 dark:text-slate-400">{t('myMedList.profileFor')}</p>
+                                        <p className="font-bold text-sm text-slate-900 dark:text-slate-100">{profile.name}</p>
+                                    </div>
+                                    <div className="w-4"></div>
+                                </button>
+                                <div ref={openMenuId === `profile-${profile.id}` ? menuRef : null} className="absolute top-2 end-2">
+                                    <button onClick={() => setOpenMenuId(openMenuId === `profile-${profile.id}` ? null : `profile-${profile.id}`)} className="p-1 rounded-full text-slate-500 hover:bg-black/10 dark:hover:bg-white/10">
+                                        <EllipsisVerticalIcon />
+                                    </button>
+                                    {openMenuId === `profile-${profile.id}` && (
+                                        <div className="absolute end-0 mt-2 w-32 bg-white dark:bg-slate-700 rounded-lg shadow-xl z-20 text-start">
+                                            <button onClick={() => openProfileModal(profile)} className="w-full text-start px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 flex items-center gap-2 rounded-t-lg"><PencilIcon/> {t('edit')}</button>
+                                            <button onClick={() => handleDeleteProfile(profile.id)} className="w-full text-start px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-600 flex items-center gap-2 rounded-b-lg"><DeleteIcon/> {t('delete')}</button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+                
+                {/* Medication List */}
+                <section>
+                    {activeMedications.length > 0 ? (
+                        <div className="space-y-3">
+                            {activeMedications.map(med => (
+                                <div key={med.id} className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm flex items-center gap-4">
+                                    <div className="flex-shrink-0 bg-[var(--primary-100)] dark:bg-[var(--primary-900)] text-[var(--primary-600)] dark:text-[var(--primary-300)] p-3 rounded-full">
+                                        <PillIcon className="text-2xl"/>
+                                    </div>
+                                    <div className="flex-1 text-start">
+                                        <h3 className="font-bold text-slate-900 dark:text-slate-100">{med.name}</h3>
+                                        <p className="text-sm text-slate-600 dark:text-slate-400">{med.formulation}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-500 mt-1 whitespace-pre-wrap">{med.instructions}</p>
+                                    </div>
+                                    <div ref={openMenuId === `med-${med.id}` ? menuRef : null} className="relative">
+                                        <button onClick={() => setOpenMenuId(openMenuId === `med-${med.id}` ? null : `med-${med.id}`)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">
+                                            <EllipsisVerticalIcon />
+                                        </button>
+                                        {openMenuId === `med-${med.id}` && (
+                                            <div className="absolute end-0 mt-2 w-32 bg-white dark:bg-slate-700 rounded-lg shadow-xl z-20 text-start">
+                                                <button onClick={() => openMedicationModal(med)} className="w-full text-start px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 flex items-center gap-2 rounded-t-lg"><PencilIcon/> {t('edit')}</button>
+                                                <button onClick={() => handleDeleteMedication(med.id)} className="w-full text-start px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-600 flex items-center gap-2 rounded-b-lg"><DeleteIcon/> {t('delete')}</button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                            <div className="pt-4">
+                               <Button onClick={() => openMedicationModal(null)} variant="primary" className="w-full !rounded-lg">
+                                    <PlusIcon className="me-2" /> {t('myMedList.addMedication')}
+                                </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-center bg-white dark:bg-slate-800 rounded-lg p-8 shadow-sm">
+                            <div className="mx-auto bg-slate-100 dark:bg-slate-700 w-16 h-16 flex items-center justify-center rounded-full">
+                                <PawIcon className="text-3xl text-slate-400 dark:text-slate-500" />
+                            </div>
+                            <h3 className="mt-4 text-lg font-semibold text-slate-900 dark:text-slate-100">{t('myMedList.noMedications')}</h3>
+                            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t('myMedList.getStarted')}</p>
+                            <Button onClick={() => openMedicationModal(null)} variant="primary" className="mt-4">
+                                <PlusIcon className="me-2" /> {t('myMedList.addMedication')}
+                            </Button>
+                        </div>
+                    )}
+                </section>
+
+                 {/* Feature Showcase */}
+                <section>
+                    <h2 className="text-xl font-bold text-start mb-4 text-slate-900 dark:text-slate-100">{t('myMedList.yourTools')}</h2>
+                    <div className="space-y-3">
+                        {featureTools.map(tool => (
+                             <button key={tool.title} className="w-full text-start bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm flex items-center gap-4 transition-transform hover:scale-[1.02]">
+                                <div className={`flex-shrink-0 ${tool.color}`}>
+                                    {tool.icon}
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="font-bold text-slate-900 dark:text-slate-100">{tool.title}</h3>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400">{tool.description}</p>
+                                </div>
+                                <ChevronRightIcon className="text-slate-400 dark:text-slate-500"/>
+                            </button>
+                        ))}
+                    </div>
+                </section>
+            </main>
+
+            <ProfileModal
+                isOpen={isProfileModalOpen}
+                onClose={() => setIsProfileModalOpen(false)}
+                onSave={handleSaveProfile}
+                editingProfile={editingProfile}
+            />
+            <MedicationModal
+                isOpen={isMedicationModalOpen}
+                onClose={() => setIsMedicationModalOpen(false)}
+                onSave={handleSaveMedication}
+                editingMedication={editingMedication}
+            />
+        </div>
+    );
 };
 
 export default MyDrugsScreen;

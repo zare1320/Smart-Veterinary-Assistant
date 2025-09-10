@@ -22,7 +22,7 @@ interface LabeledInputProps extends React.InputHTMLAttributes<HTMLInputElement> 
     unit?: string;
 }
 
-export const LabeledInput: React.FC<LabeledInputProps> = ({ label, id, unit, ...props }) => (
+export const LabeledInput: React.FC<LabeledInputProps> = ({ label, id, unit, className, ...props }) => (
     <div className="flex-grow">
         <label htmlFor={id} className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-1 text-start">
             {label}
@@ -31,7 +31,7 @@ export const LabeledInput: React.FC<LabeledInputProps> = ({ label, id, unit, ...
             <input
                 id={id}
                 {...props}
-                className="form-input w-full"
+                className={`form-input w-full ${className}`}
             />
             {unit && (
                 <span className="absolute inset-y-0 end-0 flex items-center pe-3 text-slate-500 dark:text-slate-400 text-sm">
@@ -76,3 +76,20 @@ export const LabeledSlider: React.FC<{
         </div>
     );
 };
+
+interface LabeledTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+    label: string;
+}
+
+export const LabeledTextarea: React.FC<LabeledTextareaProps> = ({ label, id, ...props }) => (
+    <div>
+        <label htmlFor={id} className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-1 text-start">
+            {label}
+        </label>
+        <textarea
+            id={id}
+            {...props}
+            className="form-input w-full"
+        />
+    </div>
+);

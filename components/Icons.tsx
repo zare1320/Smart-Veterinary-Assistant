@@ -47,3 +47,9 @@ export const TableIcon: React.FC<{ className?: string }> = ({ className }) => <I
 export const CakeIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-cake-candles" />;
 export const UsersIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-users" />;
 export const PawIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-paw" />;
+export const PlusIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-plus" />;
+export const EllipsisVerticalIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-ellipsis-vertical" />;
+export const ExchangeIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-exchange-alt" />;
+export const FileMedicalIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-file-medical" />;
+export const XMarkIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-xmark" />;
+export const ImageIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-image" />;

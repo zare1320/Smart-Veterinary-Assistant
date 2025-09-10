@@ -1,6 +1,6 @@
 import React from 'react';
-// FIX: Imported Variants type from framer-motion to resolve TypeScript error with transition properties.
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+// FIX: Replaced framer-motion variants with inline animation props to fix type errors.
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface InfoModalProps {
   isOpen: boolean;
@@ -9,32 +9,22 @@ interface InfoModalProps {
   children: React.ReactNode;
 }
 
-const backdropVariants: Variants = {
-  visible: { opacity: 1 },
-  hidden: { opacity: 0 },
-};
-
-const modalVariants: Variants = {
-  hidden: { y: "-50px", opacity: 0 },
-  visible: { y: "0", opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 30 } },
-  exit: { y: "50px", opacity: 0 },
-};
-
 const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, title, children }) => {
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-          variants={backdropVariants}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           onClick={onClose}
         >
           <motion.div
             className="bg-slate-50 dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md p-6 text-start"
-            variants={modalVariants}
+            initial={{ y: "-50px", opacity: 0 }}
+            animate={{ y: "0", opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 30 } }}
+            exit={{ y: "50px", opacity: 0 }}
             onClick={(e) => e.stopPropagation()} // Prevent closing modal when clicking inside
           >
             <div className="flex justify-between items-center mb-4">

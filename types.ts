@@ -210,3 +210,18 @@ export enum AnimalSpecies {
   CAT = 'cat',
   OTHER = 'other'
 }
+
+// My Med List Types
+export interface MedicationProfile {
+  id: number;
+  name: string;
+  imageUrl: string;
+}
+
+export interface Medication {
+  id: number;
+  profileId: number;
+  name: string;
+  formulation: string;
+  instructions: string;
+}

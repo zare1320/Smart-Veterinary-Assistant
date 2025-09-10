@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-// FIX: Imported Variants type from framer-motion for type safety.
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+// FIX: Replaced framer-motion variants with inline animation props to fix type errors.
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDownIcon } from './Icons';
 import { useLocale } from '../context/LocaleContext';
 import type { LocalizedString } from '../types';
@@ -18,13 +18,6 @@ interface BreedSelectorProps {
   placeholder: string;
   displayInfoKey?: string;
 }
-
-// FIX: Refactored framer-motion props to use variants to resolve TypeScript error.
-const dropdownVariants: Variants = {
-  initial: { opacity: 0, y: -10, height: 0 },
-  animate: { opacity: 1, y: 0, height: 'auto' },
-  exit: { opacity: 0, y: -10, height: 0 },
-};
 
 const BreedSelector: React.FC<BreedSelectorProps> = ({ breeds, value, onChange, placeholder, displayInfoKey }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -96,10 +89,9 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({ breeds, value, onChange, 
       <AnimatePresence>
         {isOpen && (
           <motion.ul
-            variants={dropdownVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
+            initial={{ opacity: 0, y: -10, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, y: -10, height: 0 }}
             className="absolute z-10 w-full mt-2 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 max-h-60 overflow-y-auto"
             role="listbox"
           >

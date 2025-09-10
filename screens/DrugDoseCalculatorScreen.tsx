@@ -5,8 +5,8 @@ import type { ScreenProps, Drug, DrugFormulation, DrugDosage } from '../types';
 import { allDrugs, drugCategories } from '../data/drug_data';
 import { PillIcon, SearchIcon } from '../components/Icons';
 import { LabeledSelect } from '../components/forms';
-// FIX: Imported Variants type from framer-motion for type safety.
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+// FIX: Replaced framer-motion variants with inline animation props to fix type errors.
+import { motion, AnimatePresence } from 'framer-motion';
 import { BackButton } from '../components/Button';
 import MissingPatientWeightBanner from '../components/MissingPatientWeightBanner';
 import PatientInfoDisplay from '../components/PatientInfoDisplay';
@@ -191,13 +191,6 @@ const CalculatorPanel: React.FC<{ drug: Drug; weightKg: number; speciesKey: stri
     );
 };
 
-// FIX: Refactored framer-motion props to use variants to resolve TypeScript error.
-const panelVariants: Variants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 },
-};
-
 const DrugDoseCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
     const { t, locale } = useLocale();
     const { patientInfo } = usePatient();
@@ -286,10 +279,9 @@ const DrugDoseCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
                          <AnimatePresence mode="wait">
                             <motion.div
                                 key={selectedDrugId || 'prompt'}
-                                variants={panelVariants}
-                                initial="initial"
-                                animate="animate"
-                                exit="exit"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
                                 className="h-full"
                             >

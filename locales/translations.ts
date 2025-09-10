@@ -9,11 +9,15 @@ export const translations: Record<string, Record<string, any>> = {
     missingWeightWarning: 'Please enter patient weight on the Home screen to use the calculators.',
     noBreedsFound: 'No breeds found.',
     moreInfo: 'More Info',
+    edit: 'Edit',
+    delete: 'Delete',
+    saveChanges: 'Save Changes',
+    cancel: 'Cancel',
 
     // Navigation
     navHome: 'Home',
     navProtocols: 'Protocols',
-    navMyDrugs: 'My Drugs',
+    navMyDrugs: 'My Med List',
     navSettings: 'Settings',
 
     // Home Screen
@@ -319,6 +323,47 @@ export const translations: Record<string, Record<string, any>> = {
     // Errors
     'errors.unsupportedSpecies': 'This calculator is validated for dogs and cats only.',
 
+    // My Med List
+    'myMedList.title': 'My Med List',
+    'myMedList.addMedication': 'Add Medication',
+    'myMedList.noMedications': 'No Medications Added',
+    'myMedList.getStarted': 'Tap the button below to add the first one.',
+    'myMedList.profileFor': 'Profile for',
+    'myMedList.maxGoldenRetriever': 'Max - Golden Retriever',
+    'myMedList.lunaPersianCat': 'Luna - Persian Cat',
+    'myMedList.meloxicamSuspension': '1.5 mg/ml Suspension',
+    'myMedList.meloxicamInstructions': 'Give 0.5ml once daily with food.',
+    'myMedList.clavamoxTablets': '62.5mg Tablets',
+    'myMedList.clavamoxInstructions': '1 tablet twice daily for 10 days.',
+    'myMedList.yourTools': 'Your Tools',
+    'myMedList.featureInteractionsTitle': 'Interaction Checker',
+    'myMedList.featureInteractionsDesc': 'Check for drug, food, and condition interactions.',
+    'myMedList.featureAlertsTitle': 'FDA Alerts & News',
+    'myMedList.featureAlertsDesc': 'Stay informed with the latest updates for your meds.',
+    'myMedList.featureReportsTitle': 'Printable Records',
+    'myMedList.featureReportsDesc': 'Generate wallet-sized cards and reports for vet visits.',
+    'myMedList.deleteProfileConfirm': 'Are you sure you want to delete this profile and all its medications? This action cannot be undone.',
+    'myMedList.deleteMedConfirm': 'Are you sure you want to delete this medication?',
+
+    // Profile Modal
+    'profileModal.title': 'Create New Profile',
+    'profileModal.editTitle': 'Edit Profile',
+    'profileModal.nameLabel': 'Patient Name',
+    'profileModal.namePlaceholder': 'e.g., Bella - German Shepherd',
+    'profileModal.imageUrlLabel': 'Image URL (Optional)',
+    'profileModal.imageUrlPlaceholder': 'https://example.com/image.png',
+    'profileModal.create': 'Create Profile',
+
+    // Medication Modal
+    'medicationModal.addTitle': 'Add Medication',
+    'medicationModal.editTitle': 'Edit Medication',
+    'medicationModal.nameLabel': 'Medication Name',
+    'medicationModal.namePlaceholder': 'e.g., Amoxicillin',
+    'medicationModal.formulationLabel': 'Formulation (Dose/Strength)',
+    'medicationModal.formulationPlaceholder': 'e.g., 250mg Tablet',
+    'medicationModal.instructionsLabel': 'Instructions',
+    'medicationModal.instructionsPlaceholder': 'e.g., 1 tablet twice daily for 7 days',
+    'medicationModal.add': 'Add Medication',
 
   },
   fa: {
@@ -331,11 +376,15 @@ export const translations: Record<string, Record<string, any>> = {
     missingWeightWarning: 'لطفاً برای استفاده از ماشین‌حساب‌ها، وزن بیمار را در صفحه اصلی وارد کنید.',
     noBreedsFound: 'هیچ نژادی یافت نشد.',
     moreInfo: 'اطلاعات بیشتر',
+    edit: 'ویرایش',
+    delete: 'حذف',
+    saveChanges: 'ذخیره تغییرات',
+    cancel: 'انصراف',
 
     // Navigation
     navHome: 'خانه',
     navProtocols: 'پروتکل ها',
-    navMyDrugs: 'داروهای من',
+    navMyDrugs: 'لیست داروهای من',
     navSettings: 'تنظیمات',
 
     // Home Screen
@@ -640,5 +689,48 @@ export const translations: Record<string, Record<string, any>> = {
 
     // Errors
     'errors.unsupportedSpecies': 'این محاسبه‌گر فقط برای سگ و گربه معتبر است.',
+
+    // My Med List
+    'myMedList.title': 'لیست داروهای من',
+    'myMedList.addMedication': 'افزودن دارو',
+    'myMedList.noMedications': 'دارویی اضافه نشده است',
+    'myMedList.getStarted': 'برای افزودن اولین دارو، دکمه زیر را بزنید.',
+    'myMedList.profileFor': 'پروفایل برای',
+    'myMedList.maxGoldenRetriever': 'مکس - گلدن رتریور',
+    'myMedList.lunaPersianCat': 'لونا - پرشین کت',
+    'myMedList.meloxicamSuspension': 'سوسپانسیون ۱.۵ میلی‌گرم/میلی‌لیتر',
+    'myMedList.meloxicamInstructions': '۰.۵ میلی‌لیتر یک بار در روز همراه با غذا.',
+    'myMedList.clavamoxTablets': 'قرص‌های ۶۲.۵ میلی‌گرم',
+    'myMedList.clavamoxInstructions': '۱ قرص دو بار در روز به مدت ۱۰ روز.',
+    'myMedList.yourTools': 'ابزارهای شما',
+    'myMedList.featureInteractionsTitle': 'بررسی تداخلات دارویی',
+    'myMedList.featureInteractionsDesc': 'بررسی تداخلات دارو، غذا و بیماری.',
+    'myMedList.featureAlertsTitle': 'هشدارها و اخبار FDA',
+    'myMedList.featureAlertsDesc': 'از آخرین به‌روزرسانی‌ها برای داروهای خود مطلع شوید.',
+    'myMedList.featureReportsTitle': 'سوابق قابل چاپ',
+    'myMedList.featureReportsDesc': 'کارت‌های جیبی و گزارش برای مراجعات دامپزشکی تولید کنید.',
+    'myMedList.deleteProfileConfirm': 'آیا از حذف این پروفایل و تمام داروهای آن مطمئن هستید؟ این عمل قابل بازگشت نیست.',
+    'myMedList.deleteMedConfirm': 'آیا از حذف این دارو مطمئن هستید؟',
+
+    // Profile Modal
+    'profileModal.title': 'ایجاد پروفایل جدید',
+    'profileModal.editTitle': 'ویرایش پروفایل',
+    'profileModal.nameLabel': 'نام بیمار',
+    'profileModal.namePlaceholder': 'مثلاً: بلا - جرمن شپرد',
+    'profileModal.imageUrlLabel': 'آدرس تصویر (اختیاری)',
+    'profileModal.imageUrlPlaceholder': 'https://example.com/image.png',
+    'profileModal.create': 'ایجاد پروفایل',
+
+    // Medication Modal
+    'medicationModal.addTitle': 'افزودن دارو',
+    'medicationModal.editTitle': 'ویرایش دارو',
+    'medicationModal.nameLabel': 'نام دارو',
+    'medicationModal.namePlaceholder': 'مثلاً: آموکسی‌سیلین',
+    'medicationModal.formulationLabel': 'شکل دارویی (دوز/قدرت)',
+    'medicationModal.formulationPlaceholder': 'مثلاً: قرص ۲۵۰ میلی‌گرم',
+    'medicationModal.instructionsLabel': 'دستورالعمل',
+    'medicationModal.instructionsPlaceholder': 'مثلاً: ۱ قرص دو بار در روز به مدت ۷ روز',
+    'medicationModal.add': 'افزودن دارو',
+
   },
 };

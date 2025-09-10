@@ -63,3 +63,7 @@ export const UniversityIcon: React.FC<{ className?: string }> = ({ className }) 
 export const IdCardIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-id-card" />;
 export const MapPinIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-map-pin" />;
 export const AwardIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-award" />;
+export const FlaskIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-flask-vial" />;
+export const PrintIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-print" />;
+export const InfoCircleIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-circle-info" />;
+export const WifiIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-wifi" />;

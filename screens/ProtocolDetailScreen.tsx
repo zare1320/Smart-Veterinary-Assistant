@@ -19,6 +19,14 @@ const ProtocolDetailScreen: React.FC<ProtocolDetailProps> = ({ protocol, onNavig
             </div>
         );
     }
+    
+    // Render content whether it's a ReactNode or a simple string (from localStorage)
+    const renderContent = () => {
+        if (typeof protocol.content === 'string') {
+            return <p className="whitespace-pre-wrap">{protocol.content}</p>;
+        }
+        return protocol.content;
+    }
 
     return (
         <div>
@@ -35,8 +43,8 @@ const ProtocolDetailScreen: React.FC<ProtocolDetailProps> = ({ protocol, onNavig
                     <div className="w-10 flex-shrink-0"></div>
                 </div>
             </header>
-            <main className="p-4 text-start">
-                {protocol.content || <p className="text-slate-500">No detailed content available for this protocol.</p>}
+            <main className="p-4 text-start text-slate-700 dark:text-slate-300 leading-relaxed">
+                {renderContent() || <p className="text-slate-500">No detailed content available for this protocol.</p>}
             </main>
         </div>
     );

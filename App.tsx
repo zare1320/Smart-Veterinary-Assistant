@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { NavItemKey, Protocol } from './types';
+import type { NavItemKey, Protocol, MedicationProfile, Medication } from './types';
 import { getNavItems } from './constants';
 import BottomNav from './components/BottomNav';
 import HomeScreen from './screens/HomeScreen';
@@ -19,6 +19,9 @@ import BloodPressureCalculatorScreen from './screens/BloodPressureCalculatorScre
 import BloodTransfusionCalculatorScreen from './screens/BloodTransfusionCalculatorScreen';
 import PetAgeCalculatorScreen from './screens/PetAgeCalculatorScreen';
 import ProtocolDetailScreen from './screens/ProtocolDetailScreen';
+import AddProtocolScreen from './screens/AddProtocolScreen';
+import DrugInteractionScreen from './screens/DrugInteractionScreen';
+import MedicationReportScreen from './screens/MedicationReportScreen';
 import { useLocale } from './context/LocaleContext';
 import { useUser } from './context/UserContext';
 import RegisterScreen from './screens/RegisterScreen';
@@ -26,6 +29,8 @@ import RegisterScreen from './screens/RegisterScreen';
 const App: React.FC = () => {
   const [activeScreen, setActiveScreen] = useState<NavItemKey>('home');
   const [selectedProtocol, setSelectedProtocol] = useState<Protocol | null>(null);
+  const [initialProtocolTitle, setInitialProtocolTitle] = useState<string>('');
+  const [reportData, setReportData] = useState<{ profile: MedicationProfile; medications: Medication[] } | null>(null);
   const { t } = useLocale();
   const { user, login } = useUser();
   const navItems = getNavItems(t);
@@ -56,16 +61,28 @@ const App: React.FC = () => {
     setActiveScreen(screen);
   }
 
+  const handleAddProtocol = (title: string) => {
+      setInitialProtocolTitle(title);
+      setActiveScreen('add-protocol');
+  }
+
+  const handleGenerateReport = (data: { profile: MedicationProfile; medications: Medication[] }) => {
+    setReportData(data);
+    setActiveScreen('medication-report');
+  };
+
   const renderScreen = () => {
     switch (activeScreen) {
       case 'home':
         return <HomeScreen onNavigate={handleNavigate} />;
       case 'protocols':
-        return <ProtocolsScreen onNavigate={handleNavigate} onSelectProtocol={handleSelectProtocol} />;
+        return <ProtocolsScreen onNavigate={handleNavigate} onSelectProtocol={handleSelectProtocol} onAddProtocol={handleAddProtocol} />;
       case 'protocol-detail':
         return <ProtocolDetailScreen protocol={selectedProtocol!} onNavigate={handleNavigate} />;
+      case 'add-protocol':
+        return <AddProtocolScreen onNavigate={handleNavigate} initialTitle={initialProtocolTitle} />;
       case 'my-drugs':
-        return <MyDrugsScreen />;
+        return <MyDrugsScreen onNavigate={handleNavigate} onGenerateReport={handleGenerateReport} />;
       case 'settings':
         return <SettingsScreen onNavigate={handleNavigate} />;
       case 'profile':
@@ -75,13 +92,13 @@ const App: React.FC = () => {
       case 'theme-settings':
           return <ThemeSettingsScreen onNavigate={handleNavigate} />;
       case 'sync-settings':
-          return <SyncSettingsScreen />;
+          return <SyncSettingsScreen onNavigate={handleNavigate} />;
       case 'privacy-policy':
-          return <PrivacyPolicyScreen />;
+          return <PrivacyPolicyScreen onNavigate={handleNavigate} />;
       case 'terms-of-service':
-          return <TermsOfServiceScreen />;
+          return <TermsOfServiceScreen onNavigate={handleNavigate} />;
       case 'weight-unit-settings':
-          return <WeightUnitSettingsScreen />;
+          return <WeightUnitSettingsScreen onNavigate={handleNavigate} />;
       case 'drug-dose-calculator':
         return <DrugDoseCalculatorScreen onNavigate={handleNavigate} />;
       case 'fluid-therapy-calculator':
@@ -92,6 +109,10 @@ const App: React.FC = () => {
         return <BloodTransfusionCalculatorScreen onNavigate={handleNavigate} />;
       case 'pet-age-calculator':
         return <PetAgeCalculatorScreen onNavigate={handleNavigate} />;
+      case 'drug-interaction-checker':
+        return <DrugInteractionScreen onNavigate={handleNavigate} />;
+      case 'medication-report':
+        return <MedicationReportScreen reportData={reportData!} onNavigate={handleNavigate} />;
       default:
         return <HomeScreen onNavigate={handleNavigate} />;
     }
@@ -110,7 +131,10 @@ const App: React.FC = () => {
     'blood-pressure-calculator',
     'blood-transfusion-calculator',
     'pet-age-calculator',
-    'protocol-detail'
+    'protocol-detail',
+    'add-protocol',
+    'drug-interaction-checker',
+    'medication-report'
   ].includes(activeScreen) && (user?.isProfileComplete ?? false);
 
 

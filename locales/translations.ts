@@ -1,3 +1,4 @@
+
 // FIX: Created the translations file to be imported by the LocaleContext.
 // FIX: The original type definition for translations only allowed for a single level of nesting,
 // causing type errors for any nested objects (e.g., `animalSpecies`, `myMedList`).
@@ -10,7 +11,7 @@ type TranslationBlock = {
 export const translations: { [key: string]: TranslationBlock } = {
   en: {
     // General
-    appName: "Vet Pocket Pal",
+    appName: "Smart Veterinary Assistant",
     back: "Back",
     kg: "kg",
     edit: "Edit",
@@ -90,6 +91,20 @@ export const translations: { [key: string]: TranslationBlock } = {
     chipExotic: "Exotic",
     protocolsCommon: "Common Protocols",
     protocolsAdvanced: "Advanced Protocols",
+    protocolNotFound: "No protocol found for your search.",
+    addProtocol: "Add New Protocol",
+    addProtocolTitle: "Add New Protocol",
+    form: {
+        titleLabel: "Title",
+        titlePlaceholder: "e.g., Canine Parvovirus Treatment",
+        descriptionLabel: "Short Description",
+        descriptionPlaceholder: "A brief summary of the protocol.",
+        categoryLabel: "Category",
+        contentLabel: "Content (Markdown Supported)",
+        contentPlaceholder: "Enter the full protocol details here...",
+        saveProtocol: "Save Protocol",
+    },
+    custom: "Custom",
 
     // My Meds Screen
     myMedList: {
@@ -155,11 +170,26 @@ export const translations: { [key: string]: TranslationBlock } = {
     termsOfService: "Terms of Service",
     settingsCalculatorDefaults: "Calculator Defaults",
     defaultWeightUnit: "Default Weight Unit",
+    settings: {
+        account: "Account",
+        logout: "Log Out",
+        logoutDescription: "Sign out of your current session.",
+        appVersion: "Version",
+        languageDescription: "Choose the display language for the app.",
+        themeDescription: "Select a light, dark, or system-default theme.",
+        pushNotificationsDescription: "Receive alerts for important updates.",
+        emailNotificationsDescription: "Get summaries and news in your inbox.",
+        syncDescription: "Manage how your data syncs across devices.",
+        privacyDescription: "Read our policy on how we handle your data.",
+        termsDescription: "Review the terms and conditions for using the app.",
+        weightUnitDescription: "Set the default unit for patient weight.",
+        about: "About",
+    },
 
     // Auth & Profile
     auth: {
-        welcomeTitle: "Welcome to Vet Pocket Pal",
-        welcomeSubtitle: "Your professional veterinary assistant.",
+        welcomeTitle: "Smart Veterinary Assistant",
+        welcomeSubtitle: "Specialized tools, treatment protocols, and precise calculators in your hands.",
         emailPlaceholder: "Enter your email or mobile number",
         continue: "Continue",
         continueWithGoogle: "Continue with Google",
@@ -444,10 +474,125 @@ export const translations: { [key: string]: TranslationBlock } = {
     gregorianMonths: { "1": "January", "2": "February", "3": "March", "4": "April", "5": "May", "6": "June", "7": "July", "8": "August", "9": "September", "10": "October", "11": "November", "12": "December" },
     jalaliMonths: { "1": "Farvardin", "2": "Ordibehesht", "3": "Khordad", "4": "Tir", "5": "Mordad", "6": "Shahrivar", "7": "Mehr", "8": "Aban", "9": "Azar", "10": "Dey", "11": "Bahman", "12": "Esfand" },
 
+    // Drug Interaction Checker
+    interactions: {
+        title: "Drug Interaction Checker",
+        intro1: "This tool is intended to identify potential interactions. Not all drugs interact with each other.",
+        intro2: "Some interactions may not require stopping medication but rather careful management. Always consult with a pharmacist or specialist.",
+        searchPlaceholder: "Enter a drug name to add it to the list...",
+        selectedDrugs: "Selected Drugs for Checking",
+        noDrugsSelected: "Add at least two drugs to check for interactions.",
+        resultsTitle: "Interaction Results",
+        noInteractions: "No interactions were found among the selected drugs.",
+        severity: {
+            major: "Major",
+            moderate: "Moderate",
+            minor: "Minor"
+        },
+        meloxicamKetoconazole: {
+            summary: "Increased risk of GI ulceration and nephrotoxicity.",
+            detail: "Concurrent use of ketoconazole (an azole antifungal) can inhibit the metabolism of meloxicam (an NSAID), leading to increased plasma levels. This elevates the risk of gastrointestinal side effects, such as ulcers and bleeding, as well as potential kidney damage. Monitor renal function and clinical signs of GI distress closely. Dose reduction of meloxicam may be necessary."
+        },
+        meloxicamWarfarin: {
+            summary: "Increased risk of bleeding.",
+            detail: "NSAIDs like meloxicam can displace warfarin from plasma proteins and inhibit platelet function, significantly increasing the anticoagulant effect and the risk of severe bleeding. This combination should be avoided if possible. If unavoidable, frequent monitoring of coagulation parameters (PT/INR) is essential."
+        },
+        ketoconazoleCyclosporine: {
+            summary: "Increased cyclosporine levels and risk of toxicity.",
+            detail: "Ketoconazole is a potent inhibitor of the CYP3A4 enzyme, which is responsible for metabolizing cyclosporine. Concurrent use can lead to dangerously high levels of cyclosporine, increasing the risk of nephrotoxicity and other side effects. Cyclosporine dose reduction (often by 50-75%) and therapeutic drug monitoring are required."
+        }
+    },
+    medicationReport: {
+        title: "Medication Report",
+        prescription: "Veterinary Prescription",
+        patientInfo: "Patient Information",
+        patientName: "Patient Name",
+        medications: "Prescribed Medications",
+        additionalNotes: "Additional Notes",
+        notesPlaceholder: "Enter any additional instructions or notes here...",
+        signature: "Veterinarian's Signature",
+        disclaimer: "This prescription is based on the information provided for the above-named patient and is intended for their use only. Please administer all medications as directed and contact your veterinarian if you have any questions or if the patient's condition worsens. Keep all medications out of reach of children and other animals.",
+        printReport: "Print Report",
+        issuedOn: "Issued on",
+    },
+    // New Translations
+    sync: {
+        title: "Data Sync",
+        lastSync: "Last sync",
+        syncNow: "Sync Now",
+        syncing: "Syncing...",
+        autoSync: "Automatic Sync",
+        frequency: "Frequency",
+        daily: "Daily",
+        weekly: "Weekly",
+        onOpen: "On app open",
+        dataUsage: "Data Usage",
+        wifiOnly: "Sync only on Wi-Fi",
+        wifiOnlyDesc: "Prevent syncing over cellular data to save usage.",
+    },
+    privacy: {
+        lastUpdated: "Last updated: July 29, 2024",
+        introduction: {
+            title: "Introduction",
+            p1: "Smart Veterinary Assistant is built to help you deliver high-quality care by providing fast, reliable calculations in any setting, so you can focus on your patients, not your math. It gives you seamless access to both essential calculation tools and trusted veterinary guidance in one convenient place."
+        },
+        informationWeCollect: {
+            title: "Information We Collect",
+            p1: "We may collect information about you in a variety of ways. The information we may collect via the Application includes:",
+            l1: { title: "Personal Data", desc: "Personally identifiable information, such as your name, email address, and professional credentials (e.g., license number, student ID) that you voluntarily give to us when you register with the Application." },
+            l2: { title: "Patient Data", desc: "Information you provide about your patients, such as species, weight, clinical signs, and medications. This data is stored locally on your device and can be optionally synced to our secure servers if you enable the sync feature." },
+            l3: { title: "Usage Data", desc: "Information our servers automatically collect when you access the Application, such as your IP address, browser type, operating system, and the pages you have viewed." },
+        },
+        howWeUse: {
+            title: "How We Use Your Information",
+            p1: "Having accurate information permits us to provide you with a smooth, efficient, and customized experience. Specifically, we may use information collected about you via the Application to:",
+            l1: "Create and manage your account.",
+            l2: "Provide the core functionality of the app, such as calculators and protocols.",
+            l3: "Compile anonymous statistical data and analysis for internal use to improve the Application.",
+        },
+        dataSecurity: {
+            title: "Data Security",
+            p1: "We use administrative, technical, and physical security measures to help protect your personal information. While we have taken reasonable steps to secure the personal information you provide to us, please be aware that despite our efforts, no security measures are perfect or impenetrable."
+        },
+        contact: {
+            title: "Contact Us",
+            p1: "If you have questions or comments about this Privacy Policy, please contact us at: support@vetpocketpal.com"
+        }
+    },
+    terms: {
+        lastUpdated: "Last updated: July 29, 2024",
+        acceptance: {
+            title: "1. Acceptance of Terms",
+            p1: "By accessing or using the Vet Pocket Pal application ('Service'), you agree to be bound by these Terms of Service. If you disagree with any part of the terms, then you may not access the Service."
+        },
+        useOfService: {
+            title: "2. Use of the Service",
+            p1: "Vet Pocket Pal is intended as a clinical decision-support tool for qualified veterinary professionals and students. The information provided is for educational and reference purposes only and is not a substitute for professional veterinary judgment, diagnosis, or treatment.",
+            p2: "You are solely responsible for verifying the accuracy of all calculations and information before clinical application. The developers assume no liability for any errors or omissions, or for any outcomes resulting from the use of this application."
+        },
+        disclaimer: {
+            title: "3. Disclaimer of Warranties",
+            p1: "The Service is provided on an 'AS IS' and 'AS AVAILABLE' basis. Your use of the Service is at your sole risk. The Service is provided without warranties of any kind, whether express or implied."
+        },
+        governingLaw: {
+            title: "4. Governing Law",
+            p1: "These Terms shall be governed and construed in accordance with the laws of the jurisdiction in which the developer is based, without regard to its conflict of law provisions."
+        }
+    },
+    weightUnits: {
+        kg: {
+            label: "Kilograms (kg)",
+            description: "Metric standard unit of mass."
+        },
+        lb: {
+            label: "Pounds (lb)",
+            description: "Imperial unit of mass (1 kg ≈ 2.20462 lb)."
+        }
+    }
   },
   fa: {
     // General
-    appName: "همیار دامپزشک",
+    appName: "دستیار هوشمند دامپزشک",
     back: "بازگشت",
     kg: "ک‌گ",
     edit: "ویرایش",
@@ -527,6 +672,20 @@ export const translations: { [key: string]: TranslationBlock } = {
     chipExotic: "اگزوتیک",
     protocolsCommon: "پروتکل‌های رایج",
     protocolsAdvanced: "پروتکل‌های پیشرفته",
+    protocolNotFound: "پروتکلی برای جستجوی شما یافت نشد.",
+    addProtocol: "افزودن پروتکل جدید",
+    addProtocolTitle: "افزودن پروتکل جدید",
+    form: {
+        titleLabel: "عنوان",
+        titlePlaceholder: "مثال: درمان پاروویروس سگ",
+        descriptionLabel: "توضیح کوتاه",
+        descriptionPlaceholder: "خلاصه‌ای کوتاه از پروتکل.",
+        categoryLabel: "دسته‌بندی",
+        contentLabel: "محتوا (پشتیبانی از مارک‌داون)",
+        contentPlaceholder: "جزئیات کامل پروتکل را اینجا وارد کنید...",
+        saveProtocol: "ذخیره پروتکل",
+    },
+    custom: "شخصی",
 
     // My Meds Screen
     myMedList: {
@@ -581,7 +740,7 @@ export const translations: { [key: string]: TranslationBlock } = {
     themeSystem: "سیستم",
     themeSystemDescription: "پوسته سیستم به طور خودکار با تنظیمات ظاهری دستگاه شما مطابقت پیدا می‌کند.",
     settingsNotifications: "اعلان‌ها",
-    pushNotifications: "اعلان‌های പുഷ്",
+    pushNotifications: "اعلان‌های پوش",
     emailNotifications: "اعلان‌های ایمیل",
     settingsDataPrivacy: "داده و حریم خصوصی",
     syncFrequency: "فرکانس همگام‌سازی",
@@ -592,11 +751,26 @@ export const translations: { [key: string]: TranslationBlock } = {
     termsOfService: "شرایط خدمات",
     settingsCalculatorDefaults: "پیش‌فرض‌های ماشین‌حساب",
     defaultWeightUnit: "واحد وزن پیش‌فرض",
+    settings: {
+        account: "حساب کاربری",
+        logout: "خروج از حساب",
+        logoutDescription: "از جلسه فعلی خود خارج شوید.",
+        appVersion: "نسخه",
+        languageDescription: "زبان نمایش برنامه را انتخاب کنید.",
+        themeDescription: "پوسته روشن، تیره یا پیش‌فرض سیستم را انتخاب کنید.",
+        pushNotificationsDescription: "هشدارهایی برای به‌روزرسانی‌های مهم دریافت کنید.",
+        emailNotificationsDescription: "خلاصه‌ها و اخبار را در ایمیل خود دریافت کنید.",
+        syncDescription: "نحوه همگام‌سازی داده‌های خود را مدیریت کنید.",
+        privacyDescription: "سیاست ما در مورد نحوه مدیریت داده‌های شما را بخوانید.",
+        termsDescription: "شرایط و ضوابط استفاده از برنامه را مرور کنید.",
+        weightUnitDescription: "واحد پیش‌فرض وزن بیمار را تنظیم کنید.",
+        about: "درباره",
+    },
     
     // Auth & Profile
     auth: {
-        welcomeTitle: "به همیار دامپزشک خوش آمدید",
-        welcomeSubtitle: "دستیار دامپزشکی حرفه‌ای شما.",
+        welcomeTitle: "دستیار هوشمند دامپزشک",
+        welcomeSubtitle: "ابزارهای تخصصی، پروتکل‌های درمانی و ماشین‌حساب‌های دقیق در دستان شما.",
         emailPlaceholder: "ایمیل یا شماره موبایل خود را وارد کنید",
         continue: "ادامه",
         continueWithGoogle: "ادامه با گوگل",
@@ -640,7 +814,7 @@ export const translations: { [key: string]: TranslationBlock } = {
             licenseNumberPlaceholder: "شماره نظام خود را وارد کنید",
             role: {
                 student: "دانشجوی دامپزشکی",
-                dvm: "دامپزشک (DVM)"
+                dvm: "دکتر دامپزشک"
             }
         },
         error: {
@@ -881,5 +1055,120 @@ export const translations: { [key: string]: TranslationBlock } = {
     gregorianMonths: { "1": "ژانویه", "2": "فوریه", "3": "مارس", "4": "آوریل", "5": "مه", "6": "ژوئن", "7": "ژوئیه", "8": "اوت", "9": "سپتامبر", "10": "اکتبر", "11": "نوامبر", "12": "دسامبر" },
     jalaliMonths: { "1": "فروردین", "2": "اردیبهشت", "3": "خرداد", "4": "تیر", "5": "مرداد", "6": "شهریور", "7": "مهر", "8": "آبان", "9": "آذر", "10": "دی", "11": "بهمن", "12": "اسفند" },
 
+     // Drug Interaction Checker
+    interactions: {
+        title: "بررسی تداخلات دارویی",
+        intro1: "این ابزار برای شناسایی تداخلات بالقوه طراحی شده است. همه داروها با یکدیگر تداخل ندارند.",
+        intro2: "برخی تداخل‌ها ممکن است نیاز به قطع دارو نداشته باشند، بلکه فقط نیازمند مدیریت دقیق هستند. همیشه با داروساز یا متخصص مشورت کنید.",
+        searchPlaceholder: "نام دارو را برای افزودن به لیست وارد کنید...",
+        selectedDrugs: "داروهای انتخاب شده برای بررسی",
+        noDrugsSelected: "برای بررسی تداخلات، حداقل دو دارو اضافه کنید.",
+        resultsTitle: "نتایج تداخلات",
+        noInteractions: "هیچ تداخلی بین داروهای انتخاب شده یافت نشد.",
+        severity: {
+            major: "عمده",
+            moderate: "متوسط",
+            minor: "جزئی"
+        },
+        meloxicamKetoconazole: {
+            summary: "افزایش خطر زخم گوارشی و سمیت کلیوی.",
+            detail: "استفاده همزمان از کتوکونازول (یک ضد قارچ آزولی) می‌تواند متابولیسم ملوکسیکام (یک NSAID) را مهار کرده و منجر به افزایش سطح پلاسمایی آن شود. این امر خطر عوارض جانبی گوارشی مانند زخم و خونریزی و همچنین آسیب احتمالی کلیه را افزایش می‌دهد. عملکرد کلیه و علائم بالینی مشکلات گوارشی را به دقت تحت نظر بگیرید. ممکن است کاهش دوز ملوکسیکام ضروری باشد."
+        },
+        meloxicamWarfarin: {
+            summary: "افزایش خطر خونریزی.",
+            detail: "NSAIDها مانند ملوکسیکام می‌توانند وارفارین را از پروتئین‌های پلاسما جابجا کرده و عملکرد پلاکت‌ها را مهار کنند، که به طور قابل توجهی اثر ضد انعقادی و خطر خونریزی شدید را افزایش می‌دهد. در صورت امکان باید از این ترکیب اجتناب شود. در صورت غیرقابل اجتناب بودن، نظارت مکرر بر پارامترهای انعقادی (PT/INR) ضروری است."
+        },
+        ketoconazoleCyclosporine: {
+            summary: "افزایش سطح سیکلوسپورین و خطر سمیت.",
+            detail: "کتوکونازول یک مهارکننده قوی آنزیم CYP3A4 است که مسئول متابولیسم سیکلوسپورین است. استفاده همزمان می‌تواند منجر به سطوح خطرناک بالای سیکلوسپورین شده و خطر سمیت کلیوی و سایر عوارض جانبی را افزایش دهد. کاهش دوز سیکلوسپورین (اغلب به میزان ۵۰-۷۵٪) و پایش درمانی دارو الزامی است."
+        }
+    },
+    medicationReport: {
+        title: "گزارش دارویی",
+        prescription: "نسخه دامپزشکی",
+        patientInfo: "اطلاعات بیمار",
+        patientName: "نام بیمار",
+        medications: "داروهای تجویز شده",
+        additionalNotes: "ملاحظات",
+        notesPlaceholder: "دستورالعمل‌ها یا ملاحظات اضافی را اینجا وارد کنید...",
+        signature: "امضای دامپزشک",
+        disclaimer: "این نسخه بر اساس اطلاعات ارائه شده برای بیمار فوق صادر شده و فقط برای استفاده او می‌باشد. لطفاً تمام داروها را طبق دستور مصرف کرده و در صورت داشتن هرگونه سوال یا بدتر شدن وضعیت بیمار با دامپزشک خود تماس بگیرید. تمام داروها را دور از دسترس کودکان و سایر حیوانات نگهداری کنید.",
+        printReport: "چاپ گزارش",
+        issuedOn: "تاریخ صدور",
+    },
+    // New Translations
+    sync: {
+        title: "همگام‌سازی داده",
+        lastSync: "آخرین همگام‌سازی",
+        syncNow: "همگام‌سازی کن",
+        syncing: "در حال همگام‌سازی...",
+        autoSync: "همگام‌سازی خودکار",
+        frequency: "فرکانس",
+        daily: "روزانه",
+        weekly: "هفتگی",
+        onOpen: "هنگام باز کردن برنامه",
+        dataUsage: "مصرف داده",
+        wifiOnly: "فقط با وای-فای همگام‌سازی شود",
+        wifiOnlyDesc: "برای صرفه‌جویی در مصرف، از همگام‌سازی با داده تلفن همراه جلوگیری کنید.",
+    },
+    privacy: {
+        lastUpdated: "آخرین به‌روزرسانی: ۲۹ جولای ۲۰۲۴",
+        introduction: {
+            title: "مقدمه",
+            p1: "دستیار هوشمند دامپزشک برای کمک به شما در ارائه مراقبت‌های باکیفیت، از طریق فراهم آوردن محاسبات سریع و قابل اعتماد در هر شرایطی ساخته شده است تا بتوانید به جای محاسبات، بر روی بیماران خود تمرکز کنید. این برنامه دسترسی یکپارچه‌ای به ابزارهای محاسباتی ضروری و راهنمایی‌های معتبر دامپزشکی را در یک مکان مناسب برای شما فراهم می‌کند."
+        },
+        informationWeCollect: {
+            title: "اطلاعاتی که جمع‌آوری می‌کنیم",
+            p1: "ما ممکن است اطلاعات شما را به روش‌های مختلفی جمع‌آوری کنیم. اطلاعاتی که ممکن است از طریق برنامه جمع‌آوری کنیم شامل موارد زیر است:",
+            l1: { title: "داده‌های شخصی", desc: "اطلاعات قابل شناسایی شخصی، مانند نام، آدرس ایمیل و مدارک حرفه‌ای شما (مانند شماره نظام، شماره دانشجویی) که به صورت داوطلبانه هنگام ثبت‌نام در اختیار ما قرار می‌دهید." },
+            l2: { title: "داده‌های بیمار", desc: "اطلاعاتی که در مورد بیماران خود ارائه می‌دهید، مانند گونه، وزن، علائم بالینی و داروها. این داده‌ها به صورت محلی در دستگاه شما ذخیره می‌شوند و در صورت فعال کردن قابلیت همگام‌سازی، می‌توانند به صورت اختیاری با سرورهای امن ما همگام‌سازی شوند." },
+            l3: { title: "داده‌های استفاده", desc: "اطلاعاتی که سرورهای ما به طور خودکار هنگام دسترسی شما به برنامه جمع‌آوری می‌کنند، مانند آدرس IP، نوع مرورگر، سیستم عامل و صفحاتی که مشاهده کرده‌اید." },
+        },
+        howWeUse: {
+            title: "چگونه از اطلاعات شما استفاده می‌کنیم",
+            p1: "داشتن اطلاعات دقیق به ما امکان می‌دهد تا تجربه‌ای روان، کارآمد و سفارشی را برای شما فراهم کنیم. به طور خاص، ما ممکن است از اطلاعات جمع‌آوری شده در مورد شما از طریق برنامه برای موارد زیر استفاده کنیم:",
+            l1: "ایجاد و مدیریت حساب کاربری شما.",
+            l2: "ارائه قابلیت‌های اصلی برنامه، مانند ماشین‌حساب‌ها و پروتکل‌ها.",
+            l3: "جمع‌آوری داده‌ها و تحلیل‌های آماری ناشناس برای استفاده داخلی جهت بهبود برنامه.",
+        },
+        dataSecurity: {
+            title: "امنیت داده‌ها",
+            p1: "ما از اقدامات امنیتی اداری، فنی و فیزیکی برای کمک به حفاظت از اطلاعات شخصی شما استفاده می‌کنیم. در حالی که ما اقدامات معقولی را برای ایمن‌سازی اطلاعات شخصی که به ما ارائه می‌دهید انجام داده‌ایم، لطفاً آگاه باشید که علی‌رغم تلاش‌های ما، هیچ اقدام امنیتی کامل یا غیرقابل نفوذ نیست."
+        },
+        contact: {
+            title: "تماس با ما",
+            p1: "اگر در مورد این سیاست حفظ حریم خصوصی سوال یا نظری دارید، لطفاً با ما تماس بگیرید: support@vetpocketpal.com"
+        }
+    },
+    terms: {
+        lastUpdated: "آخرین به‌روزرسانی: ۲۹ جولای ۲۰۲۴",
+        acceptance: {
+            title: "۱. پذیرش شرایط",
+            p1: "با دسترسی یا استفاده از برنامه همیار دامپزشک ('سرویس')، شما موافقت می‌کنید که به این شرایط خدمات متعهد باشید. اگر با هر بخشی از شرایط مخالف هستید، مجاز به دسترسی به سرویس نیستید."
+        },
+        useOfService: {
+            title: "۲. استفاده از سرویس",
+            p1: "همیار دامپزشک به عنوان یک ابزار پشتیبانی از تصمیم‌گیری بالینی برای متخصصان و دانشجویان دامپزشکی واجد شرایط در نظر گرفته شده است. اطلاعات ارائه شده فقط برای اهداف آموزشی و مرجع است و جایگزین قضاوت، تشخیص یا درمان حرفه‌ای دامپزشکی نیست.",
+            p2: "شما تنها مسئول تأیید صحت تمام محاسبات و اطلاعات قبل از کاربرد بالینی هستید. توسعه‌دهندگان هیچ مسئولیتی در قبال هرگونه خطا یا حذفیات، یا برای هرگونه نتیجه ناشی از استفاده از این برنامه بر عهده نمی‌گیرند."
+        },
+        disclaimer: {
+            title: "۳. سلب مسئولیت ضمانت‌ها",
+            p1: "این سرویس بر اساس 'همانطور که هست' و 'همانطور که در دسترس است' ارائه می‌شود. استفاده شما از سرویس به عهده خودتان است. سرویس بدون هیچ‌گونه ضمانتی، اعم از صریح یا ضمنی، ارائه می‌شود."
+        },
+        governingLaw: {
+            title: "۴. قانون حاکم",
+            p1: "این شرایط مطابق با قوانین حوزه قضایی که توسعه‌دهنده در آن مستقر است، بدون توجه به مفاد تعارض قوانین آن، اداره و تفسیر می‌شود."
+        }
+    },
+    weightUnits: {
+        kg: {
+            label: "کیلوگرم (kg)",
+            description: "واحد استاندارد متریک برای جرم."
+        },
+        lb: {
+            label: "پوند (lb)",
+            description: "واحد امپریال برای جرم (۱ کیلوگرم ≈ ۲.۲۰۴۶۲ پوند)."
+        }
+    }
   }
 };

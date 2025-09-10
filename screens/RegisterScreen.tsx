@@ -111,7 +111,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onAuthSuccess }) => {
                 <div className="flex flex-col items-center justify-center mb-8">
                     <PawIcon className="text-5xl text-[var(--primary-500)]" />
                     <h1 className="text-2xl font-bold mt-2 text-slate-800 dark:text-slate-100">{t('auth.welcomeTitle')}</h1>
-                    <p className="text-slate-500 dark:text-slate-400">{t('auth.welcomeSubtitle')}</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-center">{t('auth.welcomeSubtitle')}</p>
                 </div>
 
                 <div className="relative overflow-hidden">

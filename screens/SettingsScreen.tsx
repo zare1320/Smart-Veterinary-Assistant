@@ -1,187 +1,208 @@
 import React, { useState } from 'react';
 import type { ScreenProps } from '../types';
 import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
   BellIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ContrastIcon,
-  DeleteIcon,
   DescriptionIcon,
   GlobeIcon,
+  LogOutIcon,
   MailIcon,
   ScaleIcon,
   ShieldIcon,
   SyncIcon,
-  UserIcon
+  InfoCircleIcon
 } from '../components/Icons';
 import { useTheme } from '../context/ThemeContext';
 import { useLocale } from '../context/LocaleContext';
 import { useUser } from '../context/UserContext';
 
-// Profile Card Component
-// FIX: Destructured onNavigate from props to make it available in the component.
-const ProfileCard: React.FC<{ onNavigate: () => void }> = ({ onNavigate }) => {
+// --- Self-contained Components for a Cleaner Structure ---
+
+const SettingsHeader: React.FC = () => {
+  const { t } = useLocale();
+  return (
+    <header className="sticky top-0 z-10 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm">
+        <div className="flex items-center p-4 justify-center relative">
+          <h1 className="text-xl font-bold leading-tight tracking-tight">{t('navSettings')}</h1>
+        </div>
+    </header>
+  );
+};
+
+const ProfileCard: React.FC<{ onNavigate: (screen: 'profile') => void }> = ({ onNavigate }) => {
     const { user } = useUser();
-    const { locale } = useLocale();
+    const { t } = useLocale();
 
     if (!user) return null;
 
-    const initials = user.profile.fullName ? user.profile.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : user.email[0].toUpperCase();
+    const initials = user.profile.fullName ? user.profile.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : (user.id[0]).toUpperCase();
+    const roleMap: {[key:string]: string} = {
+        student: t('profile.role.student'),
+        dvm: t('profile.role.dvm'),
+    };
 
     return (
-        <button onClick={onNavigate} className="flex items-center w-full p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm text-start">
-            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[var(--primary-200)] dark:bg-[var(--primary-800)] flex items-center justify-center text-[var(--primary-700)] dark:text-[var(--primary-200)] font-bold text-xl">
-                {initials}
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-5">
+            <div className="flex items-center gap-4">
+                <div className="flex-shrink-0 w-16 h-16 rounded-full bg-gradient-to-br from-[var(--primary-200)] to-[var(--primary-400)] dark:from-[var(--primary-800)] dark:to-[var(--primary-600)] flex items-center justify-center text-3xl font-bold text-[var(--primary-700)] dark:text-[var(--primary-200)]">
+                    {initials}
+                </div>
+                <div className="flex-grow text-start">
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{user.profile.fullName || 'User'}</h2>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{user.profile.role ? roleMap[user.profile.role] : 'No role set'}</p>
+                </div>
             </div>
-            <div className="flex-grow mx-4">
-                <h3 className="font-bold text-slate-900 dark:text-slate-100">{user.profile.fullName || 'User'}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">{user.email}</p>
-            </div>
-            {locale === 'fa' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-        </button>
+            <button 
+                onClick={() => onNavigate('profile')} 
+                className="mt-4 w-full text-center py-2.5 px-4 rounded-lg bg-[var(--primary-500)] text-white font-semibold hover:bg-[var(--primary-600)] transition-colors text-sm shadow-[0_4px_14px_0_rgb(0,0,0,10%)] hover:shadow-[0_6px_20px_0_rgb(0,0,0,20%)]"
+            >
+                {t('profile.view.editButton')}
+            </button>
+        </div>
     );
 }
 
+const SettingsSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
+    <section>
+        <h3 className="px-4 text-sm font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider text-start">{title}</h3>
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden">
+            {children}
+        </div>
+    </section>
+);
 
-// Toggle Switch Component
-const ToggleSwitch = ({ enabled, onChange }: { enabled: boolean; onChange: () => void }) => (
+const ToggleSwitch: React.FC<{ enabled: boolean; onChange: (enabled: boolean) => void }> = ({ enabled, onChange }) => (
   <div className="relative inline-block w-11 me-2 align-middle select-none transition duration-200 ease-in">
     <input
       type="checkbox"
       name="toggle"
-      id={`toggle-${Math.random()}`}
+      id={`toggle-${React.useId()}`}
       checked={enabled}
-      onChange={onChange}
+      onChange={e => onChange(e.target.checked)}
       className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
     />
     <label
-      htmlFor={`toggle-${Math.random()}`}
+      htmlFor={`toggle-${React.useId()}`}
       className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-slate-700 cursor-pointer"
     ></label>
   </div>
 );
 
-// Settings Item Component
 interface SettingsItemProps {
-  icon: React.ReactNode;
-  label: string;
-  value?: string;
+  icon: React.ReactNode; 
+  title: string; 
+  description: string; 
+  action?: React.ReactNode; 
   onClick?: () => void;
-  isToggle?: boolean;
-  toggleState?: boolean;
-  onToggleChange?: () => void;
 }
 
-const SettingsItem: React.FC<SettingsItemProps> = ({ icon, label, value, onClick, isToggle, toggleState, onToggleChange }) => {
-  const { locale } = useLocale();
-  return (
-    <button
-      onClick={onClick}
-      className="flex items-center justify-between w-full p-4"
-      disabled={!onClick && !isToggle}
-    >
-      <div className="flex items-center gap-4">
-        <div className="bg-[var(--primary-100)] dark:bg-[var(--primary-900)] text-[var(--primary-600)] dark:text-[var(--primary-300)] p-2 rounded-full">
-          {icon}
-        </div>
-        <span className="font-medium text-slate-900 dark:text-slate-100 text-start">{label}</span>
-      </div>
-      {isToggle ? (
-        <ToggleSwitch enabled={toggleState!} onChange={onToggleChange!} />
-      ) : (
-        <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-          {value && <span>{value}</span>}
-          {onClick && (
-            locale === 'fa' ? (
-                <ChevronLeftIcon className="text-slate-400 dark:text-slate-500" />
-            ) : (
-                <ChevronRightIcon className="text-slate-400 dark:text-slate-500" />
-            )
-          )}
-        </div>
-      )}
-    </button>
-  );
+const SettingsItem: React.FC<SettingsItemProps> = ({ icon, title, description, action, onClick }) => {
+    const Component = onClick ? 'button' : 'div';
+    return (
+        <Component
+            onClick={onClick}
+            className="flex items-center w-full p-4 text-start transition-colors hover:bg-slate-50 dark:hover:bg-slate-700/50 disabled:hover:bg-transparent"
+        >
+            <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-slate-100 dark:bg-slate-700 rounded-full text-[var(--primary-600)] dark:text-[var(--primary-300)]">
+                {icon}
+            </div>
+            <div className="flex-grow mx-4">
+                <p className="font-semibold text-slate-900 dark:text-slate-100">{title}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{description}</p>
+            </div>
+            {action && <div className="flex-shrink-0 flex items-center gap-2 text-slate-500 dark:text-slate-400">{action}</div>}
+        </Component>
+    );
 };
 
+// --- Main Screen Component ---
+
 const SettingsScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
+  const { t, locale } = useLocale();
+  const { themeSetting } = useTheme();
+  const { logout } = useUser();
   const [pushNotifications, setPushNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
-  const { themeSetting } = useTheme();
-  const { t, locale } = useLocale();
 
   const themeLabelMap = {
     light: t('themeLight'),
     dark: t('themeDark'),
     system: t('themeSystem'),
   };
-
+  
   const languageLabelMap = {
       en: 'English',
       fa: 'فارسی',
-  }
+  };
+
+  const ArrowIcon = locale === 'fa' ? ChevronLeftIcon : ChevronRightIcon;
 
   return (
-    <div className="text-slate-900 dark:text-slate-100">
-      <header className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 sticky top-0 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm z-10">
-        <div className="w-10"></div>
-        <h1 className="text-lg font-bold">{t('navSettings')}</h1>
-        <div className="w-10"></div>
-      </header>
-      <main className="p-4 space-y-8 text-start">
-        {/* Profile Section */}
-        <ProfileCard onNavigate={() => onNavigate('profile')} />
+    <div className="bg-slate-100 dark:bg-slate-900 min-h-screen">
+      <SettingsHeader />
+      <main className="p-4 space-y-6 max-w-3xl mx-auto pb-8">
+        <ProfileCard onNavigate={onNavigate} />
 
-        {/* General Section */}
-        <section>
-          <h2 className="text-xl font-bold mb-4 px-2">{t('settingsGeneral')}</h2>
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm divide-y divide-slate-200 dark:divide-slate-700">
-            <SettingsItem icon={<GlobeIcon />} label={t('language')} value={languageLabelMap[locale]} onClick={() => onNavigate('language-settings')} />
-            <SettingsItem icon={<ContrastIcon />} label={t('theme')} value={themeLabelMap[themeSetting]} onClick={() => onNavigate('theme-settings')} />
-          </div>
-        </section>
+        <SettingsSection title={t('settingsGeneral')}>
+          <SettingsItem 
+            icon={<GlobeIcon />}
+            title={t('language')}
+            description={t('settings.languageDescription')}
+            onClick={() => onNavigate('language-settings')}
+            action={<><span>{languageLabelMap[locale]}</span><ArrowIcon /></>}
+          />
+          <div className="border-t border-slate-100 dark:border-slate-700/50 mx-4 my-0 h-px"></div>
+          <SettingsItem 
+            icon={<ContrastIcon />}
+            title={t('theme')}
+            description={t('settings.themeDescription')}
+            onClick={() => onNavigate('theme-settings')}
+            action={<><span>{themeLabelMap[themeSetting]}</span><ArrowIcon /></>}
+          />
+        </SettingsSection>
 
-        {/* Notifications Section */}
-        <section>
-          <h2 className="text-xl font-bold mb-4 px-2">{t('settingsNotifications')}</h2>
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm divide-y divide-slate-200 dark:divide-slate-700">
-            <SettingsItem
-              icon={<BellIcon />}
-              label={t('pushNotifications')}
-              isToggle
-              toggleState={pushNotifications}
-              onToggleChange={() => setPushNotifications(!pushNotifications)}
-            />
-            <SettingsItem
-              icon={<MailIcon />}
-              label={t('emailNotifications')}
-              isToggle
-              toggleState={emailNotifications}
-              onToggleChange={() => setEmailNotifications(!emailNotifications)}
-            />
-          </div>
-        </section>
+        <SettingsSection title={t('settingsNotifications')}>
+          <SettingsItem 
+            icon={<BellIcon />}
+            title={t('pushNotifications')}
+            description={t('settings.pushNotificationsDescription')}
+            action={<ToggleSwitch enabled={pushNotifications} onChange={setPushNotifications} />}
+          />
+          <div className="border-t border-slate-100 dark:border-slate-700/50 mx-4 my-0 h-px"></div>
+          <SettingsItem 
+            icon={<MailIcon />}
+            title={t('emailNotifications')}
+            description={t('settings.emailNotificationsDescription')}
+            action={<ToggleSwitch enabled={emailNotifications} onChange={setEmailNotifications} />}
+          />
+        </SettingsSection>
 
-        {/* Data & Privacy Section */}
-        <section>
-          <h2 className="text-xl font-bold mb-4 px-2">{t('settingsDataPrivacy')}</h2>
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm divide-y divide-slate-200 dark:divide-slate-700">
-            <SettingsItem icon={<SyncIcon />} label={t('syncFrequency')} value={t('automatic')} onClick={() => onNavigate('sync-settings')} />
-            <SettingsItem icon={<DeleteIcon />} label={t('clearCache')} onClick={() => alert(t('cacheCleared'))} />
-            <SettingsItem icon={<ShieldIcon />} label={t('privacyPolicy')} onClick={() => onNavigate('privacy-policy')} />
-            <SettingsItem icon={<DescriptionIcon />} label={t('termsOfService')} onClick={() => onNavigate('terms-of-service')} />
-          </div>
-        </section>
+        <SettingsSection title={t('settingsDataPrivacy')}>
+            <SettingsItem icon={<SyncIcon />} title={t('syncFrequency')} description={t('settings.syncDescription')} onClick={() => onNavigate('sync-settings')} action={<><span>{t('automatic')}</span><ArrowIcon/></>} />
+            <div className="border-t border-slate-100 dark:border-slate-700/50 mx-4 my-0 h-px"></div>
+            <SettingsItem icon={<ShieldIcon />} title={t('privacyPolicy')} description={t('settings.privacyDescription')} onClick={() => onNavigate('privacy-policy')} action={<ArrowIcon />} />
+             <div className="border-t border-slate-100 dark:border-slate-700/50 mx-4 my-0 h-px"></div>
+            <SettingsItem icon={<DescriptionIcon />} title={t('termsOfService')} description={t('settings.termsDescription')} onClick={() => onNavigate('terms-of-service')} action={<ArrowIcon />} />
+        </SettingsSection>
 
-        {/* Calculator Defaults Section */}
-        <section>
-          <h2 className="text-xl font-bold mb-4 px-2">{t('settingsCalculatorDefaults')}</h2>
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-            <SettingsItem icon={<ScaleIcon />} label={t('defaultWeightUnit')} value={t('kg')} onClick={() => onNavigate('weight-unit-settings')} />
-          </div>
-        </section>
+        <SettingsSection title={t('settingsCalculatorDefaults')}>
+            <SettingsItem icon={<ScaleIcon />} title={t('defaultWeightUnit')} description={t('settings.weightUnitDescription')} onClick={() => onNavigate('weight-unit-settings')} action={<><span>{t('kg')}</span><ArrowIcon/></>} />
+        </SettingsSection>
+
+        <SettingsSection title={t('settings.account')}>
+          <SettingsItem 
+            icon={<LogOutIcon />}
+            title={t('settings.logout')}
+            description={t('settings.logoutDescription')}
+            onClick={logout}
+          />
+        </SettingsSection>
+
+        <div className="text-center text-sm text-slate-500 dark:text-slate-400 pt-4">
+          <p>{t('appName')} {t('settings.appVersion')} 1.2.0</p>
+        </div>
       </main>
     </div>
   );

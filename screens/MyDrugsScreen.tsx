@@ -1,12 +1,16 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import type { Medication, MedicationProfile } from '../types';
+import type { Medication, MedicationProfile, ScreenProps, NavItemKey } from '../types';
 import { useLocale } from '../context/LocaleContext';
 import { PillIcon, PlusIcon, ChevronRightIcon, EllipsisVerticalIcon, PawIcon, ExchangeIcon, BellIcon, FileMedicalIcon, PencilIcon, DeleteIcon } from '../components/Icons';
 import { Button } from '../components/Button';
 import ProfileModal from '../components/ProfileModal';
 import MedicationModal from '../components/MedicationModal';
 
-const MyDrugsScreen: React.FC = () => {
+interface MyDrugsScreenProps extends ScreenProps {
+    onGenerateReport: (data: { profile: MedicationProfile; medications: Medication[] }) => void;
+}
+
+const MyDrugsScreen: React.FC<MyDrugsScreenProps> = ({ onNavigate, onGenerateReport }) => {
     const { t } = useLocale();
 
     // Mock Data converted to state
@@ -43,6 +47,10 @@ const MyDrugsScreen: React.FC = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [openMenuId]);
+
+    const activeProfile = useMemo(() => {
+        return profiles.find(p => p.id === activeProfileId) || null;
+    }, [activeProfileId, profiles]);
 
     const activeMedications = useMemo(() => {
         return medications.filter(med => med.profileId === activeProfileId);
@@ -115,9 +123,9 @@ const MyDrugsScreen: React.FC = () => {
     };
 
     const featureTools = [
-        { title: t('myMedList.featureInteractionsTitle'), description: t('myMedList.featureInteractionsDesc'), icon: <ExchangeIcon className="text-2xl" />, color: 'text-blue-500' },
-        { title: t('myMedList.featureAlertsTitle'), description: t('myMedList.featureAlertsDesc'), icon: <BellIcon className="text-2xl" />, color: 'text-amber-500' },
-        { title: t('myMedList.featureReportsTitle'), description: t('myMedList.featureReportsDesc'), icon: <FileMedicalIcon className="text-2xl" />, color: 'text-emerald-500' }
+        { key: 'interactions', title: t('myMedList.featureInteractionsTitle'), description: t('myMedList.featureInteractionsDesc'), icon: <ExchangeIcon className="text-2xl" />, color: 'text-blue-500', navKey: 'drug-interaction-checker' as NavItemKey },
+        { key: 'alerts', title: t('myMedList.featureAlertsTitle'), description: t('myMedList.featureAlertsDesc'), icon: <BellIcon className="text-2xl" />, color: 'text-amber-500', navKey: null },
+        { key: 'reports', title: t('myMedList.featureReportsTitle'), description: t('myMedList.featureReportsDesc'), icon: <FileMedicalIcon className="text-2xl" />, color: 'text-emerald-500', navKey: 'medication-report' as NavItemKey }
     ];
 
     return (
@@ -219,18 +227,34 @@ const MyDrugsScreen: React.FC = () => {
                 <section>
                     <h2 className="text-xl font-bold text-start mb-4 text-slate-900 dark:text-slate-100">{t('myMedList.yourTools')}</h2>
                     <div className="space-y-3">
-                        {featureTools.map(tool => (
-                             <button key={tool.title} className="w-full text-start bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm flex items-center gap-4 transition-transform hover:scale-[1.02]">
-                                <div className={`flex-shrink-0 ${tool.color}`}>
-                                    {tool.icon}
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="font-bold text-slate-900 dark:text-slate-100">{tool.title}</h3>
-                                    <p className="text-sm text-slate-600 dark:text-slate-400">{tool.description}</p>
-                                </div>
-                                <ChevronRightIcon className="text-slate-400 dark:text-slate-500"/>
-                            </button>
-                        ))}
+                        {featureTools.map(tool => {
+                            const isReportTool = tool.key === 'reports';
+                            const isReportDisabled = isReportTool && (!activeProfile || activeMedications.length === 0);
+                            
+                             return (
+                                 <button 
+                                    key={tool.title} 
+                                    className="w-full text-start bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm flex items-center gap-4 transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                    onClick={() => {
+                                        if (tool.navKey === 'medication-report' && activeProfile) {
+                                            onGenerateReport({ profile: activeProfile, medications: activeMedications });
+                                        } else if (tool.navKey) {
+                                            onNavigate(tool.navKey)
+                                        }
+                                    }}
+                                    disabled={!tool.navKey || isReportDisabled}
+                                >
+                                    <div className={`flex-shrink-0 ${tool.color}`}>
+                                        {tool.icon}
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="font-bold text-slate-900 dark:text-slate-100">{tool.title}</h3>
+                                        <p className="text-sm text-slate-600 dark:text-slate-400">{tool.description}</p>
+                                    </div>
+                                    <ChevronRightIcon className="text-slate-400 dark:text-slate-500"/>
+                                </button>
+                             );
+                        })}
                     </div>
                 </section>
             </main>

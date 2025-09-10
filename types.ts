@@ -38,7 +38,10 @@ export type NavItemKey =
   | 'blood-pressure-calculator'
   | 'blood-transfusion-calculator'
   | 'pet-age-calculator'
-  | 'protocol-detail';
+  | 'protocol-detail'
+  | 'add-protocol'
+  | 'drug-interaction-checker'
+  | 'medication-report';
 
 export type Gender = 'Male' | 'Female' | 'Unknown';
 export type AgeGroup = 'neonate' | 'pediatric' | 'adult' | 'geriatric';
@@ -64,10 +67,12 @@ export interface NavItem {
 }
 
 export interface Protocol {
+    id: string; // Unique identifier (e.g., 'canine-vaccination')
+    category: 'Canine' | 'Feline' | 'Exotic' | 'Custom';
     title: string;
     description: string;
     imageUrl: string;
-    content?: React.ReactNode;
+    content?: React.ReactNode | string;
 }
 
 export interface ScreenProps {

@@ -1,47 +1,86 @@
 import React from 'react';
 import { useLocale } from '../context/LocaleContext';
 
+// --- LabeledSelect ---
 interface LabeledSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     label: string;
     id: string;
+    error?: string;
+    icon?: React.ReactNode;
 }
 
-export const LabeledSelect: React.FC<LabeledSelectProps> = ({ label, id, children, ...props }) => (
-    <div>
-        <label htmlFor={id} className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-1 text-start">
-            {label}
-        </label>
-        <select id={id} {...props} className="form-input w-full">
-            {children}
-        </select>
-    </div>
-);
+export const LabeledSelect: React.FC<LabeledSelectProps> = ({ label, id, children, error, icon, className, ...props }) => {
+    const hasError = !!error;
+    const hasIcon = !!icon;
+    return (
+        <div className={hasError ? 'animate-shake' : ''}>
+            <label htmlFor={id} className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-1 text-start">
+                {label}
+            </label>
+            <div className="relative">
+                {hasIcon && (
+                    <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none text-slate-400 dark:text-slate-500">
+                        {icon}
+                    </div>
+                )}
+                <select 
+                    id={id} 
+                    {...props} 
+                    className={`form-input w-full ${hasIcon ? '!ps-10' : ''} ${className} ${hasError ? '!border-red-500 !shadow-red-500/20 focus:!border-red-500 focus:!ring-red-500' : ''}`}
+                    aria-invalid={hasError}
+                    aria-describedby={hasError ? `${id}-error` : undefined}
+                >
+                    {children}
+                </select>
+            </div>
+            {hasError && <p id={`${id}-error`} className="text-xs text-red-600 dark:text-red-400 mt-1 text-start">{error}</p>}
+        </div>
+    );
+};
 
+// --- LabeledInput ---
 interface LabeledInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
     unit?: string;
+    error?: string;
+    icon?: React.ReactNode;
 }
 
-export const LabeledInput: React.FC<LabeledInputProps> = ({ label, id, unit, className, ...props }) => (
-    <div className="flex-grow">
-        <label htmlFor={id} className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-1 text-start">
-            {label}
-        </label>
-        <div className="relative">
-            <input
-                id={id}
-                {...props}
-                className={`form-input w-full ${className}`}
-            />
-            {unit && (
-                <span className="absolute inset-y-0 end-0 flex items-center pe-3 text-slate-500 dark:text-slate-400 text-sm">
-                    {unit}
-                </span>
-            )}
-        </div>
-    </div>
-);
+export const LabeledInput: React.FC<LabeledInputProps> = ({ label, id, unit, className, error, icon, ...props }) => {
+    const hasError = !!error;
+    const hasIcon = !!icon;
 
+    return (
+        <div className={hasError ? 'animate-shake' : ''}>
+            <label htmlFor={id} className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-1 text-start">
+                {label}
+            </label>
+            <div className="relative">
+                {hasIcon && (
+                    <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none text-slate-400 dark:text-slate-500">
+                        {icon}
+                    </div>
+                )}
+                <input
+                    id={id}
+                    {...props}
+                    className={`form-input w-full ${hasIcon ? '!ps-10' : ''} ${className} ${hasError ? '!border-red-500 !shadow-red-500/20 focus:!border-red-500 focus:!ring-red-500' : ''}`}
+                    aria-invalid={hasError}
+                    aria-describedby={hasError ? `${id}-error` : undefined}
+                />
+                {unit && (
+                    <span className="absolute inset-y-0 end-0 flex items-center pe-3 text-slate-500 dark:text-slate-400 text-sm">
+                        {unit}
+                    </span>
+                )}
+            </div>
+            {hasError && <p id={`${id}-error`} className="text-xs text-red-600 dark:text-red-400 mt-1 text-start">{error}</p>}
+        </div>
+    );
+};
+
+
+// --- LabeledSlider ---
 export const LabeledSlider: React.FC<{
     id: string;
     label: string;
@@ -77,19 +116,27 @@ export const LabeledSlider: React.FC<{
     );
 };
 
+// --- LabeledTextarea ---
 interface LabeledTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
     label: string;
+    error?: string;
 }
 
-export const LabeledTextarea: React.FC<LabeledTextareaProps> = ({ label, id, ...props }) => (
-    <div>
-        <label htmlFor={id} className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-1 text-start">
-            {label}
-        </label>
-        <textarea
-            id={id}
-            {...props}
-            className="form-input w-full"
-        />
-    </div>
-);
+export const LabeledTextarea: React.FC<LabeledTextareaProps> = ({ label, id, error, className, ...props }) => {
+    const hasError = !!error;
+    return (
+        <div className={hasError ? 'animate-shake' : ''}>
+            <label htmlFor={id} className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-1 text-start">
+                {label}
+            </label>
+            <textarea
+                id={id}
+                {...props}
+                className={`form-input w-full ${className} ${hasError ? '!border-red-500 !shadow-red-500/20 focus:!border-red-500 focus:!ring-red-500' : ''}`}
+                aria-invalid={hasError}
+                aria-describedby={hasError ? `${id}-error` : undefined}
+            />
+            {hasError && <p id={`${id}-error`} className="text-xs text-red-600 dark:text-red-400 mt-1 text-start">{error}</p>}
+        </div>
+    );
+};

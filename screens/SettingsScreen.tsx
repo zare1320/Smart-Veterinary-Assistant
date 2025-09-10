@@ -14,9 +14,36 @@ import {
   ScaleIcon,
   ShieldIcon,
   SyncIcon,
+  UserIcon
 } from '../components/Icons';
 import { useTheme } from '../context/ThemeContext';
 import { useLocale } from '../context/LocaleContext';
+import { useUser } from '../context/UserContext';
+
+// Profile Card Component
+// FIX: Destructured onNavigate from props to make it available in the component.
+const ProfileCard: React.FC<{ onNavigate: () => void }> = ({ onNavigate }) => {
+    const { user } = useUser();
+    const { locale } = useLocale();
+
+    if (!user) return null;
+
+    const initials = user.profile.fullName ? user.profile.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : user.email[0].toUpperCase();
+
+    return (
+        <button onClick={onNavigate} className="flex items-center w-full p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm text-start">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[var(--primary-200)] dark:bg-[var(--primary-800)] flex items-center justify-center text-[var(--primary-700)] dark:text-[var(--primary-200)] font-bold text-xl">
+                {initials}
+            </div>
+            <div className="flex-grow mx-4">
+                <h3 className="font-bold text-slate-900 dark:text-slate-100">{user.profile.fullName || 'User'}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{user.email}</p>
+            </div>
+            {locale === 'fa' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+        </button>
+    );
+}
+
 
 // Toggle Switch Component
 const ToggleSwitch = ({ enabled, onChange }: { enabled: boolean; onChange: () => void }) => (
@@ -99,13 +126,14 @@ const SettingsScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
   return (
     <div className="text-slate-900 dark:text-slate-100">
       <header className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 sticky top-0 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm z-10">
-        <button onClick={() => onNavigate('home')} className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
-            {locale === 'fa' ? <ArrowRightIcon /> : <ArrowLeftIcon />}
-        </button>
+        <div className="w-10"></div>
         <h1 className="text-lg font-bold">{t('navSettings')}</h1>
         <div className="w-10"></div>
       </header>
       <main className="p-4 space-y-8 text-start">
+        {/* Profile Section */}
+        <ProfileCard onNavigate={() => onNavigate('profile')} />
+
         {/* General Section */}
         <section>
           <h2 className="text-xl font-bold mb-4 px-2">{t('settingsGeneral')}</h2>

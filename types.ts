@@ -225,3 +225,23 @@ export interface Medication {
   formulation: string;
   instructions: string;
 }
+
+// --- User Authentication and Profile Types ---
+export type UserRole = 'student' | 'dvm';
+
+export interface UserProfile {
+    fullName: string;
+    role: UserRole | '';
+    university?: string;
+    studentId?: string;
+    province?: string;
+    licenseNumber?: string;
+}
+
+export interface User {
+    id: string; // This can be email or phone number
+    email?: string;
+    phone?: string;
+    isProfileComplete: boolean;
+    profile: UserProfile;
+}

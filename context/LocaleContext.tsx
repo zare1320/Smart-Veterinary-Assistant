@@ -40,8 +40,19 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
     root.dir = locale === 'fa' ? 'rtl' : 'ltr';
   }, [locale]);
 
+  // FIX: Implemented nested key access for translations to resolve type errors and support nested translation objects. The previous implementation did not handle dot-notation keys (e.g., 'parent.child').
   const t = useCallback((key: string): string => {
-    return translations[locale][key] || key;
+    const keys = key.split('.');
+    let current: any = translations[locale];
+    for (const k of keys) {
+      if (current && typeof current === 'object' && k in current) {
+        current = current[k];
+      } else {
+        return key; // Not found, return the key as fallback
+      }
+    }
+    // If the path leads to an object instead of a string, return the key.
+    return typeof current === 'string' ? current : key;
   }, [locale]);
   
   const localizeNumber = useCallback((num: string | number): string => {

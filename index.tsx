@@ -4,6 +4,7 @@ import App from './App';
 import { ThemeProvider } from './context/ThemeContext';
 import { PatientProvider } from './context/PatientContext';
 import { LocaleProvider } from './context/LocaleContext';
+import { UserProvider } from './context/UserContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -15,9 +16,11 @@ root.render(
   <React.StrictMode>
     <ThemeProvider>
       <LocaleProvider>
-        <PatientProvider>
-          <App />
-        </PatientProvider>
+        <UserProvider>
+          <PatientProvider>
+            <App />
+          </PatientProvider>
+        </UserProvider>
       </LocaleProvider>
     </ThemeProvider>
   </React.StrictMode>

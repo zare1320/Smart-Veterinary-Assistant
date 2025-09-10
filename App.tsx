@@ -17,6 +17,7 @@ import DrugDoseCalculatorScreen from './screens/DrugDoseCalculatorScreen';
 import FluidTherapyCalculatorScreen from './screens/FluidTherapyCalculatorScreen';
 import BloodPressureCalculatorScreen from './screens/BloodPressureCalculatorScreen';
 import BloodTransfusionCalculatorScreen from './screens/BloodTransfusionCalculatorScreen';
+import PetAgeCalculatorScreen from './screens/PetAgeCalculatorScreen';
 import ProtocolDetailScreen from './screens/ProtocolDetailScreen';
 import { useLocale } from './context/LocaleContext';
 
@@ -65,6 +66,8 @@ const App: React.FC = () => {
         return <BloodPressureCalculatorScreen onNavigate={setActiveScreen} />;
       case 'blood-transfusion-calculator':
         return <BloodTransfusionCalculatorScreen onNavigate={setActiveScreen} />;
+      case 'pet-age-calculator':
+        return <PetAgeCalculatorScreen onNavigate={setActiveScreen} />;
       default:
         return <HomeScreen onNavigate={setActiveScreen} />;
     }
@@ -82,18 +85,19 @@ const App: React.FC = () => {
     'fluid-therapy-calculator',
     'blood-pressure-calculator',
     'blood-transfusion-calculator',
+    'pet-age-calculator',
     'protocol-detail'
   ].includes(activeScreen);
 
 
   return (
-    <div className="min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300 pb-20">
-      <div className="max-w-md mx-auto">
-        {renderScreen()}
-        {showBottomNav && (
-            <BottomNav items={navItems} activeItem={activeScreen} onItemClick={setActiveScreen} />
-        )}
-      </div>
+    <div className="min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300">
+      {showBottomNav && (
+          <BottomNav items={navItems} activeItem={activeScreen} onItemClick={setActiveScreen} />
+      )}
+      <main className={`transition-all duration-300 ${showBottomNav ? 'pb-20 md:pb-0 md:pl-24' : ''}`}>
+          {renderScreen()}
+      </main>
     </div>
   );
 };

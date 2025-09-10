@@ -38,7 +38,7 @@ const HomeScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
   };
 
   return (
-    <>
+    <div className="container mx-auto">
       <Header />
       <main className="p-4 space-y-6">
         {/* Main Interactive Patient Card */}
@@ -85,7 +85,7 @@ const HomeScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
         </div>
 
       </main>
-    </>
+    </div>
   );
 };
 

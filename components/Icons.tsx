@@ -1,6 +1,7 @@
 import React from 'react';
 
-const Icon: React.FC<{ className?: string; iconName: string }> = ({ className, iconName }) => (
+// FIX: Export the Icon component to make it available for use in other components.
+export const Icon: React.FC<{ className?: string; iconName: string }> = ({ className, iconName }) => (
   <i className={`fa-solid ${iconName} ${className}`} aria-hidden="true"></i>
 );
 
@@ -43,3 +44,6 @@ export const DesktopIcon: React.FC<{ className?: string }> = ({ className }) => 
 export const TriangleExclamationIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-triangle-exclamation" />;
 export const CalculatorIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-calculator" />;
 export const TableIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-table" />;
+export const CakeIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-cake-candles" />;
+export const UsersIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-users" />;
+export const PawIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-paw" />;

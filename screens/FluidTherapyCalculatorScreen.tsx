@@ -108,7 +108,7 @@ const FluidTherapyCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => 
     return (
         <>
             {!hasWeight && <MissingPatientWeightBanner />}
-            <main className="container mx-auto p-4 md:p-6">
+            <div className="container mx-auto p-4 md:p-6">
                  <header className="flex justify-between items-center mb-4">
                     <BackButton onClick={() => onNavigate('home')} />
                     <PatientInfoDisplay />
@@ -118,7 +118,7 @@ const FluidTherapyCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => 
                     <h2 className="text-3xl md:text-4xl font-extrabold text-inherit">{t('calculatorFluidTherapyTitle')}</h2>
                 </div>
 
-                <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 ${!hasWeight ? 'opacity-50 pointer-events-none' : ''}`}>
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 ${!hasWeight ? 'opacity-50 pointer-events-none' : ''}`}>
                     <FluidInputCard 
                         state={state}
                         dispatch={dispatch}
@@ -132,7 +132,7 @@ const FluidTherapyCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => 
                         results={results}
                     />
                 </div>
-            </main>
+            </div>
         </>
     );
 };

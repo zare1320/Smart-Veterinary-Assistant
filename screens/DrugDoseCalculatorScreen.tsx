@@ -237,7 +237,7 @@ const DrugDoseCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
     return (
         <>
             {!hasWeight && <MissingPatientWeightBanner />}
-            <main className="container mx-auto p-4 md:p-6">
+            <div className="container mx-auto p-4 md:p-6">
                 <div className="flex justify-between items-center mb-4">
                     <BackButton onClick={() => onNavigate('home')} />
                     <PatientInfoDisplay />
@@ -246,9 +246,9 @@ const DrugDoseCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
                     <h2 className="text-3xl md:text-4xl font-extrabold text-inherit">{t('drugCalculator.title')}</h2>
                 </header>
 
-                <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 ${!hasWeight ? 'opacity-50 pointer-events-none' : ''}`}>
+                <div className={`grid grid-cols-1 md:grid-cols-3 gap-8 ${!hasWeight ? 'opacity-50 pointer-events-none' : ''}`}>
                     {/* Left Panel: Drug List */}
-                    <div className="lg:col-span-1 space-y-4">
+                    <div className="md:col-span-1 space-y-4">
                         <div className="search-input-container">
                             <SearchIcon className="search-input-icon" />
                             <input
@@ -282,7 +282,7 @@ const DrugDoseCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
                     </div>
 
                     {/* Right Panel: Calculator */}
-                    <div className="lg:col-span-2 glass-card min-h-[400px]">
+                    <div className="md:col-span-2 glass-card min-h-[400px]">
                          <AnimatePresence mode="wait">
                             <motion.div
                                 key={selectedDrugId || 'prompt'}
@@ -305,7 +305,7 @@ const DrugDoseCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
                         </AnimatePresence>
                     </div>
                 </div>
-            </main>
+            </div>
         </>
     );
 };

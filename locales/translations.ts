@@ -1,4 +1,4 @@
-export const translations: Record<string, Record<string, string>> = {
+export const translations: Record<string, Record<string, any>> = {
   en: {
     // General
     appName: 'Smart Veterinary Assistant',
@@ -8,6 +8,7 @@ export const translations: Record<string, Record<string, string>> = {
     backToHome: 'Back to Home',
     missingWeightWarning: 'Please enter patient weight on the Home screen to use the calculators.',
     noBreedsFound: 'No breeds found.',
+    moreInfo: 'More Info',
 
     // Navigation
     navHome: 'Home',
@@ -27,6 +28,8 @@ export const translations: Record<string, Record<string, string>> = {
     speciesAmphibian: 'Amphibian',
     speciesFish: 'Fish',
     speciesReptile: 'Reptile',
+    'animalSpecies.CAT': 'Cat',
+    'animalSpecies.DOG': 'Dog',
 
     // Patient Info Form
     patientInfo: 'Patient Information',
@@ -63,6 +66,8 @@ export const translations: Record<string, Record<string, string>> = {
     bloodPressureDesc: 'Assess hypertension risk based on ACVIM guidelines.',
     bloodTransfusionCalculator: 'Blood Transfusion Calculator',
     bloodTransfusionDesc: 'Calculate the required volume of blood products.',
+    petAgeCalculator: 'Pet Age Calculator',
+    petAgeDesc: 'Calculate current age and equivalent human years.',
     suggestTool: 'Suggest a Tool',
     suggestToolDesc: "Have an idea? Let us know!",
     feedbackPrompt: "Thank you for your suggestion! We'll look into it.",
@@ -264,6 +269,54 @@ export const translations: Record<string, Record<string, string>> = {
     'transfusion.about.formulaTitle': 'Formula Used',
     'transfusion.about.formula': 'Volume (ml) = [(Desired PCV - Patient PCV) / Donor PCV] * Weight (kg) * N',
     'transfusion.about.formulaN': 'N (Blood Volume) = 90 for dogs, 60 for cats.',
+
+    // Pet Age Calculator
+    'otherPage.ageCalculator.pageTitle': 'Pet Age Calculator',
+    'otherPage.ageCalculator.currentAgeTitle': 'Calculate Current Age',
+    'otherPage.ageCalculator.dobLabel': 'Enter Date of Birth',
+    'otherPage.ageCalculator.currentAgeResult': 'Current Age',
+    'otherPage.ageCalculator.units.years': 'year(s)',
+    'otherPage.ageCalculator.units.months': 'month(s)',
+    'otherPage.ageCalculator.units.days': 'day(s)',
+    'otherPage.ageCalculator.humanYearsTitle': 'Convert to Human Years',
+    'otherPage.ageCalculator.calculationMethod': 'Calculation Method',
+    'otherPage.ageCalculator.formula': 'Modern Formula',
+    'otherPage.ageCalculator.table': 'Traditional Table',
+    'otherPage.ageCalculator.dogFormulaTitle': 'Modern Dog Age Formula',
+    'otherPage.ageCalculator.enterDogAge': "Enter dog's age in years",
+    'otherPage.ageCalculator.petAgeLabel': "Enter pet's age in years",
+    'otherPage.ageCalculator.speciesLabel': 'Select Species',
+    'otherPage.ageCalculator.dogWeightLabel': "Select Dog's Weight Range",
+    'otherPage.ageCalculator.weightRanges.0-20': '0-20 lbs (0-9 kg)',
+    'otherPage.ageCalculator.weightRanges.20-50': '20-50 lbs (9-23 kg)',
+    'otherPage.ageCalculator.weightRanges.50-90': '50-90 lbs (23-41 kg)',
+    'otherPage.ageCalculator.weightRanges.>90': '>90 lbs (>41 kg)',
+    'otherPage.ageCalculator.viewTableButton': 'View full aging table',
+    'otherPage.ageCalculator.ageInHumanYears': 'Age in Human Years',
+    'otherPage.ageCalculator.traditionalTableTitle': 'Traditional Pet Aging Chart',
+    'otherPage.ageCalculator.tableHeaders.petYears': 'Pet Years',
+    'otherPage.ageCalculator.tableHeaders.feline': 'Feline',
+    'otherPage.ageCalculator.tableHeaders.canine': 'Canine (lbs)',
+    'otherPage.ageCalculator.formulaModalTitle': 'About the Modern Formula',
+    'otherPage.ageCalculator.dogFormulaDesc': 'This method is based on a 2020 study of DNA methylation in dogs, providing a more accurate, non-linear conversion. The formula is: Human Age = 16 * ln(Dog Age) + 31.',
+    'otherPage.ageCalculator.reference': 'Reference:',
+    'otherPage.ageCalculator.referenceLinkText': 'Wang et al., Cell Systems (2020)',
+    'otherPage.ageCalculator.calendarType': 'Calendar Type',
+    'otherPage.ageCalculator.gregorian': 'Gregorian',
+    'otherPage.ageCalculator.jalali': 'Jalali',
+    'otherPage.ageCalculator.year': 'Year',
+    'otherPage.ageCalculator.month': 'Month',
+    'otherPage.ageCalculator.day': 'Day',
+
+    // Calendar Months
+    'gregorianMonths.1': 'January', 'gregorianMonths.2': 'February', 'gregorianMonths.3': 'March', 'gregorianMonths.4': 'April',
+    'gregorianMonths.5': 'May', 'gregorianMonths.6': 'June', 'gregorianMonths.7': 'July', 'gregorianMonths.8': 'August',
+    'gregorianMonths.9': 'September', 'gregorianMonths.10': 'October', 'gregorianMonths.11': 'November', 'gregorianMonths.12': 'December',
+    'jalaliMonths.1': 'Farvardin', 'jalaliMonths.2': 'Ordibehesht', 'jalaliMonths.3': 'Khordad', 'jalaliMonths.4': 'Tir',
+    'jalaliMonths.5': 'Mordad', 'jalaliMonths.6': 'Shahrivar', 'jalaliMonths.7': 'Mehr', 'jalaliMonths.8': 'Aban',
+    'jalaliMonths.9': 'Azar', 'jalaliMonths.10': 'Dey', 'jalaliMonths.11': 'Bahman', 'jalaliMonths.12': 'Esfand',
+
+    // Errors
     'errors.unsupportedSpecies': 'This calculator is validated for dogs and cats only.',
 
 
@@ -277,6 +330,7 @@ export const translations: Record<string, Record<string, string>> = {
     backToHome: 'بازگشت به خانه',
     missingWeightWarning: 'لطفاً برای استفاده از ماشین‌حساب‌ها، وزن بیمار را در صفحه اصلی وارد کنید.',
     noBreedsFound: 'هیچ نژادی یافت نشد.',
+    moreInfo: 'اطلاعات بیشتر',
 
     // Navigation
     navHome: 'خانه',
@@ -296,6 +350,8 @@ export const translations: Record<string, Record<string, string>> = {
     speciesAmphibian: 'دوزیست',
     speciesFish: 'ماهی',
     speciesReptile: 'خزنده',
+    'animalSpecies.CAT': 'گربه',
+    'animalSpecies.DOG': 'سگ',
 
     // Patient Info Form
     patientInfo: 'اطلاعات بیمار',
@@ -332,6 +388,8 @@ export const translations: Record<string, Record<string, string>> = {
     bloodPressureDesc: 'ارزیابی ریسک پرفشاری خون طبق دستورالعمل ACVIM.',
     bloodTransfusionCalculator: 'محاسبه‌گر انتقال خون',
     bloodTransfusionDesc: 'محاسبه حجم مورد نیاز فرآورده‌های خونی.',
+    petAgeCalculator: 'محاسبه‌گر سن حیوان',
+    petAgeDesc: 'محاسبه سن فعلی و معادل آن به سال انسانی.',
     suggestTool: 'پیشنهاد ابزار جدید',
     suggestToolDesc: 'ایده‌ای دارید؟ به ما اطلاع دهید!',
     feedbackPrompt: 'از پیشنهاد شما سپاسگزاریم! آن را بررسی خواهیم کرد.',
@@ -523,7 +581,7 @@ export const translations: Record<string, Record<string, string>> = {
     'transfusion.reactions.immuneHemolytic.title': 'واکنش‌های همولیتیک با واسطه ایمنی',
     'transfusion.reactions.immuneHemolytic.summary': 'واکنش‌های حاد، نادر اما جدی‌ترین نوع. نتیجه آنتی‌بادی‌های از پیش موجود یا حساسیت ناشی از انتقال قبلی.',
     'transfusion.reactions.immuneHemolytic.signsTitle': 'علائم بالینی:',
-    'transfusion.reactions.immuneHemolytic.signs': 'هیپوترمی (اولین علامت)، استفراغ، تاکی‌کاردی، تاکی‌پنه، ضعف، لرزش، تورم صورت، افت فشار خون، هموگلوبینمی، هموگلوبینوری.',
+    'transfusion.reactions.immuneHemolytic.signs': 'هیپوترمی (اولین علامت)، استفغ، تاکی‌کاردی، تاکی‌پنه، ضعف، لرزش، تورم صورت، افت فشار خون، هموگلوبینمی، هموگلوبینوری.',
     'transfusion.reactions.immuneNonHemolytic.title': 'واکنش‌های غیر همولیتیک با واسطه ایمنی',
     'transfusion.reactions.immuneNonHemolytic.summary': 'اغلب گذرا هستند و ناشی از آنتی‌بادی‌ها علیه RBCها، لکوسیت‌ها، پلاکت‌ها یا پروتئین‌های پلاسما می‌باشند.',
     'transfusion.reactions.immuneNonHemolytic.signsTitle': 'علائم بالینی:',
@@ -532,6 +590,55 @@ export const translations: Record<string, Record<string, string>> = {
     'transfusion.about.formulaTitle': 'فرمول مورد استفاده',
     'transfusion.about.formula': 'حجم (میلی‌لیتر) = [ (PCV مطلوب - PCV بیمار) ÷ PCV دهنده ] * وزن (کیلوگرم) * N',
     'transfusion.about.formulaN': 'N (حجم خون) = ۹۰ برای سگ، ۶۰ برای گربه.',
+
+    // Pet Age Calculator
+    'otherPage.ageCalculator.pageTitle': 'محاسبه‌گر سن حیوان',
+    'otherPage.ageCalculator.currentAgeTitle': 'محاسبه سن فعلی',
+    'otherPage.ageCalculator.dobLabel': 'تاریخ تولد را وارد کنید',
+    'otherPage.ageCalculator.currentAgeResult': 'سن فعلی',
+    'otherPage.ageCalculator.units.years': 'سال',
+    'otherPage.ageCalculator.units.months': 'ماه',
+    'otherPage.ageCalculator.units.days': 'روز',
+    'otherPage.ageCalculator.humanYearsTitle': 'تبدیل به سال انسانی',
+    'otherPage.ageCalculator.calculationMethod': 'روش محاسبه',
+    'otherPage.ageCalculator.formula': 'فرمول مدرن',
+    'otherPage.ageCalculator.table': 'جدول سنتی',
+    'otherPage.ageCalculator.dogFormulaTitle': 'فرمول مدرن سن سگ',
+    'otherPage.ageCalculator.enterDogAge': 'سن سگ را به سال وارد کنید',
+    'otherPage.ageCalculator.petAgeLabel': 'سن حیوان را به سال وارد کنید',
+    'otherPage.ageCalculator.speciesLabel': 'گونه را انتخاب کنید',
+    'otherPage.ageCalculator.dogWeightLabel': 'محدوده وزنی سگ را انتخاب کنید',
+    'otherPage.ageCalculator.weightRanges.0-20': '۰-۲۰ پوند (۰-۹ کیلوگرم)',
+    'otherPage.ageCalculator.weightRanges.20-50': '۲۰-۵۰ پوند (۹-۲۳ کیلوگرم)',
+    'otherPage.ageCalculator.weightRanges.50-90': '۵۰-۹۰ پوند (۲۳-۴۱ کیلوگرم)',
+    'otherPage.ageCalculator.weightRanges.>90': 'بیش از ۹۰ پوند (بیش از ۴۱ کیلوگرم)',
+    'otherPage.ageCalculator.viewTableButton': 'مشاهده جدول کامل سن',
+    'otherPage.ageCalculator.ageInHumanYears': 'سن به سال انسانی',
+    'otherPage.ageCalculator.traditionalTableTitle': 'جدول سنتی سن حیوانات',
+    'otherPage.ageCalculator.tableHeaders.petYears': 'سال حیوانی',
+    'otherPage.ageCalculator.tableHeaders.feline': 'گربه‌سانان',
+    'otherPage.ageCalculator.tableHeaders.canine': 'سگ‌سانان (پوند)',
+    'otherPage.ageCalculator.formulaModalTitle': 'درباره فرمول مدرن',
+    'otherPage.ageCalculator.dogFormulaDesc': 'این روش بر اساس مطالعه‌ای در سال ۲۰۲۰ روی متیلاسیون DNA سگ‌ها است و یک تبدیل غیرخطی و دقیق‌تر ارائه می‌دهد. فرمول: سن انسانی = ۱۶ * لگاریتم طبیعی (سن سگ) + ۳۱.',
+    'otherPage.ageCalculator.reference': 'مرجع:',
+    'otherPage.ageCalculator.referenceLinkText': 'Wang et al., Cell Systems (2020)',
+    'otherPage.ageCalculator.calendarType': 'نوع تقویم',
+    'otherPage.ageCalculator.gregorian': 'میلادی',
+    'otherPage.ageCalculator.jalali': 'شمسی',
+    'otherPage.ageCalculator.year': 'سال',
+    'otherPage.ageCalculator.month': 'ماه',
+    'otherPage.ageCalculator.day': 'روز',
+
+    // Calendar Months
+    'gregorianMonths.1': 'ژانویه', 'gregorianMonths.2': 'فوریه', 'gregorianMonths.3': 'مارس', 'gregorianMonths.4': 'آوریل',
+    'gregorianMonths.5': 'مه', 'gregorianMonths.6': 'ژوئن', 'gregorianMonths.7': 'ژوئیه', 'gregorianMonths.8': 'اوت',
+    'gregorianMonths.9': 'سپتامبر', 'gregorianMonths.10': 'اکتبر', 'gregorianMonths.11': 'نوامبر', 'gregorianMonths.12': 'دسامبر',
+    'jalaliMonths.1': 'فروردین', 'jalaliMonths.2': 'اردیبهشت', 'jalaliMonths.3': 'خرداد', 'jalaliMonths.4': 'تیر',
+    'jalaliMonths.5': 'مرداد', 'jalaliMonths.6': 'شهریور', 'jalaliMonths.7': 'مهر', 'jalaliMonths.8': 'آبان',
+    'jalaliMonths.9': 'آذر', 'jalaliMonths.10': 'دی', 'jalaliMonths.11': 'بهمن', 'jalaliMonths.12': 'اسفند',
+    
+
+    // Errors
     'errors.unsupportedSpecies': 'این محاسبه‌گر فقط برای سگ و گربه معتبر است.',
   },
 };

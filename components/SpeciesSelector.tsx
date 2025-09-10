@@ -9,7 +9,7 @@ interface SpeciesSelectorProps {
 
 const SpeciesSelector: React.FC<SpeciesSelectorProps> = ({ species, selectedSpecies, onSelectSpecies }) => {
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-4 justify-center">
       {species.map((s) => (
         <div
           key={s.name}

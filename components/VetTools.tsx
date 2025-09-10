@@ -1,5 +1,5 @@
 import React from 'react';
-import { SyringeIcon, FluidIcon, HeartPulseIcon, BloodIcon, ArrowLeftIcon, ArrowRightIcon } from './Icons';
+import { SyringeIcon, FluidIcon, HeartPulseIcon, BloodIcon, CakeIcon, ArrowLeftIcon, ArrowRightIcon } from './Icons';
 import type { NavItemKey } from '../types';
 import { useLocale } from '../context/LocaleContext';
 
@@ -36,6 +36,12 @@ const getTools = (t: (key: string) => string): Tool[] => [
         description: t('bloodTransfusionDesc'),
         icon: <BloodIcon className="text-2xl text-red-500" />,
         navKey: 'blood-transfusion-calculator',
+    },
+    {
+        title: t('petAgeCalculator'),
+        description: t('petAgeDesc'),
+        icon: <CakeIcon className="text-2xl text-[var(--primary-500)]" />,
+        navKey: 'pet-age-calculator',
     }
 ];
 
@@ -74,7 +80,7 @@ const VetTools: React.FC<VetToolsProps> = ({ onNavigate }) => {
   return (
     <section>
       <h2 className="text-xl font-bold text-start mb-4 text-slate-900 dark:text-slate-100">{t('tools')}</h2>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {tools.map(tool => (
           <ToolCard 
             key={tool.title} 

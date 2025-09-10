@@ -37,6 +37,7 @@ export type NavItemKey =
   | 'fluid-therapy-calculator'
   | 'blood-pressure-calculator'
   | 'blood-transfusion-calculator'
+  | 'pet-age-calculator'
   | 'protocol-detail';
 
 export type Gender = 'Male' | 'Female' | 'Unknown';

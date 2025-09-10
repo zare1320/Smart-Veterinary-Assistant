@@ -48,11 +48,11 @@ export const getSpeciesList = (t: (key: string) => string): Species[] => [
   },
     {
     name: t('speciesAmphibian'),
-    imageUrl: '',
+    imageUrl: 'https://i.postimg.cc/3JBjZfSG/image.png',
   },
     {
     name: t('speciesFish'),
-    imageUrl: '',
+    imageUrl: 'https://i.postimg.cc/Kjn3FvCQ/image.webp',
   },
 ];
 

@@ -1,6 +1,6 @@
 import React, { useReducer, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePatient } from '../context/PatientContext';
+import { usePatientStore } from '../stores/usePatientStore';
 import { useLocale } from '../context/LocaleContext';
 import { AnimalSpecies } from '../types';
 import { ActionTypes, FluidCalculatorAction, FluidCalculatorState } from '../components/fluid/FluidCalculatorTypes';
@@ -55,7 +55,7 @@ function fluidCalculatorReducer(state: FluidCalculatorState, action: FluidCalcul
 }
 
 const FluidTherapyCalculatorScreen: React.FC = () => {
-    const { patientInfo } = usePatient();
+    const { species, weightInKg } = usePatientStore(state => ({ species: state.species, weightInKg: state.weightInKg }));
     const { t } = useLocale();
     const navigate = useNavigate();
 
@@ -66,8 +66,8 @@ const FluidTherapyCalculatorScreen: React.FC = () => {
         return AnimalSpecies.OTHER;
     };
 
-    const patientSpecies = getAnimalSpecies(patientInfo.species);
-    const patientWeight = patientInfo.weightInKg || 0;
+    const patientSpecies = getAnimalSpecies(species);
+    const patientWeight = weightInKg || 0;
     
     const [state, dispatch] = useReducer(fluidCalculatorReducer, getInitialState(patientWeight, patientSpecies));
     

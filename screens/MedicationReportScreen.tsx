@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import type { MedicationProfile, Medication } from '../types';
 import { useLocale } from '../context/LocaleContext';
-import { useUser } from '../context/UserContext';
+import { useUserStore } from '../stores/useUserStore';
 import { Button } from '../components/Button';
 import { ArrowLeftIcon, ArrowRightIcon, PawIcon, PrintIcon } from '../components/Icons';
 
@@ -10,7 +10,7 @@ const MedicationReportScreen: React.FC = () => {
   const { t, locale } = useLocale();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useUser();
+  const user = useUserStore(state => state.user);
   const [notes, setNotes] = useState('');
 
   const reportData = location.state as { profile: MedicationProfile; medications: Medication[] } | null;

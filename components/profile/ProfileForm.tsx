@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useUser } from '../../context/UserContext';
+import { useUserStore } from '../../stores/useUserStore';
 import { useLocale } from '../../context/LocaleContext';
 import type { UserProfile, UserRole } from '../../types';
 import { LabeledInput, LabeledSelect } from '../forms';
@@ -11,8 +11,18 @@ interface ProfileFormProps {
     onCancel: () => void;
 }
 
+// --- Helper Components (Moved outside ProfileForm) ---
+
+const IconWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <div className="relative">{children}</div>
+);
+
+const Icon: React.FC<{ icon: React.ReactNode }> = ({ icon }) => (
+    <div className="absolute top-[2.4rem] start-3.5 text-muted-foreground pointer-events-none">{icon}</div>
+);
+
 export const ProfileForm: React.FC<ProfileFormProps> = ({ onSave, onCancel }) => {
-    const { user, updateProfile } = useUser();
+    const { user, updateProfile } = useUserStore();
     const { t } = useLocale();
     const [profile, setProfile] = useState<UserProfile>(user!.profile);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -43,13 +53,6 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ onSave, onCancel }) =>
         { value: 'student', label: t('profile.form.role.student') },
         { value: 'dvm', label: t('profile.form.role.dvm') }
     ];
-
-    const IconWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-        <div className="relative">{children}</div>
-    );
-    const Icon: React.FC<{ icon: React.ReactNode }> = ({ icon }) => (
-        <div className="absolute top-[2.4rem] start-3.5 text-muted-foreground pointer-events-none">{icon}</div>
-    );
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">

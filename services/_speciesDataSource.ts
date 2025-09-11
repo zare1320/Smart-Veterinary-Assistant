@@ -1,34 +1,5 @@
-import { HomeIcon, DescriptionIcon, PillIcon, SettingsIcon } from './components/Icons';
-import type { NavItem, Species } from './types';
+import type { Species } from '../types';
 
-export const getNavItems = (t: (key: string) => string): NavItem[] => [
-  {
-    key: 'home',
-    label: t('navHome'),
-    icon: HomeIcon,
-    path: '/',
-  },
-  {
-    key: 'protocols',
-    label: t('navProtocols'),
-    icon: DescriptionIcon,
-    path: '/protocols',
-  },
-  {
-    key: 'my-drugs',
-    label: t('navMyDrugs'),
-    icon: PillIcon,
-    path: '/my-drugs',
-  },
-  {
-    key: 'settings',
-    label: t('navSettings'),
-    icon: SettingsIcon,
-    path: '/settings',
-  },
-];
-
-// FIX: Moved getSpeciesList from a private service file to constants. This resolves an incorrect import path in PatientInfoDisplay.tsx and logically groups this static data function with other constants.
 export const getSpeciesList = (t: (key: string) => string): Species[] => [
   {
     name: t('speciesCat'),

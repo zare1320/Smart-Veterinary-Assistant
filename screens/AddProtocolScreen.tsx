@@ -5,8 +5,7 @@ import { useLocale } from '../context/LocaleContext';
 import { ArrowLeftIcon, ArrowRightIcon } from '../components/Icons';
 import { LabeledInput, LabeledSelect, LabeledTextarea } from '../components/forms';
 import { Button } from '../components/Button';
-
-const CUSTOM_PROTOCOLS_KEY = 'vet_custom_protocols';
+import { dataService } from '../services/dataService';
 
 const AddProtocolScreen: React.FC = () => {
   const { t, locale } = useLocale();
@@ -20,7 +19,7 @@ const AddProtocolScreen: React.FC = () => {
   const [category, setCategory] = useState<'Canine' | 'Feline' | 'Exotic' | 'Custom'>('Custom');
   const [content, setContent] = useState('');
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title.trim() || !description.trim() || !content.trim()) {
       alert('Please fill out all required fields.'); // Simple validation
       return;
@@ -35,9 +34,7 @@ const AddProtocolScreen: React.FC = () => {
       imageUrl: 'https://i.postimg.cc/P5gLp2f0/default-pet.png', // A default image
     };
 
-    const existingProtocols: Protocol[] = JSON.parse(localStorage.getItem(CUSTOM_PROTOCOLS_KEY) || '[]');
-    localStorage.setItem(CUSTOM_PROTOCOLS_KEY, JSON.stringify([...existingProtocols, newProtocol]));
-
+    await dataService.saveCustomProtocol(newProtocol);
     navigate('/protocols');
   };
 

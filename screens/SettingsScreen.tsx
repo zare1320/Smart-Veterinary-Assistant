@@ -16,9 +16,9 @@ import {
 } from '../components/Icons';
 import { useTheme } from '../context/ThemeContext';
 import { useLocale } from '../context/LocaleContext';
-import { useUser } from '../context/UserContext';
+import { useUserStore } from '../stores/useUserStore';
 
-// --- Self-contained Components for a Cleaner Structure ---
+// --- Self-contained Components for a Cleaner Structure (Moved outside SettingsScreen) ---
 
 const SettingsHeader: React.FC = () => {
   const { t } = useLocale();
@@ -32,7 +32,7 @@ const SettingsHeader: React.FC = () => {
 };
 
 const ProfileCard: React.FC<{ onNavigate: (path: string) => void }> = ({ onNavigate }) => {
-    const { user } = useUser();
+    const user = useUserStore(state => state.user);
     const { t } = useLocale();
 
     if (!user) return null;
@@ -73,22 +73,26 @@ const SettingsSection: React.FC<{ title: string; children: React.ReactNode }> = 
     </section>
 );
 
-const ToggleSwitch: React.FC<{ enabled: boolean; onChange: (enabled: boolean) => void }> = ({ enabled, onChange }) => (
-  <div className="relative inline-block w-11 me-2 align-middle select-none transition duration-200 ease-in">
-    <input
-      type="checkbox"
-      name="toggle"
-      id={`toggle-${React.useId()}`}
-      checked={enabled}
-      onChange={e => onChange(e.target.checked)}
-      className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
-    />
-    <label
-      htmlFor={`toggle-${React.useId()}`}
-      className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-slate-700 cursor-pointer"
-    ></label>
-  </div>
-);
+const ToggleSwitch: React.FC<{ enabled: boolean; onChange: (enabled: boolean) => void }> = ({ enabled, onChange }) => {
+  const id = React.useId();
+  return (
+    <div className="relative inline-block w-11 me-2 align-middle select-none transition duration-200 ease-in">
+      <input
+        type="checkbox"
+        name="toggle"
+        id={`toggle-${id}`}
+        checked={enabled}
+        onChange={e => onChange(e.target.checked)}
+        className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+      />
+      <label
+        htmlFor={`toggle-${id}`}
+        className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-slate-700 cursor-pointer"
+      ></label>
+    </div>
+  );
+};
+
 
 interface SettingsItemProps {
   icon: React.ReactNode; 
@@ -122,7 +126,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({ icon, title, description, a
 const SettingsScreen: React.FC = () => {
   const { t, locale } = useLocale();
   const { themeSetting } = useTheme();
-  const { logout } = useUser();
+  const logout = useUserStore(state => state.logout);
   const navigate = useNavigate();
   const [pushNotifications, setPushNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);

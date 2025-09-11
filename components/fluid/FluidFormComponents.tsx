@@ -85,7 +85,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({ unit, value, ...prop
             />
             <div className="font-mono text-center bg-muted rounded-md px-3 py-1 w-24">
                 <span className="font-bold text-heading">{localizeNumber(displayValue)}</span>
-                <span className="text-sm text-muted-foreground ml-1">{unit}</span>
+                <span className="text-sm text-muted-foreground ms-1">{unit}</span>
             </div>
         </div>
     );
@@ -109,7 +109,7 @@ export const ResultPill: React.FC<{ value: string; unit: string; label?: string;
     {label && <span className="text-xs text-foreground/60 dark:text-foreground/60 mb-1.5 font-medium">{label}</span>}
     <div className="bg-sky-500/10 dark:bg-sky-500/10 text-sky-800 dark:text-sky-300 font-bold rounded-full px-4 py-1.5 text-center w-full">
       <span className="text-lg">{value}</span>
-      <span className="text-xs ml-1 opacity-80">{unit}</span>
+      <span className="text-xs ms-1 opacity-80">{unit}</span>
     </div>
   </div>
 );

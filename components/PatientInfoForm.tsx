@@ -1,14 +1,31 @@
-import React from 'react';
-import { usePatient } from '../context/PatientContext';
+import React, { useState, useEffect } from 'react';
+import { usePatientStore } from '../stores/usePatientStore';
 import { useLocale } from '../context/LocaleContext';
 import SegmentedControl from './SegmentedControl';
 import type { Gender, AgeGroup } from '../types';
-import { dogBreeds, catBreeds, birdBreeds, amphibianBreeds, fishBreeds, mammalBreeds, reptileBreeds } from '../constants';
+import { dataService } from '../services/dataService';
 import BreedSelector from './BreedSelector';
 
 const PatientInfoForm: React.FC = () => {
-  const { patientInfo, updatePatientInfo } = usePatient();
+  const { species, weightInKg, gender, breed, ageGroup, clinicalSigns, updatePatientInfo } = usePatientStore();
   const { t } = useLocale();
+  const [breeds, setBreeds] = useState<any[]>([]);
+  const [breedConfig, setBreedConfig] = useState({ key: undefined, placeholder: t('enterBreed') });
+
+  useEffect(() => {
+    const fetchBreeds = async () => {
+      if (species) {
+        const breedData = await dataService.getBreedsForSpecies(species, t);
+        const config = dataService.getBreedDisplayInfo(species, t);
+        setBreeds(breedData);
+        setBreedConfig({ key: config.key as any, placeholder: config.placeholder });
+      } else {
+        setBreeds([]);
+        setBreedConfig({ key: undefined, placeholder: t('enterBreed') });
+      }
+    };
+    fetchBreeds();
+  }, [species, t]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     updatePatientInfo({ [e.target.name]: e.target.value });
@@ -32,20 +49,6 @@ const PatientInfoForm: React.FC = () => {
     { value: 'geriatric' as AgeGroup, label: t('geriatric') },
   ];
 
-  const getBreedData = () => {
-    const species = patientInfo.species;
-    if (species === t('speciesDog')) return { breeds: dogBreeds, key: 'group', placeholder: t('placeholderGermanShepherd') };
-    if (species === t('speciesCat')) return { breeds: catBreeds, key: 'origin', placeholder: t('placeholderPersianCat') };
-    if (species === t('speciesBird')) return { breeds: birdBreeds, key: 'family', placeholder: t('placeholderCockatiel') };
-    if (species === t('speciesMammal')) return { breeds: mammalBreeds, key: 'category', placeholder: t('placeholderHollandLop') };
-    if (species === t('speciesAmphibian')) return { breeds: amphibianBreeds, key: 'category', placeholder: t('placeholderRedEyedTreeFrog') };
-    if (species === t('speciesFish')) return { breeds: fishBreeds, key: 'category', placeholder: t('placeholderGoldfish') };
-    if (species === t('speciesReptile')) return { breeds: reptileBreeds, key: 'category', placeholder: t('placeholderBeardedDragon') };
-    return { breeds: [], key: undefined, placeholder: t('enterBreed') };
-  };
-  
-  const { breeds, key: displayInfoKey, placeholder } = getBreedData();
-
   return (
     <div className="space-y-6">
       {/* Weight */}
@@ -58,7 +61,7 @@ const PatientInfoForm: React.FC = () => {
             type="number"
             id="weight"
             name="weightInKg"
-            value={patientInfo.weightInKg ?? ''}
+            value={weightInKg ?? ''}
             onChange={handleWeightChange}
             placeholder={t('enterWeight')}
             className="custom-form-input text-start"
@@ -71,7 +74,7 @@ const PatientInfoForm: React.FC = () => {
         <label className="block text-sm font-medium text-card-foreground mb-2 text-start">{t('gender')}</label>
         <SegmentedControl
           options={genderOptions}
-          value={patientInfo.gender}
+          value={gender}
           onChange={(value) => updatePatientInfo({ gender: value as Gender })}
         />
       </div>
@@ -83,10 +86,10 @@ const PatientInfoForm: React.FC = () => {
         </label>
         <BreedSelector
             breeds={breeds}
-            value={patientInfo.breed}
+            value={breed}
             onChange={(breedName) => updatePatientInfo({ breed: breedName })}
-            placeholder={placeholder}
-            displayInfoKey={displayInfoKey}
+            placeholder={breedConfig.placeholder}
+            displayInfoKey={breedConfig.key}
         />
       </div>
 
@@ -95,7 +98,7 @@ const PatientInfoForm: React.FC = () => {
         <label className="block text-sm font-medium text-card-foreground mb-2 text-start">{t('ageGroup')}</label>
         <SegmentedControl
           options={ageGroupOptions}
-          value={patientInfo.ageGroup}
+          value={ageGroup}
           onChange={(value) => updatePatientInfo({ ageGroup: value as AgeGroup })}
         />
       </div>
@@ -108,7 +111,7 @@ const PatientInfoForm: React.FC = () => {
         <textarea
           id="clinicalSigns"
           name="clinicalSigns"
-          value={patientInfo.clinicalSigns}
+          value={clinicalSigns}
           onChange={handleInputChange}
           rows={3}
           placeholder={t('enterClinicalSigns')}

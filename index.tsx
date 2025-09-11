@@ -3,9 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import App from './App';
 import { ThemeProvider } from './context/ThemeContext';
-import { PatientProvider } from './context/PatientContext';
 import { LocaleProvider } from './context/LocaleContext';
-import { UserProvider } from './context/UserContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -17,14 +15,9 @@ root.render(
   <React.StrictMode>
     <ThemeProvider>
       <LocaleProvider>
-        <UserProvider>
-          <PatientProvider>
-            <HashRouter>
-              <App />
-            </HashRouter>
-          </PatientProvider>
-        {/* FIX: Corrected typo in closing tag from User-Provider to UserProvider */}
-        </UserProvider>
+        <HashRouter>
+          <App />
+        </HashRouter>
       </LocaleProvider>
     </ThemeProvider>
   </React.StrictMode>

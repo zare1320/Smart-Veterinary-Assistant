@@ -6,24 +6,19 @@ import { PillIcon, PlusIcon, ChevronRightIcon, EllipsisVerticalIcon, PawIcon, Ex
 import { Button } from '../components/Button';
 import ProfileModal from '../components/ProfileModal';
 import MedicationModal from '../components/MedicationModal';
+import { dataService } from '../services/dataService';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ProfileChipSkeleton, MedicationItemSkeleton } from '../components/skeletons/MyDrugsSkeletons';
+import { EmptyState } from '../components/EmptyState';
 
 const MyDrugsScreen: React.FC = () => {
     const { t } = useLocale();
     const navigate = useNavigate();
 
-    // Mock Data converted to state
-    const [profiles, setProfiles] = useState<MedicationProfile[]>([
-        { id: 1, name: t('myMedList.maxGoldenRetriever'), imageUrl: 'https://i.postimg.cc/4x28nG8x/dog-2.png' },
-        { id: 2, name: t('myMedList.lunaPersianCat'), imageUrl: 'https://i.postimg.cc/VNSKChTB/cat-2.png' },
-    ]);
-
-    const [medications, setMedications] = useState<Medication[]>([
-        { id: 1, profileId: 1, name: 'Meloxicam', formulation: t('myMedList.meloxicamSuspension'), instructions: t('myMedList.meloxicamInstructions') },
-        { id: 2, profileId: 1, name: 'Clavamox', formulation: t('myMedList.clavamoxTablets'), instructions: t('myMedList.clavamoxInstructions') },
-        { id: 3, profileId: 2, name: 'Amoxicillin', formulation: '250mg Tablet', instructions: '1 tablet BID for 7 days' },
-    ]);
-    
-    const [activeProfileId, setActiveProfileId] = useState<number | null>(profiles.length > 0 ? profiles[0].id : null);
+    const [profiles, setProfiles] = useState<MedicationProfile[]>([]);
+    const [medications, setMedications] = useState<Medication[]>([]);
+    const [activeProfileId, setActiveProfileId] = useState<number | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Modal States
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -31,11 +26,27 @@ const MyDrugsScreen: React.FC = () => {
     const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
     const [editingMedication, setEditingMedication] = useState<Medication | null>(null);
     
-    // Action Menu State
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const menuRef = useRef<HTMLDivElement>(null);
 
-     // Close menu on outside click
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            const [profilesData, medicationsData] = await Promise.all([
+                dataService.getProfiles(t),
+                // FIX: Passed the translation function `t` to `getMedications` to ensure consistent data fetching and initialization logic.
+                dataService.getMedications(t)
+            ]);
+            setProfiles(profilesData);
+            setMedications(medicationsData);
+            if (profilesData.length > 0 && !activeProfileId) {
+                setActiveProfileId(profilesData[0].id);
+            }
+            setIsLoading(false);
+        };
+        fetchData();
+    }, [t]);
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (openMenuId && menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -55,27 +66,26 @@ const MyDrugsScreen: React.FC = () => {
     }, [activeProfileId, medications]);
 
     // Profile CRUD Handlers
-    const handleSaveProfile = (data: { id?: number; name: string; imageUrl: string }) => {
-        if (data.id) { // Editing
-            setProfiles(profiles.map(p => p.id === data.id ? { ...p, name: data.name, imageUrl: data.imageUrl || p.imageUrl } : p));
-        } else { // Creating
-            const newProfile: MedicationProfile = {
-                id: Date.now(),
-                name: data.name,
-                imageUrl: data.imageUrl || 'https://i.postimg.cc/P5gLp2f0/default-pet.png',
-            };
-            setProfiles([...profiles, newProfile]);
+    const handleSaveProfile = async (data: { id?: number; name: string; imageUrl: string }) => {
+        // FIX: Corrected call to `saveProfile` by adding the missing `t` argument, as required by the data service implementation.
+        const updatedProfiles = await dataService.saveProfile(data, t);
+        setProfiles(updatedProfiles);
+        
+        if (!data.id) {
+            const newProfile = updatedProfiles[updatedProfiles.length -1];
             setActiveProfileId(newProfile.id);
         }
+        
         setIsProfileModalOpen(false);
         setEditingProfile(null);
     };
 
-    const handleDeleteProfile = (profileId: number) => {
+    const handleDeleteProfile = async (profileId: number) => {
         if (window.confirm(t('myMedList.deleteProfileConfirm'))) {
-            const newProfiles = profiles.filter(p => p.id !== profileId);
+            // FIX: Corrected call to `deleteProfile` by adding the missing `t` argument, as required by the data service implementation.
+            const { profiles: newProfiles, medications: newMedications } = await dataService.deleteProfile(profileId, t);
             setProfiles(newProfiles);
-            setMedications(medications.filter(m => m.profileId !== profileId));
+            setMedications(newMedications);
             if (activeProfileId === profileId) {
                 setActiveProfileId(newProfiles.length > 0 ? newProfiles[0].id : null);
             }
@@ -84,26 +94,21 @@ const MyDrugsScreen: React.FC = () => {
     };
     
     // Medication CRUD Handlers
-    const handleSaveMedication = (data: { id?: number; name: string; formulation: string; instructions: string }) => {
-        if (data.id) { // Editing
-            setMedications(medications.map(m => m.id === data.id ? { ...m, ...data } : m));
-        } else { // Creating
-            const newMedication: Medication = {
-                id: Date.now(),
-                profileId: activeProfileId!,
-                name: data.name,
-                formulation: data.formulation,
-                instructions: data.instructions,
-            };
-            setMedications([...medications, newMedication]);
+    const handleSaveMedication = async (data: { id?: number; name: string; formulation: string; instructions: string }) => {
+        if(activeProfileId) {
+            // FIX: Corrected call to `saveMedication` by adding the missing `t` argument, as required by the data service implementation.
+            const updatedMeds = await dataService.saveMedication({ ...data, profileId: activeProfileId }, t);
+            setMedications(updatedMeds);
         }
         setIsMedicationModalOpen(false);
         setEditingMedication(null);
     };
 
-    const handleDeleteMedication = (medicationId: number) => {
+    const handleDeleteMedication = async (medicationId: number) => {
         if (window.confirm(t('myMedList.deleteMedConfirm'))) {
-            setMedications(medications.filter(m => m.id !== medicationId));
+            // FIX: Corrected call to `deleteMedication` by adding the missing `t` argument, as required by the data service implementation.
+            const updatedMeds = await dataService.deleteMedication(medicationId, t);
+            setMedications(updatedMeds);
         }
         setOpenMenuId(null);
     };
@@ -145,62 +150,77 @@ const MyDrugsScreen: React.FC = () => {
                 {/* Profile Selector */}
                 <section>
                     <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
-                        {profiles.map(profile => (
-                            <div key={profile.id} className="relative shrink-0">
-                                <button
-                                    onClick={() => setActiveProfileId(profile.id)}
-                                    className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 w-full ${activeProfileId === profile.id ? 'bg-card shadow-lg scale-105' : 'bg-muted/60 hover:bg-muted'}`}
-                                >
-                                    <img src={profile.imageUrl} alt={profile.name} className="w-10 h-10 rounded-full object-cover" />
-                                    <div className="text-start">
-                                        <p className="text-xs text-muted-foreground">{t('myMedList.profileFor')}</p>
-                                        <p className="font-bold text-sm text-heading">{profile.name}</p>
-                                    </div>
-                                    <div className="w-4"></div>
-                                </button>
-                                <div ref={openMenuId === `profile-${profile.id}` ? menuRef : null} className="absolute top-2 end-2">
-                                    <button onClick={() => setOpenMenuId(openMenuId === `profile-${profile.id}` ? null : `profile-${profile.id}`)} className="p-1 rounded-full text-muted-foreground hover:bg-black/10 dark:hover:bg-white/10">
-                                        <EllipsisVerticalIcon />
-                                    </button>
-                                    {openMenuId === `profile-${profile.id}` && (
-                                        <div className="absolute end-0 mt-2 w-32 bg-popover rounded-lg shadow-xl z-20 text-start">
-                                            <button onClick={() => openProfileModal(profile)} className="w-full text-start px-4 py-2 text-sm text-popover-foreground hover:bg-muted flex items-center gap-2 rounded-t-lg"><PencilIcon/> {t('edit')}</button>
-                                            <button onClick={() => handleDeleteProfile(profile.id)} className="w-full text-start px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-muted flex items-center gap-2 rounded-b-lg"><DeleteIcon/> {t('delete')}</button>
+                        {isLoading ? (
+                            <ProfileChipSkeleton />
+                        ) : (
+                            profiles.map(profile => (
+                                <div key={profile.id} className="relative shrink-0">
+                                    <button
+                                        onClick={() => setActiveProfileId(profile.id)}
+                                        className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 w-full ${activeProfileId === profile.id ? 'bg-card shadow-lg scale-105' : 'bg-muted/60 hover:bg-muted'}`}
+                                    >
+                                        <img src={profile.imageUrl} alt={profile.name} className="w-10 h-10 rounded-full object-cover" />
+                                        <div className="text-start">
+                                            <p className="text-xs text-muted-foreground">{t('myMedList.profileFor')}</p>
+                                            <p className="font-bold text-sm text-heading">{profile.name}</p>
                                         </div>
-                                    )}
+                                        <div className="w-4"></div>
+                                    </button>
+                                    <div ref={openMenuId === `profile-${profile.id}` ? menuRef : null} className="absolute top-2 end-2">
+                                        <button onClick={() => setOpenMenuId(openMenuId === `profile-${profile.id}` ? null : `profile-${profile.id}`)} className="p-1 rounded-full text-muted-foreground hover:bg-black/10 dark:hover:bg-white/10">
+                                            <EllipsisVerticalIcon />
+                                        </button>
+                                        {openMenuId === `profile-${profile.id}` && (
+                                            <div className="absolute end-0 mt-2 w-32 bg-popover rounded-lg shadow-xl z-20 text-start">
+                                                <button onClick={() => openProfileModal(profile)} className="w-full text-start px-4 py-2 text-sm text-popover-foreground hover:bg-muted flex items-center gap-2 rounded-t-lg"><PencilIcon/> {t('edit')}</button>
+                                                <button onClick={() => handleDeleteProfile(profile.id)} className="w-full text-start px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-muted flex items-center gap-2 rounded-b-lg"><DeleteIcon/> {t('delete')}</button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </section>
                 
                 {/* Medication List */}
                 <section>
-                    {activeMedications.length > 0 ? (
+                    {isLoading ? (
+                        <MedicationItemSkeleton />
+                    ) : activeProfileId && activeMedications.length > 0 ? (
                         <div className="space-y-3">
-                            {activeMedications.map(med => (
-                                <div key={med.id} className="bg-card p-4 rounded-lg shadow-sm flex items-center gap-4">
-                                    <div className="flex-shrink-0 bg-secondary text-secondary-foreground p-3 rounded-full">
-                                        <PillIcon className="text-2xl"/>
-                                    </div>
-                                    <div className="flex-1 text-start">
-                                        <h3 className="font-bold text-heading">{med.name}</h3>
-                                        <p className="text-sm text-foreground">{med.formulation}</p>
-                                        <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap">{med.instructions}</p>
-                                    </div>
-                                    <div ref={openMenuId === `med-${med.id}` ? menuRef : null} className="relative">
-                                        <button onClick={() => setOpenMenuId(openMenuId === `med-${med.id}` ? null : `med-${med.id}`)} className="text-muted-foreground hover:text-foreground">
-                                            <EllipsisVerticalIcon />
-                                        </button>
-                                        {openMenuId === `med-${med.id}` && (
-                                            <div className="absolute end-0 mt-2 w-32 bg-popover rounded-lg shadow-xl z-20 text-start">
-                                                <button onClick={() => openMedicationModal(med)} className="w-full text-start px-4 py-2 text-sm text-popover-foreground hover:bg-muted flex items-center gap-2 rounded-t-lg"><PencilIcon/> {t('edit')}</button>
-                                                <button onClick={() => handleDeleteMedication(med.id)} className="w-full text-start px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-muted flex items-center gap-2 rounded-b-lg"><DeleteIcon/> {t('delete')}</button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
+                            <AnimatePresence>
+                                {activeMedications.map(med => (
+                                    <motion.div 
+                                        key={med.id} 
+                                        layout
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0 }}
+                                        className="bg-card p-4 rounded-lg shadow-sm flex items-center gap-4"
+                                    >
+                                        <div className="flex-shrink-0 bg-secondary text-secondary-foreground p-3 rounded-full">
+                                            <PillIcon className="text-2xl"/>
+                                        </div>
+                                        <div className="flex-1 text-start">
+                                            <h3 className="font-bold text-heading">{med.name}</h3>
+                                            <p className="text-sm text-foreground">{med.formulation}</p>
+                                            <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap">{med.instructions}</p>
+                                        </div>
+                                        <div ref={openMenuId === `med-${med.id}` ? menuRef : null} className="relative">
+                                            <button onClick={() => setOpenMenuId(openMenuId === `med-${med.id}` ? null : `med-${med.id}`)} className="text-muted-foreground hover:text-foreground">
+                                                <EllipsisVerticalIcon />
+                                            </button>
+                                            {openMenuId === `med-${med.id}` && (
+                                                <div className="absolute end-0 mt-2 w-32 bg-popover rounded-lg shadow-xl z-20 text-start">
+                                                    <button onClick={() => openMedicationModal(med)} className="w-full text-start px-4 py-2 text-sm text-popover-foreground hover:bg-muted flex items-center gap-2 rounded-t-lg"><PencilIcon/> {t('edit')}</button>
+                                                    <button onClick={() => handleDeleteMedication(med.id)} className="w-full text-start px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-muted flex items-center gap-2 rounded-b-lg"><DeleteIcon/> {t('delete')}</button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
                             <div className="pt-4">
                                <Button onClick={() => openMedicationModal(null)} variant="primary" className="w-full !rounded-lg">
                                     <PlusIcon className="me-2" /> {t('myMedList.addMedication')}
@@ -208,16 +228,16 @@ const MyDrugsScreen: React.FC = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="text-center bg-card rounded-lg p-8 shadow-sm">
-                            <div className="mx-auto bg-muted w-16 h-16 flex items-center justify-center rounded-full">
-                                <PawIcon className="text-3xl text-muted-foreground" />
-                            </div>
-                            <h3 className="mt-4 text-lg font-semibold text-heading">{t('myMedList.noMedications')}</h3>
-                            <p className="mt-1 text-sm text-muted-foreground">{t('myMedList.getStarted')}</p>
-                            <Button onClick={() => openMedicationModal(null)} variant="primary" className="mt-4">
-                                <PlusIcon className="me-2" /> {t('myMedList.addMedication')}
-                            </Button>
-                        </div>
+                        <EmptyState 
+                            icon={<PawIcon className="text-4xl" />}
+                            title={activeProfileId ? t('myMedList.noMedications') : 'Create or select a profile'}
+                            message={activeProfileId ? t('myMedList.getStarted') : 'Add a pet profile to start managing medications.'}
+                            action={{
+                                text: activeProfileId ? t('myMedList.addMedication') : 'Add Profile',
+                                onClick: () => activeProfileId ? openMedicationModal(null) : openProfileModal(null),
+                                icon: <PlusIcon className="me-2" />
+                            }}
+                        />
                     )}
                 </section>
 

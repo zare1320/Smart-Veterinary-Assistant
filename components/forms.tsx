@@ -14,8 +14,8 @@ export const LabeledInput: React.FC<LabeledInputProps> = ({ label, id, unit, cla
       {label}
     </label>
     <div className="relative">
-      <input id={id} {...props} className={`custom-form-input text-start ${unit ? 'pr-12' : ''} ${className || ''}`} />
-      {unit && <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground">{unit}</span>}
+      <input id={id} {...props} className={`custom-form-input text-start ${unit ? 'pe-12' : ''} ${className || ''}`} />
+      {unit && <span className="absolute inset-y-0 end-0 flex items-center pe-3 text-muted-foreground">{unit}</span>}
     </div>
   </div>
 );
@@ -86,7 +86,7 @@ export const LabeledSlider: React.FC<LabeledSliderProps> = ({ id, label, value, 
                 />
                 <div className="font-mono text-center bg-muted rounded-md px-3 py-1 w-28">
                     <span className="font-bold text-heading">{localizeNumber(value)}</span>
-                    <span className="text-sm text-muted-foreground ml-1">{unit}</span>
+                    <span className="text-sm text-muted-foreground ms-1">{unit}</span>
                 </div>
             </div>
         </div>

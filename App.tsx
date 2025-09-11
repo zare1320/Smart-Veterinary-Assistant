@@ -23,7 +23,7 @@ import AddProtocolScreen from './screens/AddProtocolScreen';
 import DrugInteractionScreen from './screens/DrugInteractionScreen';
 import MedicationReportScreen from './screens/MedicationReportScreen';
 import { useLocale } from './context/LocaleContext';
-import { useUser } from './context/UserContext';
+import { useUserStore } from './stores/useUserStore';
 import RegisterScreen from './screens/RegisterScreen';
 
 const MainLayout: React.FC = () => {
@@ -44,7 +44,7 @@ const MainLayout: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  const { user, login } = useUser();
+  const { user, login } = useUserStore();
   const location = useLocation();
 
   if (!user) {

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
-import { usePatient } from '../context/PatientContext';
+import { usePatientStore } from '../stores/usePatientStore';
 import MissingPatientWeightBanner from '../components/MissingPatientWeightBanner';
 import { BackButton, Button } from '../components/Button';
 import PatientInfoDisplay from '../components/PatientInfoDisplay';
@@ -157,8 +157,8 @@ const BloodTransfusionCalculatorScreen: React.FC = () => {
   const { t, localizeNumber } = useLocale();
   const navigate = useNavigate();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-  const { patientInfo } = usePatient();
-  const hasWeight = patientInfo.weightInKg && patientInfo.weightInKg > 0;
+  const { species, weightInKg } = usePatientStore(state => ({ species: state.species, weightInKg: state.weightInKg }));
+  const hasWeight = weightInKg && weightInKg > 0;
 
   const {
     desiredPcv,
@@ -168,13 +168,13 @@ const BloodTransfusionCalculatorScreen: React.FC = () => {
     donorPcv,
     setDonorPcv,
     calculatedVolume,
-  } = useTransfusionCalculator(patientInfo.weightInKg, patientInfo.species);
+  } = useTransfusionCalculator(weightInKg, species);
 
   const speciesKeyMap: { [key: string]: string } = {
     [t('speciesCat')]: 'cat',
     [t('speciesDog')]: 'dog',
   };
-  const speciesKey = patientInfo.species ? speciesKeyMap[patientInfo.species] : null;
+  const speciesKey = species ? speciesKeyMap[species] : null;
   const isSupportedSpecies = speciesKey === 'dog' || speciesKey === 'cat';
 
   const handleOpenInfoModal = useCallback(() => setIsInfoModalOpen(true), []);

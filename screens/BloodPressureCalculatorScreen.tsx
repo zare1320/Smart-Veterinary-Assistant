@@ -1,7 +1,7 @@
 import React, { useReducer, useEffect, useMemo, useCallback, useState, useId } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
-import { usePatient } from '../context/PatientContext';
+import { usePatientStore } from '../stores/usePatientStore';
 import { BackButton, Button } from '../components/Button';
 import MissingPatientWeightBanner from '../components/MissingPatientWeightBanner';
 import { LabeledInput, LabeledSelect } from '../components/forms';
@@ -202,13 +202,13 @@ const RiskClassificationTable: React.FC<{ riskCategory: string | null; t: (key: 
 const BloodPressureCalculatorScreen: React.FC = () => {
     const { t, localizeNumber } = useLocale();
     const navigate = useNavigate();
-    const { patientInfo } = usePatient();
+    const { species, weightInKg } = usePatientStore(state => ({ species: state.species, weightInKg: state.weightInKg }));
     const [state, dispatch] = useReducer(bpReducer, createInitialState());
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
     useEffect(() => {
-        dispatch({ type: 'SET_INITIAL_DATA', payload: { species: patientInfo.species } });
-    }, [patientInfo.species]);
+        dispatch({ type: 'SET_INITIAL_DATA', payload: { species: species } });
+    }, [species]);
 
     const { meanSbp, riskCategory } = useMemo(() => {
         const validPressures = state.pressures.map(p => parseFloat(p)).filter(p => !isNaN(p) && p > 0);
@@ -243,9 +243,9 @@ const BloodPressureCalculatorScreen: React.FC = () => {
         [t('speciesCat')]: 'cat',
         [t('speciesDog')]: 'dog',
     };
-    const speciesKey = patientInfo.species ? speciesKeyMap[patientInfo.species] : null;
+    const speciesKey = species ? speciesKeyMap[species] : null;
     const isSupportedSpecies = speciesKey === 'cat' || speciesKey === 'dog';
-    const hasWeight = patientInfo.weightInKg && patientInfo.weightInKg > 0;
+    const hasWeight = weightInKg && weightInKg > 0;
 
     return (
         <>

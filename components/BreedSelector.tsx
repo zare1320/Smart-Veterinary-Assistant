@@ -71,7 +71,7 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({ breeds, value, onChange, 
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className="custom-form-input text-start pr-10"
+          className="custom-form-input text-start pe-10"
           autoComplete="off"
           aria-autocomplete="list"
           aria-expanded={isOpen}
@@ -79,7 +79,7 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({ breeds, value, onChange, 
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground"
+          className="absolute inset-y-0 end-0 flex items-center px-3 text-muted-foreground"
           aria-label="Toggle breed list"
         >
           <ChevronDownIcon className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />

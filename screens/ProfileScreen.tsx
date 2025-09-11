@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../context/UserContext';
+import { useUserStore } from '../stores/useUserStore';
 import ProfileView from '../components/profile/ProfileView';
 import { ProfileForm } from '../components/profile/ProfileForm';
 
 const ProfileScreen: React.FC = () => {
-    const { user, logout } = useUser();
+    const { user, logout } = useUserStore();
     const navigate = useNavigate();
     
     // If profile is incomplete, start in edit mode. Otherwise, start in view mode.

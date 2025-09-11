@@ -1,16 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
-import { usePatient } from '../context/PatientContext';
-import type { Drug, DrugFormulation, DrugDosage } from '../types';
-import { allDrugs, drugCategories } from '../data/drug_data';
+import { usePatientStore } from '../stores/usePatientStore';
+import type { Drug, DrugFormulation, DrugDosage, DrugCategory } from '../types';
+import { dataService } from '../services/dataService';
 import { PillIcon, SearchIcon } from '../components/Icons';
 import { LabeledSelect } from '../components/forms';
-// FIX: Replaced framer-motion variants with inline animation props to fix type errors.
 import { motion, AnimatePresence } from 'framer-motion';
 import { BackButton } from '../components/Button';
 import MissingPatientWeightBanner from '../components/MissingPatientWeightBanner';
 import PatientInfoDisplay from '../components/PatientInfoDisplay';
+import { DrugCategorySkeleton, DrugListSkeleton } from '../components/skeletons/DrugListSkeleton';
+import { EmptyState } from '../components/EmptyState';
 
 const speciesGroupMap: { [key: string]: string[] } = {
     dog: ['dog', 'dog_cat'],
@@ -195,10 +196,27 @@ const CalculatorPanel: React.FC<{ drug: Drug; weightKg: number; speciesKey: stri
 const DrugDoseCalculatorScreen: React.FC = () => {
     const { t, locale } = useLocale();
     const navigate = useNavigate();
-    const { patientInfo } = usePatient();
+    const { species, weightInKg } = usePatientStore(state => ({ species: state.species, weightInKg: state.weightInKg }));
+    const [allDrugs, setAllDrugs] = useState<Drug[]>([]);
+    const [drugCategories, setDrugCategories] = useState<DrugCategory[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategoryId, setActiveCategoryId] = useState('all');
     const [selectedDrugId, setSelectedDrugId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            const [drugs, categories] = await Promise.all([
+                dataService.getAllDrugs(),
+                dataService.getDrugCategories()
+            ]);
+            setAllDrugs(drugs);
+            setDrugCategories(categories);
+            setIsLoading(false);
+        };
+        fetchData();
+    }, []);
 
     const speciesKeyMap: { [key: string]: string } = {
         [t('speciesCat')]: 'cat',
@@ -209,7 +227,7 @@ const DrugDoseCalculatorScreen: React.FC = () => {
         [t('speciesFish')]: 'fish',
         [t('speciesAmphibian')]: 'amphibian',
     };
-    const patientSpeciesKey = patientInfo.species ? speciesKeyMap[patientInfo.species] : null;
+    const patientSpeciesKey = species ? speciesKeyMap[species] : null;
 
     const filteredDrugs = useMemo(() => {
         const query = searchQuery.toLowerCase();
@@ -221,13 +239,13 @@ const DrugDoseCalculatorScreen: React.FC = () => {
                 drug.brandNames.some(b => b.toLowerCase().includes(query));
             return inCategory && matchesSearch;
         });
-    }, [searchQuery, activeCategoryId, locale]);
+    }, [searchQuery, activeCategoryId, locale, allDrugs]);
     
     const selectedDrug = useMemo(() => {
         return allDrugs.find(d => d.id === selectedDrugId) || null;
-    }, [selectedDrugId]);
+    }, [selectedDrugId, allDrugs]);
     
-    const hasWeight = patientInfo.weightInKg && patientInfo.weightInKg > 0;
+    const hasWeight = weightInKg && weightInKg > 0;
 
     return (
         <>
@@ -254,26 +272,43 @@ const DrugDoseCalculatorScreen: React.FC = () => {
                                 className="search-input"
                             />
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                             <button onClick={() => setActiveCategoryId('all')} className={`px-3 py-1 text-sm font-semibold rounded-full transition-colors ${activeCategoryId === 'all' ? 'bg-[var(--primary-500)] text-white' : 'bg-muted hover:bg-secondary'}`}>{t('drugCalculator.allCategories')}</button>
-                            {drugCategories.map(cat => (
-                                 <button key={cat.id} onClick={() => setActiveCategoryId(cat.id)} className={`px-3 py-1 text-sm font-semibold rounded-full transition-colors ${activeCategoryId === cat.id ? 'bg-[var(--primary-500)] text-white' : 'bg-muted hover:bg-secondary'}`}>{cat.name[locale as keyof typeof cat.name]}</button>
-                            ))}
-                        </div>
-                        <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
-                           {filteredDrugs.length > 0 ? filteredDrugs.map(drug => (
-                               <div
-                                    key={drug.id}
-                                    onClick={() => setSelectedDrugId(drug.id)}
-                                    className={`w-full text-start p-3 rounded-lg transition-all duration-200 cursor-pointer border ${selectedDrugId === drug.id ? 'bg-secondary border-[var(--primary-500)]' : 'bg-muted/50 border-transparent hover:border-border'}`}
-                               >
-                                   <h4 className="font-bold text-foreground">{drug.name[locale as keyof typeof drug.name]}</h4>
-                                   <p className="text-xs text-muted-foreground" dir="ltr">{drug.brandNames.join(', ')}</p>
-                               </div>
-                           )) : (
-                               <p className="text-center text-muted-foreground p-4">{t('drugCalculator.notFound')}</p>
-                           )}
-                        </div>
+                        {isLoading ? (
+                            <DrugCategorySkeleton />
+                        ) : (
+                            <div className="flex flex-wrap gap-2">
+                                <button onClick={() => setActiveCategoryId('all')} className={`px-3 py-1 text-sm font-semibold rounded-full transition-colors ${activeCategoryId === 'all' ? 'bg-[var(--primary-500)] text-white' : 'bg-muted hover:bg-secondary'}`}>{t('drugCalculator.allCategories')}</button>
+                                {drugCategories.map(cat => (
+                                    <button key={cat.id} onClick={() => setActiveCategoryId(cat.id)} className={`px-3 py-1 text-sm font-semibold rounded-full transition-colors ${activeCategoryId === cat.id ? 'bg-[var(--primary-500)] text-white' : 'bg-muted hover:bg-secondary'}`}>{cat.name[locale as keyof typeof cat.name]}</button>
+                                ))}
+                            </div>
+                        )}
+                        {isLoading ? (
+                            <DrugListSkeleton />
+                        ) : (
+                            <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+                               <AnimatePresence>
+                               {filteredDrugs.length > 0 ? filteredDrugs.map(drug => (
+                                   <motion.div
+                                        key={drug.id}
+                                        layout
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0 }}
+                                   >
+                                       <div
+                                            onClick={() => setSelectedDrugId(drug.id)}
+                                            className={`w-full text-start p-3 rounded-lg transition-all duration-200 cursor-pointer border ${selectedDrugId === drug.id ? 'bg-secondary border-[var(--primary-500)]' : 'bg-muted/50 border-transparent hover:border-border'}`}
+                                       >
+                                           <h4 className="font-bold text-foreground">{drug.name[locale as keyof typeof drug.name]}</h4>
+                                           <p className="text-xs text-muted-foreground" dir="ltr">{drug.brandNames.join(', ')}</p>
+                                       </div>
+                                   </motion.div>
+                               )) : (
+                                   <EmptyState icon={<PillIcon className="text-4xl" />} title={t('drugCalculator.notFound')} message="Try adjusting your search or category filters." />
+                               )}
+                               </AnimatePresence>
+                            </div>
+                        )}
                     </div>
 
                     {/* Right Panel: Calculator */}
@@ -288,7 +323,7 @@ const DrugDoseCalculatorScreen: React.FC = () => {
                                 className="h-full"
                             >
                                 {selectedDrug ? (
-                                    <CalculatorPanel drug={selectedDrug} weightKg={patientInfo.weightInKg || 0} speciesKey={patientSpeciesKey} />
+                                    <CalculatorPanel drug={selectedDrug} weightKg={weightInKg || 0} speciesKey={patientSpeciesKey} />
                                 ) : (
                                     <div className="h-full flex flex-col items-center justify-center text-center p-8">
                                         <PillIcon className="text-6xl text-foreground/20" />

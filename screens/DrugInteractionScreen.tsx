@@ -53,6 +53,13 @@ const interactions: Interaction[] = [
 
 // --- Sub-components ---
 
+// FIX: Replaced inline animation props with variants to fix type errors.
+const resultCardVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 },
+  exit: { opacity: 0 },
+};
+
 const InteractionResultCard: React.FC<{ result: Interaction & { drugNames: [string, string] } }> = ({ result }) => {
     const { t } = useLocale();
     const severityStyles = {
@@ -70,9 +77,10 @@ const InteractionResultCard: React.FC<{ result: Interaction & { drugNames: [stri
     return (
         <motion.div 
             className={`p-4 rounded-lg border ${severityStyles[result.severity]}`}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
+            variants={resultCardVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             layout
         >
             <div className="flex items-center gap-3">
@@ -89,6 +97,17 @@ const InteractionResultCard: React.FC<{ result: Interaction & { drugNames: [stri
 };
 
 // --- Main Component ---
+
+const searchResultsVariants = {
+  hidden: { opacity: 0, y: -10 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const selectedDrugVariants = {
+  hidden: { opacity: 0, scale: 0.5 },
+  visible: { opacity: 1, scale: 1 },
+};
+
 
 const DrugInteractionScreen: React.FC = () => {
   const { t } = useLocale();
@@ -178,9 +197,10 @@ const DrugInteractionScreen: React.FC = () => {
                     {searchResults.length > 0 && (
                         <motion.ul 
                             className="absolute top-full mt-2 w-full bg-card rounded-lg shadow-lg border-border z-10 max-h-60 overflow-y-auto"
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
+                            variants={searchResultsVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="hidden"
                         >
                             {searchResults.map(drug => (
                                 <li key={drug.id}>
@@ -201,9 +221,10 @@ const DrugInteractionScreen: React.FC = () => {
                             <motion.div 
                                 key={drug.id}
                                 className="flex items-center gap-2 bg-secondary text-secondary-foreground rounded-full px-3 py-1 text-sm font-semibold"
-                                initial={{ opacity: 0, scale: 0.5 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.5 }}
+                                variants={selectedDrugVariants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="hidden"
                                 layout
                             >
                                 <span>{drug.name}</span>

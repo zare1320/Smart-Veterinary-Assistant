@@ -1,10 +1,18 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import type { NavItem } from '../types';
+import { motion } from 'framer-motion';
 
 interface BottomNavProps {
   items: NavItem[];
 }
+
+// FIX: Replaced inline animation props with variants to fix type errors.
+const navItemVariants = {
+  hover: { y: -3 },
+  tap: { scale: 0.9 },
+};
+
 
 const BottomNav: React.FC<BottomNavProps> = ({ items }) => {
   const location = useLocation();
@@ -21,16 +29,23 @@ const BottomNav: React.FC<BottomNavProps> = ({ items }) => {
 
           const Icon = item.icon;
           return (
-            <Link
+            <motion.div
               key={item.key}
-              to={item.path}
-              className={`flex flex-col items-center justify-center space-y-1 w-full h-full md:w-full md:h-auto md:py-4 transition-colors ${
-                isActive ? 'text-[var(--primary-600)]' : 'text-muted-foreground hover:text-[var(--primary-600)] dark:hover:text-[var(--primary-400)]'
-              }`}
+              variants={navItemVariants}
+              whileHover="hover"
+              whileTap="tap"
+              className="h-full flex-1 md:w-full md:flex-initial"
             >
-              <Icon className="text-2xl" />
-              <span className={`text-xs font-medium ${isActive ? 'font-bold' : ''}`}>{item.label}</span>
-            </Link>
+              <Link
+                to={item.path}
+                className={`flex flex-col items-center justify-center space-y-1 w-full h-full md:w-full md:h-auto md:py-4 transition-colors ${
+                  isActive ? 'text-[var(--primary-600)]' : 'text-muted-foreground hover:text-[var(--primary-600)] dark:hover:text-[var(--primary-400)]'
+                }`}
+              >
+                <Icon className="text-2xl" />
+                <span className={`text-xs font-medium ${isActive ? 'font-bold' : ''}`}>{item.label}</span>
+              </Link>
+            </motion.div>
           );
         })}
       </nav>

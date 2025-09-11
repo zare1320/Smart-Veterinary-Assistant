@@ -9,12 +9,30 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ProtocolCardSkeleton } from '../components/skeletons/ProtocolCardSkeleton';
 import { EmptyState } from '../components/EmptyState';
 
+// FIX: Replaced inline animation props with variants to fix type errors.
+const cardContainerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+  exit: { opacity: 0 },
+};
+
+const cardButtonVariants = {
+  hover: { scale: 1.02 },
+  tap: { scale: 0.98 },
+};
+
 const ProtocolCard: React.FC<{ protocol: Protocol; onSelect: () => void }> = ({ protocol, onSelect }) => {
     const { t } = useLocale();
     const categoryLabel = protocol.category === 'Custom' ? t('custom') : t(`chip${protocol.category}`);
     return (
-        <motion.div layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <button onClick={onSelect} className="bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 w-full">
+        <motion.div layout variants={cardContainerVariants} initial="hidden" animate="visible" exit="exit">
+            <motion.button 
+                onClick={onSelect} 
+                className="bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 w-full"
+                variants={cardButtonVariants}
+                whileHover="hover"
+                whileTap="tap"
+            >
                 <div className="p-4 flex items-start gap-4 text-start">
                     <div className="flex-1">
                         <span className={`text-xs font-semibold px-2 py-1 rounded-full ${protocol.category === 'Custom' ? 'bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200' : 'bg-muted text-muted-foreground'}`}>{categoryLabel}</span>
@@ -23,7 +41,7 @@ const ProtocolCard: React.FC<{ protocol: Protocol; onSelect: () => void }> = ({ 
                     </div>
                     <div className="w-24 h-24 bg-center bg-no-repeat bg-cover rounded-lg flex-shrink-0" style={{ backgroundImage: `url("${protocol.imageUrl}")` }}></div>
                 </div>
-            </button>
+            </motion.button>
         </motion.div>
     );
 };
@@ -71,6 +89,12 @@ const ProtocolsScreen: React.FC = () => {
 
     const handleAddProtocol = (title: string = '') => {
       navigate('/add-protocol', { state: { initialTitle: title } });
+    };
+
+    // FIX: Replaced inline animation props with variants to fix type errors.
+    const chipButtonVariants = {
+      hover: { scale: 1.05 },
+      tap: { scale: 0.95 },
     };
     
     const renderContent = () => {
@@ -146,7 +170,16 @@ const ProtocolsScreen: React.FC = () => {
       <div className="px-4 py-2">
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
             {chips.map(chip => (
-                 <button key={chip.key} onClick={() => setActiveChip(chip.key)} className={`${chipBaseClasses} ${activeChip === chip.key ? activeChipClasses : inactiveChipClasses}`}>{chip.label}</button>
+                 <motion.button 
+                    key={chip.key} 
+                    onClick={() => setActiveChip(chip.key)} 
+                    className={`${chipBaseClasses} ${activeChip === chip.key ? activeChipClasses : inactiveChipClasses}`}
+                    variants={chipButtonVariants}
+                    whileHover="hover"
+                    whileTap="tap"
+                 >
+                    {chip.label}
+                 </motion.button>
             ))}
         </div>
       </div>

@@ -10,6 +10,28 @@ import { dataService } from '../services/dataService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProfileChipSkeleton, MedicationItemSkeleton } from '../components/skeletons/MyDrugsSkeletons';
 import { EmptyState } from '../components/EmptyState';
+import toast from 'react-hot-toast';
+
+// FIX: Replaced inline animation props with variants to fix type errors.
+const profileButtonVariants = {
+  active: { scale: 1.05 },
+  inactive: { scale: 1 },
+  hoverActive: { scale: 1.08 },
+  hoverInactive: { scale: 1.03 },
+  tap: { scale: 0.98 },
+};
+
+const medicationItemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 },
+  exit: { opacity: 0 },
+};
+
+const toolButtonVariants = {
+  hover: { scale: 1.02 },
+  tap: { scale: 0.98 },
+};
+
 
 const MyDrugsScreen: React.FC = () => {
     const { t } = useLocale();
@@ -78,6 +100,7 @@ const MyDrugsScreen: React.FC = () => {
         
         setIsProfileModalOpen(false);
         setEditingProfile(null);
+        toast.success(data.id ? t('toast.profile.updated') : t('toast.profile.created'));
     };
 
     const handleDeleteProfile = async (profileId: number) => {
@@ -89,6 +112,7 @@ const MyDrugsScreen: React.FC = () => {
             if (activeProfileId === profileId) {
                 setActiveProfileId(newProfiles.length > 0 ? newProfiles[0].id : null);
             }
+            toast.success(t('toast.profile.deleted'));
         }
         setOpenMenuId(null);
     };
@@ -102,6 +126,7 @@ const MyDrugsScreen: React.FC = () => {
         }
         setIsMedicationModalOpen(false);
         setEditingMedication(null);
+        toast.success(data.id ? t('toast.medication.updated') : t('toast.medication.added'));
     };
 
     const handleDeleteMedication = async (medicationId: number) => {
@@ -109,6 +134,7 @@ const MyDrugsScreen: React.FC = () => {
             // FIX: Corrected call to `deleteMedication` by adding the missing `t` argument, as required by the data service implementation.
             const updatedMeds = await dataService.deleteMedication(medicationId, t);
             setMedications(updatedMeds);
+            toast.success(t('toast.medication.deleted'));
         }
         setOpenMenuId(null);
     };
@@ -155,9 +181,13 @@ const MyDrugsScreen: React.FC = () => {
                         ) : (
                             profiles.map(profile => (
                                 <div key={profile.id} className="relative shrink-0">
-                                    <button
+                                    <motion.button
                                         onClick={() => setActiveProfileId(profile.id)}
-                                        className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 w-full ${activeProfileId === profile.id ? 'bg-card shadow-lg scale-105' : 'bg-muted/60 hover:bg-muted'}`}
+                                        className={`flex items-center gap-3 p-3 rounded-xl transition-colors duration-300 w-full ${activeProfileId === profile.id ? 'bg-card shadow-lg' : 'bg-muted/60 hover:bg-muted'}`}
+                                        variants={profileButtonVariants}
+                                        animate={activeProfileId === profile.id ? 'active' : 'inactive'}
+                                        whileHover={activeProfileId === profile.id ? 'hoverActive' : 'hoverInactive'}
+                                        whileTap="tap"
                                     >
                                         <img src={profile.imageUrl} alt={profile.name} className="w-10 h-10 rounded-full object-cover" />
                                         <div className="text-start">
@@ -165,7 +195,7 @@ const MyDrugsScreen: React.FC = () => {
                                             <p className="font-bold text-sm text-heading">{profile.name}</p>
                                         </div>
                                         <div className="w-4"></div>
-                                    </button>
+                                    </motion.button>
                                     <div ref={openMenuId === `profile-${profile.id}` ? menuRef : null} className="absolute top-2 end-2">
                                         <button onClick={() => setOpenMenuId(openMenuId === `profile-${profile.id}` ? null : `profile-${profile.id}`)} className="p-1 rounded-full text-muted-foreground hover:bg-black/10 dark:hover:bg-white/10">
                                             <EllipsisVerticalIcon />
@@ -194,9 +224,10 @@ const MyDrugsScreen: React.FC = () => {
                                     <motion.div 
                                         key={med.id} 
                                         layout
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0 }}
+                                        variants={medicationItemVariants}
+                                        initial="hidden"
+                                        animate="visible"
+                                        exit="exit"
                                         className="bg-card p-4 rounded-lg shadow-sm flex items-center gap-4"
                                     >
                                         <div className="flex-shrink-0 bg-secondary text-secondary-foreground p-3 rounded-full">
@@ -250,9 +281,9 @@ const MyDrugsScreen: React.FC = () => {
                             const isReportDisabled = isReportTool && (!activeProfile || activeMedications.length === 0);
                             
                              return (
-                                 <button 
+                                 <motion.button 
                                     key={tool.title} 
-                                    className="w-full text-start bg-card p-4 rounded-lg shadow-sm flex items-center gap-4 transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                    className="w-full text-start bg-card p-4 rounded-lg shadow-sm flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed"
                                     onClick={() => {
                                         if (tool.path === '/medication-report' && activeProfile) {
                                             navigate(tool.path, { state: { profile: activeProfile, medications: activeMedications } });
@@ -261,6 +292,9 @@ const MyDrugsScreen: React.FC = () => {
                                         }
                                     }}
                                     disabled={!tool.path || isReportDisabled}
+                                    variants={toolButtonVariants}
+                                    whileHover="hover"
+                                    whileTap="tap"
                                 >
                                     <div className={`flex-shrink-0 ${tool.color}`}>
                                         {tool.icon}
@@ -270,7 +304,7 @@ const MyDrugsScreen: React.FC = () => {
                                         <p className="text-sm text-muted-foreground">{tool.description}</p>
                                     </div>
                                     <ChevronRightIcon className="text-muted-foreground"/>
-                                </button>
+                                </motion.button>
                              );
                         })}
                     </div>

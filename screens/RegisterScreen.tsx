@@ -53,6 +53,23 @@ interface RegisterScreenProps {
     onAuthSuccess: (identity: string) => void;
 }
 
+// FIX: Replaced inline animation props with variants to fix type errors.
+const viewVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 300 : -300,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction < 0 ? 300 : -300,
+    opacity: 0,
+  }),
+};
+
+
 const RegisterScreen: React.FC<RegisterScreenProps> = ({ onAuthSuccess }) => {
     const { t, locale, setLocale } = useLocale();
     const [state, dispatch] = useReducer(authReducer, initialState);
@@ -127,12 +144,14 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onAuthSuccess }) => {
                 </div>
 
                 <div className="relative overflow-hidden">
-                    <AnimatePresence mode="wait">
+                    <AnimatePresence mode="wait" custom={state.view === 'identity' ? 1 : -1}>
                         <motion.div
                             key={state.view}
-                            initial={{ x: state.view === 'identity' ? 0 : 300, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: -300, opacity: 0 }}
+                            custom={state.view === 'identity' ? 1 : -1}
+                            variants={viewVariants}
+                            initial="enter"
+                            animate="center"
+                            exit="exit"
                             transition={{ type: 'tween', duration: 0.3 }}
                         >
                            {state.view === 'identity' ? (

@@ -3,10 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../stores/useUserStore';
 import ProfileView from '../components/profile/ProfileView';
 import { ProfileForm } from '../components/profile/ProfileForm';
+import toast from 'react-hot-toast';
+import { useLocale } from '../context/LocaleContext';
 
 const ProfileScreen: React.FC = () => {
     const { user, logout } = useUserStore();
     const navigate = useNavigate();
+    const { t } = useLocale();
     
     // If profile is incomplete, start in edit mode. Otherwise, start in view mode.
     const [isEditing, setIsEditing] = useState(!user?.isProfileComplete);
@@ -20,6 +23,7 @@ const ProfileScreen: React.FC = () => {
 
     const handleSave = () => {
         setIsEditing(false);
+        toast.success(t('toast.profile.updated'));
         // App.tsx will handle navigation away to 'home' if the profile was just completed
     };
 

@@ -2,6 +2,12 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
 import { ArrowRightIcon, CheckIcon, ArrowLeftIcon } from '../components/Icons';
+import { motion } from 'framer-motion';
+
+// FIX: Replaced inline animation props with variants to fix type errors.
+const buttonVariants = {
+  tap: { scale: 0.98 },
+};
 
 const LanguageSettingsScreen: React.FC = () => {
   const { locale, setLocale, t } = useLocale();
@@ -24,10 +30,12 @@ const LanguageSettingsScreen: React.FC = () => {
       <main className="p-4">
         <div className="bg-card rounded-lg shadow-sm divide-y divide-border">
           {options.map((option) => (
-            <button
+            <motion.button
               key={option.key}
               onClick={() => setLocale(option.key)}
-              className="flex items-center justify-between w-full p-4"
+              className="flex items-center justify-between w-full p-4 hover:bg-muted transition-colors"
+              variants={buttonVariants}
+              whileTap="tap"
             >
               <span className={`font-medium ${locale === option.key ? 'text-[var(--primary-600)] dark:text-[var(--primary-300)]' : 'text-foreground'}`}>
                 {option.label}
@@ -35,7 +43,7 @@ const LanguageSettingsScreen: React.FC = () => {
               {locale === option.key && (
                 <CheckIcon className="w-5 h-5 text-[var(--primary-600)] dark:text-[var(--primary-300)]" />
               )}
-            </button>
+            </motion.button>
           ))}
         </div>
       </main>

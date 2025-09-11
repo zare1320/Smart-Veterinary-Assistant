@@ -6,6 +6,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from '../components/Icons';
 import { LabeledInput, LabeledSelect, LabeledTextarea } from '../components/forms';
 import { Button } from '../components/Button';
 import { dataService } from '../services/dataService';
+import toast from 'react-hot-toast';
 
 const AddProtocolScreen: React.FC = () => {
   const { t, locale } = useLocale();
@@ -21,7 +22,7 @@ const AddProtocolScreen: React.FC = () => {
 
   const handleSave = async () => {
     if (!title.trim() || !description.trim() || !content.trim()) {
-      alert('Please fill out all required fields.'); // Simple validation
+      toast.error(t('toast.error.requiredFields'));
       return;
     }
 
@@ -35,6 +36,7 @@ const AddProtocolScreen: React.FC = () => {
     };
 
     await dataService.saveCustomProtocol(newProtocol);
+    toast.success(t('toast.protocol.saved'));
     navigate('/protocols');
   };
 

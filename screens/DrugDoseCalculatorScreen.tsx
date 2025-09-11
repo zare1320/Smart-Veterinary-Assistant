@@ -193,6 +193,19 @@ const CalculatorPanel: React.FC<{ drug: Drug; weightKg: number; speciesKey: stri
     );
 };
 
+// FIX: Replaced inline animation props with variants to fix type errors.
+const drugItemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 },
+  exit: { opacity: 0 },
+};
+
+const panelVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+};
+
 const DrugDoseCalculatorScreen: React.FC = () => {
     const { t, locale } = useLocale();
     const navigate = useNavigate();
@@ -291,9 +304,10 @@ const DrugDoseCalculatorScreen: React.FC = () => {
                                    <motion.div
                                         key={drug.id}
                                         layout
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0 }}
+                                        variants={drugItemVariants}
+                                        initial="hidden"
+                                        animate="visible"
+                                        exit="exit"
                                    >
                                        <div
                                             onClick={() => setSelectedDrugId(drug.id)}
@@ -316,9 +330,10 @@ const DrugDoseCalculatorScreen: React.FC = () => {
                          <AnimatePresence mode="wait">
                             <motion.div
                                 key={selectedDrugId || 'prompt'}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -20 }}
+                                variants={panelVariants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
                                 transition={{ duration: 0.3 }}
                                 className="h-full"
                             >

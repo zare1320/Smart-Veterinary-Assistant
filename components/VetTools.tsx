@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SyringeIcon, FluidIcon, HeartPulseIcon, BloodIcon, CakeIcon, ArrowLeftIcon, ArrowRightIcon } from './Icons';
 import { useLocale } from '../context/LocaleContext';
+import { motion } from 'framer-motion';
 
 type SpecialKey = 'suggest-tool';
 
@@ -45,17 +46,26 @@ const getTools = (t: (key: string) => string): Tool[] => [
     }
 ];
 
+// FIX: Replaced inline animation props with variants to fix type errors.
+const toolCardVariants = {
+  hover: { y: -5, scale: 1.03 },
+  tap: { scale: 0.97 },
+};
+
 const ToolCard: React.FC<{ tool: Tool; onClick: () => void }> = ({ tool, onClick }) => {
     const { locale } = useLocale();
     const isSuggestTool = tool.path === 'suggest-tool';
     const isDisabled = !tool.path;
 
     return (
-        <button
+        <motion.button
             onClick={onClick}
             disabled={isDisabled}
-            className="relative group bg-card rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer aspect-square disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-md disabled:hover:translate-y-0"
+            className="relative group bg-card rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer aspect-square disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-md disabled:hover:translate-y-0"
             aria-label={tool.title}
+            variants={toolCardVariants}
+            whileHover="hover"
+            whileTap="tap"
         >
             {!isSuggestTool && !isDisabled && (
                 <div className="absolute top-4 end-4 text-muted-foreground/50 group-hover:text-[var(--primary-500)] transition-colors">
@@ -65,7 +75,7 @@ const ToolCard: React.FC<{ tool: Tool; onClick: () => void }> = ({ tool, onClick
             <div className="mb-2">{tool.icon}</div>
             <h3 className="font-bold text-sm text-heading">{tool.title}</h3>
             <p className="text-xs text-muted-foreground mt-1">{tool.description}</p>
-        </button>
+        </motion.button>
     );
 };
 

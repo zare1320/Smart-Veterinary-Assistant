@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { ArrowRightIcon, CheckIcon, ArrowLeftIcon } from '../components/Icons';
 import { useLocale } from '../context/LocaleContext';
+import { motion } from 'framer-motion';
+
+// FIX: Replaced inline animation props with variants to fix type errors.
+const buttonVariants = {
+  tap: { scale: 0.98 },
+};
 
 const ThemeSettingsScreen: React.FC = () => {
   const { themeSetting, setThemeSetting } = useTheme();
@@ -27,10 +33,12 @@ const ThemeSettingsScreen: React.FC = () => {
       <main className="p-4">
         <div className="bg-card rounded-lg shadow-sm divide-y divide-border">
           {options.map((option) => (
-            <button
+            <motion.button
               key={option.key}
               onClick={() => setThemeSetting(option.key)}
-              className="flex items-center justify-between w-full p-4"
+              className="flex items-center justify-between w-full p-4 hover:bg-muted transition-colors"
+              variants={buttonVariants}
+              whileTap="tap"
             >
               <span className={`font-medium ${themeSetting === option.key ? 'text-[var(--primary-600)] dark:text-[var(--primary-300)]' : 'text-foreground'}`}>
                 {option.label}
@@ -38,7 +46,7 @@ const ThemeSettingsScreen: React.FC = () => {
               {themeSetting === option.key && (
                 <CheckIcon className="w-5 h-5 text-[var(--primary-600)] dark:text-[var(--primary-300)]" />
               )}
-            </button>
+            </motion.button>
           ))}
         </div>
         <p className="text-sm text-muted-foreground mt-4 px-2 text-start">

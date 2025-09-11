@@ -1,6 +1,7 @@
 import React from 'react';
 // FIX: Replaced framer-motion variants with inline animation props to fix type errors.
-import { motion, AnimatePresence } from 'framer-motion';
+// FIX: Added explicit Variants type to modalVariants object to fix framer-motion transition type error. The 'type' property of a transition must be a specific literal type, not a generic string.
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 
 interface InfoModalProps {
   isOpen: boolean;
@@ -9,22 +10,36 @@ interface InfoModalProps {
   children: React.ReactNode;
 }
 
+// FIX: Replaced inline animation props with variants to fix type errors.
+const backdropVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+const modalVariants: Variants = {
+  hidden: { y: "-50px", opacity: 0 },
+  visible: { y: "0", opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 30 } },
+  exit: { y: "50px", opacity: 0 },
+};
+
 const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, title, children }) => {
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          variants={backdropVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
           onClick={onClose}
         >
           <motion.div
             className="bg-card rounded-2xl shadow-xl w-full max-w-md p-6 text-start"
-            initial={{ y: "-50px", opacity: 0 }}
-            animate={{ y: "0", opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 30 } }}
-            exit={{ y: "50px", opacity: 0 }}
+            variants={modalVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             onClick={(e) => e.stopPropagation()} // Prevent closing modal when clicking inside
           >
             <div className="flex justify-between items-center mb-4">

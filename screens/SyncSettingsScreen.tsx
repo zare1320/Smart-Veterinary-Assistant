@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
 import { ArrowLeftIcon, ArrowRightIcon, SyncIcon, WifiIcon } from '../components/Icons';
 import { Button } from '../components/Button';
+import { motion } from 'framer-motion';
 
 const SyncSettingsScreen: React.FC = () => {
   const { t, locale } = useLocale();
@@ -23,6 +24,8 @@ const SyncSettingsScreen: React.FC = () => {
     { key: 'weekly', label: t('sync.weekly') },
     { key: 'onOpen', label: t('sync.onOpen') },
   ];
+  
+  const activeIndex = frequencyOptions.findIndex(opt => opt.key === syncFrequency);
 
   return (
     <div className="min-h-screen bg-background">
@@ -52,9 +55,19 @@ const SyncSettingsScreen: React.FC = () => {
                 <label htmlFor="syncFrequency" className="block text-sm font-medium text-foreground mb-1 text-start">
                     {t('sync.frequency')}
                 </label>
-                <div className="flex w-full bg-muted p-1 rounded-lg">
+                 <div className="relative flex w-full bg-muted p-1 rounded-lg">
+                    {activeIndex !== -1 && (
+                        // FIX: Replaced inline animation props with variants to fix type errors.
+                        <motion.div
+                            className="absolute top-1 bottom-1 left-0 h-auto bg-card shadow"
+                            style={{ width: `calc(100% / ${frequencyOptions.length})`, borderRadius: '6px' }}
+                            initial={false}
+                            animate={{ x: `calc(${activeIndex * 100}%)` }}
+                            transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                        />
+                    )}
                     {frequencyOptions.map(option => (
-                        <button key={option.key} onClick={() => setSyncFrequency(option.key)} className={`flex-1 py-2 px-2 sm:px-4 rounded-md text-sm font-semibold transition-colors duration-200 focus:outline-none ${syncFrequency === option.key ? 'bg-card text-[var(--primary-600)] dark:text-[var(--primary-300)] shadow' : 'text-muted-foreground hover:bg-secondary/50'}`}>
+                        <button key={option.key} onClick={() => setSyncFrequency(option.key)} className={`relative z-10 flex-1 py-2 px-2 sm:px-4 rounded-md text-sm font-semibold transition-colors duration-200 focus:outline-none ${syncFrequency === option.key ? 'text-[var(--primary-600)] dark:text-[var(--primary-300)]' : 'text-muted-foreground hover:bg-secondary/50'}`}>
                             {option.label}
                         </button>
                     ))}

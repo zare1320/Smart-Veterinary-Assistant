@@ -1,30 +1,34 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Routes, Route, useLocation, Navigate, Outlet } from 'react-router-dom';
 import { getNavItems } from './constants';
 import BottomNav from './components/BottomNav';
-import HomeScreen from './screens/HomeScreen';
-import ProtocolsScreen from './screens/ProtocolsScreen';
-import MyDrugsScreen from './screens/MyDrugsScreen';
-import SettingsScreen from './screens/SettingsScreen';
-import ProfileScreen from './screens/ProfileScreen';
-import LanguageSettingsScreen from './screens/LanguageSettingsScreen';
-import ThemeSettingsScreen from './screens/ThemeSettingsScreen';
-import SyncSettingsScreen from './screens/SyncSettingsScreen';
-import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
-import TermsOfServiceScreen from './screens/TermsOfServiceScreen';
-import WeightUnitSettingsScreen from './screens/WeightUnitSettingsScreen';
-import DrugDoseCalculatorScreen from './screens/DrugDoseCalculatorScreen';
-import FluidTherapyCalculatorScreen from './screens/FluidTherapyCalculatorScreen';
-import BloodPressureCalculatorScreen from './screens/BloodPressureCalculatorScreen';
-import BloodTransfusionCalculatorScreen from './screens/BloodTransfusionCalculatorScreen';
-import PetAgeCalculatorScreen from './screens/PetAgeCalculatorScreen';
-import ProtocolDetailScreen from './screens/ProtocolDetailScreen';
-import AddProtocolScreen from './screens/AddProtocolScreen';
-import DrugInteractionScreen from './screens/DrugInteractionScreen';
-import MedicationReportScreen from './screens/MedicationReportScreen';
 import { useLocale } from './context/LocaleContext';
 import { useUserStore } from './stores/useUserStore';
-import RegisterScreen from './screens/RegisterScreen';
+import SuspenseLoader from './components/SuspenseLoader';
+
+// --- Lazy Loaded Screens ---
+const HomeScreen = lazy(() => import('./screens/HomeScreen'));
+const ProtocolsScreen = lazy(() => import('./screens/ProtocolsScreen'));
+const MyDrugsScreen = lazy(() => import('./screens/MyDrugsScreen'));
+const SettingsScreen = lazy(() => import('./screens/SettingsScreen'));
+const ProfileScreen = lazy(() => import('./screens/ProfileScreen'));
+const LanguageSettingsScreen = lazy(() => import('./screens/LanguageSettingsScreen'));
+const ThemeSettingsScreen = lazy(() => import('./screens/ThemeSettingsScreen'));
+const SyncSettingsScreen = lazy(() => import('./screens/SyncSettingsScreen'));
+const PrivacyPolicyScreen = lazy(() => import('./screens/PrivacyPolicyScreen'));
+const TermsOfServiceScreen = lazy(() => import('./screens/TermsOfServiceScreen'));
+const WeightUnitSettingsScreen = lazy(() => import('./screens/WeightUnitSettingsScreen'));
+const DrugDoseCalculatorScreen = lazy(() => import('./screens/DrugDoseCalculatorScreen'));
+const FluidTherapyCalculatorScreen = lazy(() => import('./screens/FluidTherapyCalculatorScreen'));
+const BloodPressureCalculatorScreen = lazy(() => import('./screens/BloodPressureCalculatorScreen'));
+const BloodTransfusionCalculatorScreen = lazy(() => import('./screens/BloodTransfusionCalculatorScreen'));
+const PetAgeCalculatorScreen = lazy(() => import('./screens/PetAgeCalculatorScreen'));
+const ProtocolDetailScreen = lazy(() => import('./screens/ProtocolDetailScreen'));
+const AddProtocolScreen = lazy(() => import('./screens/AddProtocolScreen'));
+const DrugInteractionScreen = lazy(() => import('./screens/DrugInteractionScreen'));
+const MedicationReportScreen = lazy(() => import('./screens/MedicationReportScreen'));
+const RegisterScreen = lazy(() => import('./screens/RegisterScreen'));
+
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
@@ -48,7 +52,11 @@ const App: React.FC = () => {
   const location = useLocation();
 
   if (!user) {
-    return <RegisterScreen onAuthSuccess={login} />;
+    return (
+      <Suspense fallback={<SuspenseLoader />}>
+        <RegisterScreen onAuthSuccess={login} />
+      </Suspense>
+    );
   }
 
   // If the user's profile is not complete, force them to the profile screen
@@ -57,35 +65,35 @@ const App: React.FC = () => {
   }
 
   return (
-    <Routes>
-      <Route element={<MainLayout />}>
-        <Route path="/" element={<HomeScreen />} />
-        <Route path="/protocols" element={<ProtocolsScreen />} />
-        <Route path="/my-drugs" element={<MyDrugsScreen />} />
-        <Route path="/settings" element={<SettingsScreen />} />
-      </Route>
+    <Suspense fallback={<SuspenseLoader />}>
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<HomeScreen />} />
+          <Route path="/protocols" element={<ProtocolsScreen />} />
+          <Route path="/my-drugs" element={<MyDrugsScreen />} />
+          <Route path="/settings" element={<SettingsScreen />} />
+        </Route>
 
-      {/* FIX: Added missing routes for screens that are not part of the main layout */}
-      {/* Routes without the main layout/nav */}
-      <Route path="/profile" element={<ProfileScreen />} />
-      <Route path="/settings/language" element={<LanguageSettingsScreen />} />
-      <Route path="/settings/theme" element={<ThemeSettingsScreen />} />
-      <Route path="/settings/sync" element={<SyncSettingsScreen />} />
-      <Route path="/settings/privacy-policy" element={<PrivacyPolicyScreen />} />
-      <Route path="/settings/terms-of-service" element={<TermsOfServiceScreen />} />
-      <Route path="/settings/weight-unit" element={<WeightUnitSettingsScreen />} />
-      <Route path="/calculators/drug-dose" element={<DrugDoseCalculatorScreen />} />
-      <Route path="/calculators/fluid-therapy" element={<FluidTherapyCalculatorScreen />} />
-      <Route path="/calculators/blood-pressure" element={<BloodPressureCalculatorScreen />} />
-      <Route path="/calculators/blood-transfusion" element={<BloodTransfusionCalculatorScreen />} />
-      <Route path="/calculators/pet-age" element={<PetAgeCalculatorScreen />} />
-      <Route path="/protocols/:protocolId" element={<ProtocolDetailScreen />} />
-      <Route path="/add-protocol" element={<AddProtocolScreen />} />
-      <Route path="/drug-interaction-checker" element={<DrugInteractionScreen />} />
-      <Route path="/medication-report" element={<MedicationReportScreen />} />
-    </Routes>
+        {/* Routes without the main layout/nav */}
+        <Route path="/profile" element={<ProfileScreen />} />
+        <Route path="/settings/language" element={<LanguageSettingsScreen />} />
+        <Route path="/settings/theme" element={<ThemeSettingsScreen />} />
+        <Route path="/settings/sync" element={<SyncSettingsScreen />} />
+        <Route path="/settings/privacy-policy" element={<PrivacyPolicyScreen />} />
+        <Route path="/settings/terms-of-service" element={<TermsOfServiceScreen />} />
+        <Route path="/settings/weight-unit" element={<WeightUnitSettingsScreen />} />
+        <Route path="/calculators/drug-dose" element={<DrugDoseCalculatorScreen />} />
+        <Route path="/calculators/fluid-therapy" element={<FluidTherapyCalculatorScreen />} />
+        <Route path="/calculators/blood-pressure" element={<BloodPressureCalculatorScreen />} />
+        <Route path="/calculators/blood-transfusion" element={<BloodTransfusionCalculatorScreen />} />
+        <Route path="/calculators/pet-age" element={<PetAgeCalculatorScreen />} />
+        <Route path="/protocols/:protocolId" element={<ProtocolDetailScreen />} />
+        <Route path="/add-protocol" element={<AddProtocolScreen />} />
+        <Route path="/drug-interaction-checker" element={<DrugInteractionScreen />} />
+        <Route path="/medication-report" element={<MedicationReportScreen />} />
+      </Routes>
+    </Suspense>
   );
 };
 
-// FIX: Added default export for App component
 export default App;

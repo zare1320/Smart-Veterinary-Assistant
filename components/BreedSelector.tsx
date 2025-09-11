@@ -19,6 +19,12 @@ interface BreedSelectorProps {
   displayInfoKey?: string;
 }
 
+// FIX: Replaced inline animation props with variants to fix type errors.
+const listVariants = {
+  open: { opacity: 1, y: 0, height: 'auto' },
+  closed: { opacity: 0, y: -10, height: 0 },
+};
+
 const BreedSelector: React.FC<BreedSelectorProps> = ({ breeds, value, onChange, placeholder, displayInfoKey }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState('');
@@ -89,9 +95,10 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({ breeds, value, onChange, 
       <AnimatePresence>
         {isOpen && (
           <motion.ul
-            initial={{ opacity: 0, y: -10, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: 'auto' }}
-            exit={{ opacity: 0, y: -10, height: 0 }}
+            variants={listVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
             className="absolute z-10 w-full mt-2 bg-card rounded-lg shadow-lg border border-border max-h-60 overflow-y-auto"
             role="listbox"
           >

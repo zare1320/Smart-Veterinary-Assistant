@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// FIX: Added explicit Variants type to modalVariants object to fix framer-motion transition type error. The 'type' property of a transition must be a specific literal type, not a generic string.
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { useLocale } from '../context/LocaleContext';
 import { LabeledInput } from './forms';
 import { Button } from './Button';
@@ -12,6 +13,18 @@ interface ProfileModalProps {
   onSave: (data: { id?: number; name: string; imageUrl: string }) => void;
   editingProfile: MedicationProfile | null;
 }
+
+// FIX: Replaced inline animation props with variants to fix type errors.
+const backdropVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+const modalVariants: Variants = {
+  hidden: { y: "-50px", opacity: 0 },
+  visible: { y: "0", opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 30 } },
+  exit: { y: "50px", opacity: 0 },
+};
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, editingProfile }) => {
   const { t } = useLocale();
@@ -44,16 +57,18 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, ed
         // FIX: Replaced framer-motion variants with inline animation props to fix type errors.
         <motion.div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          variants={backdropVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
           onClick={onClose}
         >
           <motion.div
             className="bg-card rounded-2xl shadow-xl w-full max-w-md"
-            initial={{ y: "-50px", opacity: 0 }}
-            animate={{ y: "0", opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 30 } }}
-            exit={{ y: "50px", opacity: 0 }}
+            variants={modalVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"

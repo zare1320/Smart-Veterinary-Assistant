@@ -631,6 +631,24 @@ export const translations: { [key: string]: TranslationBlock } = {
       boostersDesc: "After the initial puppy series, boosters are required to maintain immunity.",
       boosterPoint1: "<strong>1 Year Old:</strong> A booster dose of DHPP and Rabies is typically given one year after the final puppy vaccination.",
       boosterPoint2: "<strong>Adult Dogs (after 1-year booster):</strong> Rabies vaccine is typically boosted every 1-3 years, depending on the vaccine label and local laws. DHPP is often boosted every 3 years. Other non-core vaccines may require annual boosters."
+    },
+    toast: {
+        profile: {
+            updated: "Profile updated successfully!",
+            created: "Profile created successfully!",
+            deleted: "Profile deleted."
+        },
+        medication: {
+            added: "Medication added.",
+            updated: "Medication updated.",
+            deleted: "Medication deleted."
+        },
+        protocol: {
+            saved: "Protocol saved successfully!"
+        },
+        error: {
+            requiredFields: "Please fill out all required fields."
+        }
     }
   },
   fa: {
@@ -1256,6 +1274,24 @@ export const translations: { [key: string]: TranslationBlock } = {
       boostersDesc: "پس از سری اولیه واکسن‌های تولگی، برای حفظ ایمنی به دوزهای یادآور نیاز است.",
       boosterPoint1: "<strong>۱ سالگی:</strong> یک دوز یادآور DHPP و هاری معمولاً یک سال پس از آخرین واکسن تولگی تزریق می‌شود.",
       boosterPoint2: "<strong>سگ‌های بالغ (پس از یادآور ۱ سالگی):</strong> واکسن هاری معمولاً هر ۱ تا ۳ سال، بسته به برچسب واکسن و قوانین محلی، تکرار می‌شود. DHPP اغلب هر ۳ سال تکرار می‌شود. سایر واکسن‌های غیراصلی ممکن است به یادآورهای سالانه نیاز داشته باشند."
+    },
+    toast: {
+        profile: {
+            updated: "پروفایل با موفقیت به‌روزرسانی شد!",
+            created: "پروفایل با موفقیت ایجاد شد!",
+            deleted: "پروفایل حذف شد."
+        },
+        medication: {
+            added: "دارو اضافه شد.",
+            updated: "دارو به‌روزرسانی شد.",
+            deleted: "دارو حذف شد."
+        },
+        protocol: {
+            saved: "پروتکل با موفقیت ذخیره شد!"
+        },
+        error: {
+            requiredFields: "لطفاً تمام فیلدهای الزامی را پر کنید."
+        }
     }
   }
 };

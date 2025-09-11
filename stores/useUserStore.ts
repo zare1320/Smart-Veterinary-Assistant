@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { User, UserProfile } from '../types';
+import type { User, UserProfile, UserSettings } from '../types';
 
 const VET_USERS_KEY = 'vet_users';
 const VET_CURRENT_USER_KEY = 'vet_current_user';
@@ -9,6 +9,7 @@ interface UserState {
   login: (identity: string) => void;
   logout: () => void;
   updateProfile: (profileData: Partial<UserProfile>) => void;
+  updateSettings: (settingsData: Partial<UserSettings>) => void;
 }
 
 const getInitialUser = (): User | null => {
@@ -39,12 +40,23 @@ export const useUserStore = create<UserState>((set) => ({
         phone: !isEmail ? identity : undefined,
         isProfileComplete: false,
         profile: { fullName: '', role: '' },
+        settings: { weightUnit: 'kg' },
       };
       const updatedUsers = [...allUsers, newUser];
       saveAllUsers(updatedUsers);
       currentUser = newUser;
     }
     
+    // Migration for existing users without the settings property
+    if (currentUser && !currentUser.settings) {
+        currentUser.settings = { weightUnit: 'kg' };
+        const userIndex = allUsers.findIndex(u => u.id === currentUser!.id);
+        if (userIndex > -1) {
+            allUsers[userIndex] = currentUser;
+            saveAllUsers(allUsers);
+        }
+    }
+
     localStorage.setItem(VET_CURRENT_USER_KEY, JSON.stringify(currentUser));
     set({ user: currentUser });
   },
@@ -60,6 +72,28 @@ export const useUserStore = create<UserState>((set) => ({
         ...state.user,
         isProfileComplete: true,
         profile: { ...state.user.profile, ...profileData },
+      };
+      
+      const allUsers = getAllUsers();
+      const userIndex = allUsers.findIndex(u => u.id === updatedUser.id);
+      if (userIndex > -1) {
+        allUsers[userIndex] = updatedUser;
+      } else {
+        allUsers.push(updatedUser);
+      }
+      saveAllUsers(allUsers);
+      localStorage.setItem(VET_CURRENT_USER_KEY, JSON.stringify(updatedUser));
+      
+      return { user: updatedUser };
+    });
+  },
+  updateSettings: (settingsData) => {
+    set((state) => {
+      if (!state.user) return state;
+
+      const updatedUser: User = {
+        ...state.user,
+        settings: { ...state.user.settings, ...settingsData },
       };
       
       const allUsers = getAllUsers();

@@ -230,6 +230,11 @@ export interface Medication {
 
 // --- User Authentication and Profile Types ---
 export type UserRole = 'student' | 'dvm';
+export type WeightUnit = 'kg' | 'lb';
+
+export interface UserSettings {
+    weightUnit: WeightUnit;
+}
 
 export interface UserProfile {
     fullName: string;
@@ -246,4 +251,5 @@ export interface User {
     phone?: string;
     isProfileComplete: boolean;
     profile: UserProfile;
+    settings: UserSettings;
 }

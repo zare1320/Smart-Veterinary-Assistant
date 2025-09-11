@@ -2,18 +2,31 @@ import React from 'react';
 import { usePatientStore } from '../stores/usePatientStore';
 import { useLocale } from '../context/LocaleContext';
 import { getSpeciesList } from '../constants';
+import { useUserStore } from '../stores/useUserStore';
 
 const PatientInfoDisplay: React.FC = () => {
     const { species, weightInKg, breed } = usePatientStore(
         state => ({ species: state.species, weightInKg: state.weightInKg, breed: state.breed })
     );
     const { t, locale, localizeNumber } = useLocale();
+    const { user } = useUserStore();
 
     // Get the full species list to act as the single source of truth for images.
     const speciesList = getSpeciesList(t);
 
     const speciesName = species || '---';
-    const weightDisplay = weightInKg ? `${localizeNumber(weightInKg.toFixed(2))} ${t('kg')}` : '---';
+    
+    const weightUnit = user?.settings?.weightUnit || 'kg';
+    const KG_TO_LB = 2.20462;
+    let weightDisplay = '---';
+
+    if (weightInKg) {
+        if (weightUnit === 'lb') {
+            weightDisplay = `${localizeNumber((weightInKg * KG_TO_LB).toFixed(2))} lb`;
+        } else {
+            weightDisplay = `${localizeNumber(weightInKg.toFixed(2))} kg`;
+        }
+    }
 
     // Find the selected species object from the master list.
     const selectedSpeciesObject = species 

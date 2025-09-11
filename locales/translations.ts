@@ -655,7 +655,7 @@ export const translations: { [key: string]: TranslationBlock } = {
     // General
     appName: "دستیار هوشمند دامپزشک",
     back: "بازگشت",
-    kg: "ک‌گ",
+    kg: "kg",
     edit: "ویرایش",
     delete: "حذف",
     cancel: "انصراف",

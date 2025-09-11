@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from '../components/Icons';
-
-type WeightUnit = 'kg' | 'lb';
+import { useUserStore } from '../stores/useUserStore';
+import type { WeightUnit } from '../types';
 
 const WeightUnitSettingsScreen: React.FC = () => {
   const { t, locale } = useLocale();
   const navigate = useNavigate();
-  // In a real app, this state would come from a global context (like User settings).
-  const [selectedUnit, setSelectedUnit] = useState<WeightUnit>('kg');
+  const { user, updateSettings } = useUserStore();
+  const selectedUnit = user?.settings?.weightUnit || 'kg';
+
+  const handleSelectUnit = (unit: WeightUnit) => {
+    updateSettings({ weightUnit: unit });
+  };
 
   const options: { key: WeightUnit; label: string; description: string }[] = [
     { key: 'kg', label: t('weightUnits.kg.label'), description: t('weightUnits.kg.description') },
@@ -30,7 +34,7 @@ const WeightUnitSettingsScreen: React.FC = () => {
           {options.map((option) => (
             <button
               key={option.key}
-              onClick={() => setSelectedUnit(option.key)}
+              onClick={() => handleSelectUnit(option.key)}
               className="flex items-center justify-between w-full p-4 text-start"
             >
               <div>

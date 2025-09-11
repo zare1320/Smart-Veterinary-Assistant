@@ -5,12 +5,30 @@ import SegmentedControl from './SegmentedControl';
 import type { Gender, AgeGroup } from '../types';
 import { dataService } from '../services/dataService';
 import BreedSelector from './BreedSelector';
+import { useUserStore } from '../stores/useUserStore';
 
 const PatientInfoForm: React.FC = () => {
   const { species, weightInKg, gender, breed, ageGroup, clinicalSigns, updatePatientInfo } = usePatientStore();
   const { t } = useLocale();
+  const { user } = useUserStore();
   const [breeds, setBreeds] = useState<any[]>([]);
   const [breedConfig, setBreedConfig] = useState({ key: undefined, placeholder: t('enterBreed') });
+
+  const weightUnit = user?.settings?.weightUnit || 'kg';
+  const [displayWeight, setDisplayWeight] = useState('');
+  const KG_TO_LB = 2.20462;
+
+  useEffect(() => {
+    if (weightInKg === null) {
+        setDisplayWeight('');
+    } else {
+        if (weightUnit === 'lb') {
+            setDisplayWeight(Number((weightInKg * KG_TO_LB).toFixed(2)).toString());
+        } else {
+            setDisplayWeight(Number(weightInKg.toFixed(4)).toString());
+        }
+    }
+  }, [weightInKg, weightUnit]);
 
   useEffect(() => {
     const fetchBreeds = async () => {
@@ -31,9 +49,19 @@ const PatientInfoForm: React.FC = () => {
     updatePatientInfo({ [e.target.name]: e.target.value });
   };
 
-  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDisplayWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    updatePatientInfo({ weightInKg: value === '' ? null : parseFloat(value) });
+    setDisplayWeight(value);
+    
+    const normalizedValue = value.replace(',', '.');
+    const parsedValue = parseFloat(normalizedValue);
+
+    if (value === '' || isNaN(parsedValue)) {
+        updatePatientInfo({ weightInKg: null });
+    } else {
+        const weightInKgValue = weightUnit === 'lb' ? parsedValue / KG_TO_LB : parsedValue;
+        updatePatientInfo({ weightInKg: weightInKgValue });
+    }
   };
 
   const genderOptions = [
@@ -54,17 +82,18 @@ const PatientInfoForm: React.FC = () => {
       {/* Weight */}
       <div>
         <label htmlFor="weight" className="block text-sm font-medium text-card-foreground mb-1 text-start">
-          {t('weight')} ({t('kg')})
+          {t('weight')} ({weightUnit})
         </label>
         <div className="relative">
           <input
             type="number"
             id="weight"
             name="weightInKg"
-            value={weightInKg ?? ''}
-            onChange={handleWeightChange}
+            value={displayWeight}
+            onChange={handleDisplayWeightChange}
             placeholder={t('enterWeight')}
             className="custom-form-input text-start"
+            step="0.01"
           />
         </div>
       </div>

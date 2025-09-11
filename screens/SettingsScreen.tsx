@@ -126,7 +126,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({ icon, title, description, a
 const SettingsScreen: React.FC = () => {
   const { t, locale } = useLocale();
   const { themeSetting } = useTheme();
-  const logout = useUserStore(state => state.logout);
+  const { user, logout } = useUserStore(state => ({ user: state.user, logout: state.logout }));
   const navigate = useNavigate();
   const [pushNotifications, setPushNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -141,6 +141,9 @@ const SettingsScreen: React.FC = () => {
       en: 'English',
       fa: 'فارسی',
   };
+  
+  const weightUnit = user?.settings?.weightUnit || 'kg';
+  const weightUnitLabel = t(`weightUnits.${weightUnit}.label`);
 
   const ArrowIcon = locale === 'fa' ? ChevronLeftIcon : ChevronRightIcon;
 
@@ -193,7 +196,7 @@ const SettingsScreen: React.FC = () => {
         </SettingsSection>
 
         <SettingsSection title={t('settingsCalculatorDefaults')}>
-            <SettingsItem icon={<ScaleIcon />} title={t('defaultWeightUnit')} description={t('settings.weightUnitDescription')} onClick={() => navigate('/settings/weight-unit')} action={<><span>{t('kg')}</span><ArrowIcon/></>} />
+            <SettingsItem icon={<ScaleIcon />} title={t('defaultWeightUnit')} description={t('settings.weightUnitDescription')} onClick={() => navigate('/settings/weight-unit')} action={<><span>{weightUnitLabel}</span><ArrowIcon/></>} />
         </SettingsSection>
 
         <SettingsSection title={t('settings.account')}>

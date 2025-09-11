@@ -21,23 +21,23 @@ const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, title, children 
           onClick={onClose}
         >
           <motion.div
-            className="bg-slate-50 dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md p-6 text-start"
+            className="bg-card rounded-2xl shadow-xl w-full max-w-md p-6 text-start"
             initial={{ y: "-50px", opacity: 0 }}
             animate={{ y: "0", opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 30 } }}
             exit={{ y: "50px", opacity: 0 }}
             onClick={(e) => e.stopPropagation()} // Prevent closing modal when clicking inside
           >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{title}</h2>
+              <h2 className="text-xl font-bold text-heading">{title}</h2>
               <button
                 onClick={onClose}
-                className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="Close modal"
               >
                 <i className="fa-solid fa-times text-xl"></i>
               </button>
             </div>
-            <div className="text-slate-600 dark:text-slate-300 space-y-4">
+            <div className="text-foreground/90 space-y-4">
               {children}
             </div>
           </motion.div>

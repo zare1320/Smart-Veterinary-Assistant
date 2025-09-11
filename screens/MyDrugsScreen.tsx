@@ -1,17 +1,15 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import type { Medication, MedicationProfile, ScreenProps, NavItemKey } from '../types';
+import { useNavigate } from 'react-router-dom';
+import type { Medication, MedicationProfile } from '../types';
 import { useLocale } from '../context/LocaleContext';
 import { PillIcon, PlusIcon, ChevronRightIcon, EllipsisVerticalIcon, PawIcon, ExchangeIcon, BellIcon, FileMedicalIcon, PencilIcon, DeleteIcon } from '../components/Icons';
 import { Button } from '../components/Button';
 import ProfileModal from '../components/ProfileModal';
 import MedicationModal from '../components/MedicationModal';
 
-interface MyDrugsScreenProps extends ScreenProps {
-    onGenerateReport: (data: { profile: MedicationProfile; medications: Medication[] }) => void;
-}
-
-const MyDrugsScreen: React.FC<MyDrugsScreenProps> = ({ onNavigate, onGenerateReport }) => {
+const MyDrugsScreen: React.FC = () => {
     const { t } = useLocale();
+    const navigate = useNavigate();
 
     // Mock Data converted to state
     const [profiles, setProfiles] = useState<MedicationProfile[]>([
@@ -123,16 +121,16 @@ const MyDrugsScreen: React.FC<MyDrugsScreenProps> = ({ onNavigate, onGenerateRep
     };
 
     const featureTools = [
-        { key: 'interactions', title: t('myMedList.featureInteractionsTitle'), description: t('myMedList.featureInteractionsDesc'), icon: <ExchangeIcon className="text-2xl" />, color: 'text-blue-500', navKey: 'drug-interaction-checker' as NavItemKey },
-        { key: 'alerts', title: t('myMedList.featureAlertsTitle'), description: t('myMedList.featureAlertsDesc'), icon: <BellIcon className="text-2xl" />, color: 'text-amber-500', navKey: null },
-        { key: 'reports', title: t('myMedList.featureReportsTitle'), description: t('myMedList.featureReportsDesc'), icon: <FileMedicalIcon className="text-2xl" />, color: 'text-emerald-500', navKey: 'medication-report' as NavItemKey }
+        { key: 'interactions', title: t('myMedList.featureInteractionsTitle'), description: t('myMedList.featureInteractionsDesc'), icon: <ExchangeIcon className="text-2xl" />, color: 'text-blue-500', path: '/drug-interaction-checker' },
+        { key: 'alerts', title: t('myMedList.featureAlertsTitle'), description: t('myMedList.featureAlertsDesc'), icon: <BellIcon className="text-2xl" />, color: 'text-amber-500', path: null },
+        { key: 'reports', title: t('myMedList.featureReportsTitle'), description: t('myMedList.featureReportsDesc'), icon: <FileMedicalIcon className="text-2xl" />, color: 'text-emerald-500', path: '/medication-report' }
     ];
 
     return (
         <div className="min-h-screen">
-             <header className="sticky top-0 z-10 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm">
+             <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm">
                 <div className="flex items-center p-4 justify-between">
-                    <h1 className="text-xl font-bold leading-tight tracking-tight">{t('myMedList.title')}</h1>
+                    <h1 className="text-xl font-bold leading-tight tracking-tight text-heading">{t('myMedList.title')}</h1>
                     <button 
                         onClick={() => openProfileModal(null)}
                         className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--primary-500)] text-white hover:bg-[var(--primary-600)] transition-colors shadow-md"
@@ -151,23 +149,23 @@ const MyDrugsScreen: React.FC<MyDrugsScreenProps> = ({ onNavigate, onGenerateRep
                             <div key={profile.id} className="relative shrink-0">
                                 <button
                                     onClick={() => setActiveProfileId(profile.id)}
-                                    className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 w-full ${activeProfileId === profile.id ? 'bg-white dark:bg-slate-800 shadow-lg scale-105' : 'bg-slate-200/80 dark:bg-slate-800/50 hover:bg-slate-300/80 dark:hover:bg-slate-700/80'}`}
+                                    className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 w-full ${activeProfileId === profile.id ? 'bg-card shadow-lg scale-105' : 'bg-muted/60 hover:bg-muted'}`}
                                 >
                                     <img src={profile.imageUrl} alt={profile.name} className="w-10 h-10 rounded-full object-cover" />
                                     <div className="text-start">
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">{t('myMedList.profileFor')}</p>
-                                        <p className="font-bold text-sm text-slate-900 dark:text-slate-100">{profile.name}</p>
+                                        <p className="text-xs text-muted-foreground">{t('myMedList.profileFor')}</p>
+                                        <p className="font-bold text-sm text-heading">{profile.name}</p>
                                     </div>
                                     <div className="w-4"></div>
                                 </button>
                                 <div ref={openMenuId === `profile-${profile.id}` ? menuRef : null} className="absolute top-2 end-2">
-                                    <button onClick={() => setOpenMenuId(openMenuId === `profile-${profile.id}` ? null : `profile-${profile.id}`)} className="p-1 rounded-full text-slate-500 hover:bg-black/10 dark:hover:bg-white/10">
+                                    <button onClick={() => setOpenMenuId(openMenuId === `profile-${profile.id}` ? null : `profile-${profile.id}`)} className="p-1 rounded-full text-muted-foreground hover:bg-black/10 dark:hover:bg-white/10">
                                         <EllipsisVerticalIcon />
                                     </button>
                                     {openMenuId === `profile-${profile.id}` && (
-                                        <div className="absolute end-0 mt-2 w-32 bg-white dark:bg-slate-700 rounded-lg shadow-xl z-20 text-start">
-                                            <button onClick={() => openProfileModal(profile)} className="w-full text-start px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 flex items-center gap-2 rounded-t-lg"><PencilIcon/> {t('edit')}</button>
-                                            <button onClick={() => handleDeleteProfile(profile.id)} className="w-full text-start px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-600 flex items-center gap-2 rounded-b-lg"><DeleteIcon/> {t('delete')}</button>
+                                        <div className="absolute end-0 mt-2 w-32 bg-popover rounded-lg shadow-xl z-20 text-start">
+                                            <button onClick={() => openProfileModal(profile)} className="w-full text-start px-4 py-2 text-sm text-popover-foreground hover:bg-muted flex items-center gap-2 rounded-t-lg"><PencilIcon/> {t('edit')}</button>
+                                            <button onClick={() => handleDeleteProfile(profile.id)} className="w-full text-start px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-muted flex items-center gap-2 rounded-b-lg"><DeleteIcon/> {t('delete')}</button>
                                         </div>
                                     )}
                                 </div>
@@ -181,23 +179,23 @@ const MyDrugsScreen: React.FC<MyDrugsScreenProps> = ({ onNavigate, onGenerateRep
                     {activeMedications.length > 0 ? (
                         <div className="space-y-3">
                             {activeMedications.map(med => (
-                                <div key={med.id} className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm flex items-center gap-4">
-                                    <div className="flex-shrink-0 bg-[var(--primary-100)] dark:bg-[var(--primary-900)] text-[var(--primary-600)] dark:text-[var(--primary-300)] p-3 rounded-full">
+                                <div key={med.id} className="bg-card p-4 rounded-lg shadow-sm flex items-center gap-4">
+                                    <div className="flex-shrink-0 bg-secondary text-secondary-foreground p-3 rounded-full">
                                         <PillIcon className="text-2xl"/>
                                     </div>
                                     <div className="flex-1 text-start">
-                                        <h3 className="font-bold text-slate-900 dark:text-slate-100">{med.name}</h3>
-                                        <p className="text-sm text-slate-600 dark:text-slate-400">{med.formulation}</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-500 mt-1 whitespace-pre-wrap">{med.instructions}</p>
+                                        <h3 className="font-bold text-heading">{med.name}</h3>
+                                        <p className="text-sm text-foreground">{med.formulation}</p>
+                                        <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap">{med.instructions}</p>
                                     </div>
                                     <div ref={openMenuId === `med-${med.id}` ? menuRef : null} className="relative">
-                                        <button onClick={() => setOpenMenuId(openMenuId === `med-${med.id}` ? null : `med-${med.id}`)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">
+                                        <button onClick={() => setOpenMenuId(openMenuId === `med-${med.id}` ? null : `med-${med.id}`)} className="text-muted-foreground hover:text-foreground">
                                             <EllipsisVerticalIcon />
                                         </button>
                                         {openMenuId === `med-${med.id}` && (
-                                            <div className="absolute end-0 mt-2 w-32 bg-white dark:bg-slate-700 rounded-lg shadow-xl z-20 text-start">
-                                                <button onClick={() => openMedicationModal(med)} className="w-full text-start px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 flex items-center gap-2 rounded-t-lg"><PencilIcon/> {t('edit')}</button>
-                                                <button onClick={() => handleDeleteMedication(med.id)} className="w-full text-start px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-600 flex items-center gap-2 rounded-b-lg"><DeleteIcon/> {t('delete')}</button>
+                                            <div className="absolute end-0 mt-2 w-32 bg-popover rounded-lg shadow-xl z-20 text-start">
+                                                <button onClick={() => openMedicationModal(med)} className="w-full text-start px-4 py-2 text-sm text-popover-foreground hover:bg-muted flex items-center gap-2 rounded-t-lg"><PencilIcon/> {t('edit')}</button>
+                                                <button onClick={() => handleDeleteMedication(med.id)} className="w-full text-start px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-muted flex items-center gap-2 rounded-b-lg"><DeleteIcon/> {t('delete')}</button>
                                             </div>
                                         )}
                                     </div>
@@ -210,12 +208,12 @@ const MyDrugsScreen: React.FC<MyDrugsScreenProps> = ({ onNavigate, onGenerateRep
                             </div>
                         </div>
                     ) : (
-                        <div className="text-center bg-white dark:bg-slate-800 rounded-lg p-8 shadow-sm">
-                            <div className="mx-auto bg-slate-100 dark:bg-slate-700 w-16 h-16 flex items-center justify-center rounded-full">
-                                <PawIcon className="text-3xl text-slate-400 dark:text-slate-500" />
+                        <div className="text-center bg-card rounded-lg p-8 shadow-sm">
+                            <div className="mx-auto bg-muted w-16 h-16 flex items-center justify-center rounded-full">
+                                <PawIcon className="text-3xl text-muted-foreground" />
                             </div>
-                            <h3 className="mt-4 text-lg font-semibold text-slate-900 dark:text-slate-100">{t('myMedList.noMedications')}</h3>
-                            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t('myMedList.getStarted')}</p>
+                            <h3 className="mt-4 text-lg font-semibold text-heading">{t('myMedList.noMedications')}</h3>
+                            <p className="mt-1 text-sm text-muted-foreground">{t('myMedList.getStarted')}</p>
                             <Button onClick={() => openMedicationModal(null)} variant="primary" className="mt-4">
                                 <PlusIcon className="me-2" /> {t('myMedList.addMedication')}
                             </Button>
@@ -225,7 +223,7 @@ const MyDrugsScreen: React.FC<MyDrugsScreenProps> = ({ onNavigate, onGenerateRep
 
                  {/* Feature Showcase */}
                 <section>
-                    <h2 className="text-xl font-bold text-start mb-4 text-slate-900 dark:text-slate-100">{t('myMedList.yourTools')}</h2>
+                    <h2 className="text-xl font-bold text-start mb-4 text-heading">{t('myMedList.yourTools')}</h2>
                     <div className="space-y-3">
                         {featureTools.map(tool => {
                             const isReportTool = tool.key === 'reports';
@@ -234,24 +232,24 @@ const MyDrugsScreen: React.FC<MyDrugsScreenProps> = ({ onNavigate, onGenerateRep
                              return (
                                  <button 
                                     key={tool.title} 
-                                    className="w-full text-start bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm flex items-center gap-4 transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                    className="w-full text-start bg-card p-4 rounded-lg shadow-sm flex items-center gap-4 transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                                     onClick={() => {
-                                        if (tool.navKey === 'medication-report' && activeProfile) {
-                                            onGenerateReport({ profile: activeProfile, medications: activeMedications });
-                                        } else if (tool.navKey) {
-                                            onNavigate(tool.navKey)
+                                        if (tool.path === '/medication-report' && activeProfile) {
+                                            navigate(tool.path, { state: { profile: activeProfile, medications: activeMedications } });
+                                        } else if (tool.path) {
+                                            navigate(tool.path)
                                         }
                                     }}
-                                    disabled={!tool.navKey || isReportDisabled}
+                                    disabled={!tool.path || isReportDisabled}
                                 >
                                     <div className={`flex-shrink-0 ${tool.color}`}>
                                         {tool.icon}
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="font-bold text-slate-900 dark:text-slate-100">{tool.title}</h3>
-                                        <p className="text-sm text-slate-600 dark:text-slate-400">{tool.description}</p>
+                                        <h3 className="font-bold text-heading">{tool.title}</h3>
+                                        <p className="text-sm text-muted-foreground">{tool.description}</p>
                                     </div>
-                                    <ChevronRightIcon className="text-slate-400 dark:text-slate-500"/>
+                                    <ChevronRightIcon className="text-muted-foreground"/>
                                 </button>
                              );
                         })}

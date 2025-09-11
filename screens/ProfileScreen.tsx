@@ -1,51 +1,54 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import ProfileView from '../components/profile/ProfileView';
-import ProfileForm from '../components/profile/ProfileForm';
-import { AnimatePresence, motion } from 'framer-motion';
-import type { ScreenProps } from '../types';
+import { ProfileForm } from '../components/profile/ProfileForm';
 
-const ProfileScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
-    const { user, updateProfile, logout } = useUser();
+const ProfileScreen: React.FC = () => {
+    const { user, logout } = useUser();
+    const navigate = useNavigate();
+    
+    // If profile is incomplete, start in edit mode. Otherwise, start in view mode.
     const [isEditing, setIsEditing] = useState(!user?.isProfileComplete);
 
     if (!user) {
-        // This should not happen if App.tsx logic is correct, but as a safeguard:
+        // This case should ideally not be reached if App.tsx handles redirection correctly,
+        // but it's good practice to have a fallback.
+        // The App component will render the RegisterScreen if there's no user.
         return null;
     }
-    
-    const handleProfileSave = (data: any) => {
-        updateProfile(data);
-        setIsEditing(false); // Switch to view mode after saving
-    }
+
+    const handleSave = () => {
+        setIsEditing(false);
+        // App.tsx will handle navigation away to 'home' if the profile was just completed
+    };
+
+    const handleCancel = () => {
+        // If profile is complete, we can go back to view mode.
+        // If it's incomplete, they must complete it. Let's send them to settings.
+        if (user.isProfileComplete) {
+            setIsEditing(false);
+        } else {
+             navigate('/settings');
+        }
+    };
 
     return (
-        <div className="min-h-screen">
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={isEditing ? 'form' : 'view'}
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.3 }}
-                >
-                    {isEditing ? (
-                        <ProfileForm 
-                            user={user}
-                            onSave={handleProfileSave}
-                            onCancel={() => user.isProfileComplete && setIsEditing(false)}
-                            onNavigate={onNavigate}
-                        />
-                    ) : (
-                        <ProfileView 
-                            user={user}
-                            onEdit={() => setIsEditing(true)}
-                            onLogout={logout}
-                            onNavigate={onNavigate}
-                        />
-                    )}
-                </motion.div>
-            </AnimatePresence>
+        <div className="min-h-screen bg-background">
+            {isEditing ? (
+                <div className="p-4 sm:p-6 max-w-2xl mx-auto flex items-center justify-center min-h-screen">
+                    <div className="bg-card rounded-2xl shadow-xl p-6 w-full">
+                        <ProfileForm onSave={handleSave} onCancel={handleCancel} />
+                    </div>
+                </div>
+            ) : (
+                <ProfileView 
+                    user={user} 
+                    onEdit={() => setIsEditing(true)} 
+                    onLogout={logout}
+                    onNavigate={navigate}
+                />
+            )}
         </div>
     );
 };

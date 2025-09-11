@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
 import { usePatient } from '../context/PatientContext';
-import type { ScreenProps, Drug, DrugFormulation, DrugDosage } from '../types';
+import type { Drug, DrugFormulation, DrugDosage } from '../types';
 import { allDrugs, drugCategories } from '../data/drug_data';
 import { PillIcon, SearchIcon } from '../components/Icons';
 import { LabeledSelect } from '../components/forms';
@@ -131,7 +132,7 @@ const CalculatorPanel: React.FC<{ drug: Drug; weightKg: number; speciesKey: stri
 
     return (
         <div className="p-6 space-y-6 flex flex-col h-full">
-            <h3 className="text-2xl font-bold text-inherit text-start">{drug.name[locale as keyof typeof drug.name]}</h3>
+            <h3 className="text-2xl font-bold text-heading text-start">{drug.name[locale as keyof typeof drug.name]}</h3>
             
             <div className="flex-grow space-y-4">
                 <LabeledSelect label={t('drugCalculator.formulation')} id="formulation" value={selectedFormulationId} onChange={e => setSelectedFormulationId(e.target.value)}>
@@ -155,17 +156,17 @@ const CalculatorPanel: React.FC<{ drug: Drug; weightKg: number; speciesKey: stri
                                 />
                             </div>
                             <div className="flex items-center gap-2 justify-end shrink-0 text-end">
-                                <label htmlFor="dosePerKg" className="block text-sm font-medium text-inherit/80 whitespace-nowrap">
+                                <label htmlFor="dosePerKg" className="block text-sm font-medium text-foreground/80 whitespace-nowrap">
                                     {t('drugCalculator.rangeRoute')}
                                 </label>
-                                <div className="text-xs text-inherit/70 whitespace-nowrap" dir="ltr">
+                                <div className="text-xs text-foreground/70 whitespace-nowrap" dir="ltr">
                                      ({localizeNumber(relevantDosage.doseRange?.min || 0)} - {localizeNumber(relevantDosage.doseRange?.max || 0)}) {relevantDosage.unit} {relevantDosage.route && `(${relevantDosage.route})`}
                                 </div>
                             </div>
                         </div>
 
                         {relevantDosage.note && (
-                            <p className="text-sm text-inherit/70 p-2 bg-black/5 dark:bg-white/5 rounded-md text-start whitespace-pre-wrap">
+                            <p className="text-sm text-foreground/70 p-2 bg-black/5 dark:bg-white/5 rounded-md text-start whitespace-pre-wrap">
                                 {t(relevantDosage.note)}
                             </p>
                         )}
@@ -191,8 +192,9 @@ const CalculatorPanel: React.FC<{ drug: Drug; weightKg: number; speciesKey: stri
     );
 };
 
-const DrugDoseCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
+const DrugDoseCalculatorScreen: React.FC = () => {
     const { t, locale } = useLocale();
+    const navigate = useNavigate();
     const { patientInfo } = usePatient();
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategoryId, setActiveCategoryId] = useState('all');
@@ -232,11 +234,11 @@ const DrugDoseCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
             {!hasWeight && <MissingPatientWeightBanner />}
             <div className="container mx-auto p-4 md:p-6">
                 <div className="flex justify-between items-center mb-4">
-                    <BackButton onClick={() => onNavigate('home')} />
+                    <BackButton onClick={() => navigate('/')} />
                     <PatientInfoDisplay />
                 </div>
                 <header className="text-center mb-6">
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-inherit">{t('drugCalculator.title')}</h2>
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-heading">{t('drugCalculator.title')}</h2>
                 </header>
 
                 <div className={`grid grid-cols-1 md:grid-cols-3 gap-8 ${!hasWeight ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -253,9 +255,9 @@ const DrugDoseCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
                             />
                         </div>
                         <div className="flex flex-wrap gap-2">
-                             <button onClick={() => setActiveCategoryId('all')} className={`px-3 py-1 text-sm font-semibold rounded-full transition-colors ${activeCategoryId === 'all' ? 'bg-[var(--primary-500)] text-white' : 'bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20'}`}>{t('drugCalculator.allCategories')}</button>
+                             <button onClick={() => setActiveCategoryId('all')} className={`px-3 py-1 text-sm font-semibold rounded-full transition-colors ${activeCategoryId === 'all' ? 'bg-[var(--primary-500)] text-white' : 'bg-muted hover:bg-secondary'}`}>{t('drugCalculator.allCategories')}</button>
                             {drugCategories.map(cat => (
-                                 <button key={cat.id} onClick={() => setActiveCategoryId(cat.id)} className={`px-3 py-1 text-sm font-semibold rounded-full transition-colors ${activeCategoryId === cat.id ? 'bg-[var(--primary-500)] text-white' : 'bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20'}`}>{cat.name[locale as keyof typeof cat.name]}</button>
+                                 <button key={cat.id} onClick={() => setActiveCategoryId(cat.id)} className={`px-3 py-1 text-sm font-semibold rounded-full transition-colors ${activeCategoryId === cat.id ? 'bg-[var(--primary-500)] text-white' : 'bg-muted hover:bg-secondary'}`}>{cat.name[locale as keyof typeof cat.name]}</button>
                             ))}
                         </div>
                         <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
@@ -263,13 +265,13 @@ const DrugDoseCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
                                <div
                                     key={drug.id}
                                     onClick={() => setSelectedDrugId(drug.id)}
-                                    className={`w-full text-start p-3 rounded-lg transition-all duration-200 cursor-pointer border ${selectedDrugId === drug.id ? 'bg-[var(--primary-500)]/10 border-[var(--primary-500)]' : 'bg-black/5 dark:bg-white/5 border-transparent hover:border-black/20 dark:hover:border-white/20'}`}
+                                    className={`w-full text-start p-3 rounded-lg transition-all duration-200 cursor-pointer border ${selectedDrugId === drug.id ? 'bg-secondary border-[var(--primary-500)]' : 'bg-muted/50 border-transparent hover:border-border'}`}
                                >
-                                   <h4 className="font-bold text-inherit">{drug.name[locale as keyof typeof drug.name]}</h4>
-                                   <p className="text-xs text-inherit/70" dir="ltr">{drug.brandNames.join(', ')}</p>
+                                   <h4 className="font-bold text-foreground">{drug.name[locale as keyof typeof drug.name]}</h4>
+                                   <p className="text-xs text-muted-foreground" dir="ltr">{drug.brandNames.join(', ')}</p>
                                </div>
                            )) : (
-                               <p className="text-center text-inherit/70 p-4">{t('drugCalculator.notFound')}</p>
+                               <p className="text-center text-muted-foreground p-4">{t('drugCalculator.notFound')}</p>
                            )}
                         </div>
                     </div>
@@ -289,8 +291,8 @@ const DrugDoseCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
                                     <CalculatorPanel drug={selectedDrug} weightKg={patientInfo.weightInKg || 0} speciesKey={patientSpeciesKey} />
                                 ) : (
                                     <div className="h-full flex flex-col items-center justify-center text-center p-8">
-                                        <PillIcon className="text-6xl text-inherit/20" />
-                                        <p className="mt-4 text-lg font-medium text-slate-500 dark:text-slate-400">{t('drugCalculator.selectDrugPrompt')}</p>
+                                        <PillIcon className="text-6xl text-foreground/20" />
+                                        <p className="mt-4 text-lg font-medium text-muted-foreground">{t('drugCalculator.selectDrugPrompt')}</p>
                                     </div>
                                 )}
                             </motion.div>

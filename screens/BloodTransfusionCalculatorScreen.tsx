@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
 import { usePatient } from '../context/PatientContext';
-import type { ScreenProps } from '../types';
 import MissingPatientWeightBanner from '../components/MissingPatientWeightBanner';
 import { BackButton, Button } from '../components/Button';
 import PatientInfoDisplay from '../components/PatientInfoDisplay';
@@ -78,9 +78,9 @@ const TransfusionRateInfo: React.FC = () => {
             </h4>
             <div className="space-y-3">
                 {rates.map((rate, index) => (
-                    <div key={index} className="bg-slate-100 dark:bg-slate-700/50 p-3 rounded-lg flex justify-between items-center text-start">
-                        <span className="font-semibold text-sm text-slate-700 dark:text-slate-300">{rate.label}</span>
-                        <span className="font-mono font-bold text-base text-slate-900 dark:text-slate-100">{rate.value}</span>
+                    <div key={index} className="bg-muted/50 p-3 rounded-lg flex justify-between items-center text-start">
+                        <span className="font-semibold text-sm text-foreground/80">{rate.label}</span>
+                        <span className="font-mono font-bold text-base text-heading">{rate.value}</span>
                     </div>
                 ))}
             </div>
@@ -103,7 +103,7 @@ const MonitoringInfo: React.FC = () => {
                 {t('transfusion.monitoring.title')}
             </h4>
             <div className="relative">
-                <div className="absolute left-4 rtl:left-auto rtl:right-4 top-4 bottom-4 w-0.5 bg-slate-200 dark:bg-slate-700"></div>
+                <div className="absolute left-4 rtl:left-auto rtl:right-4 top-4 bottom-4 w-0.5 bg-border"></div>
                 {steps.map((step, index) => (
                     <div key={index} className="relative flex items-start gap-4 mb-4 last:mb-0">
                         <div className={`z-10 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${step.isAlert ? 'bg-red-500 text-white' : 'bg-[var(--primary-500)] text-white'}`}>
@@ -153,8 +153,9 @@ const ReactionsInfo: React.FC = () => {
 };
 
 
-const BloodTransfusionCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
+const BloodTransfusionCalculatorScreen: React.FC = () => {
   const { t, localizeNumber } = useLocale();
+  const navigate = useNavigate();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const { patientInfo } = usePatient();
   const hasWeight = patientInfo.weightInKg && patientInfo.weightInKg > 0;
@@ -184,13 +185,13 @@ const BloodTransfusionCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate })
       {!hasWeight && <MissingPatientWeightBanner />}
       <main className="container mx-auto p-4 md:p-6 space-y-6">
         <div className="flex justify-between items-center mb-4">
-            <BackButton onClick={() => onNavigate('home')} />
+            <BackButton onClick={() => navigate('/')} />
             <PatientInfoDisplay />
         </div>
         <header className="relative text-center mb-6">
             <div className="flex items-center justify-center gap-2">
                 <BloodIcon className="w-8 h-8 text-red-500" />
-                <h1 className="text-3xl md:text-4xl font-extrabold text-inherit">{t('transfusion.title')}</h1>
+                <h1 className="text-3xl md:text-4xl font-extrabold text-heading">{t('transfusion.title')}</h1>
             </div>
             <div className="absolute top-1/2 -translate-y-1/2 end-0">
                 <Button variant="secondary" onClick={handleOpenInfoModal} className="!p-2.5 !rounded-full" aria-label={t('bp.about')}>
@@ -244,7 +245,7 @@ const BloodTransfusionCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate })
                   <CalculatorIcon />
                   {t('transfusion.about.formulaTitle')}
               </h4>
-              <div className="bg-black/10 dark:bg-black/30 p-4 rounded-lg font-mono text-center text-sm" dir="ltr">
+              <div className="bg-muted p-4 rounded-lg font-mono text-center text-sm" dir="ltr">
                 <p>{t('transfusion.about.formula')}</p>
                 <p className="mt-2 text-xs font-sans">
                   {t('transfusion.about.formulaN')}

@@ -23,11 +23,11 @@ const VET_CONSTANTS = {
 };
 
 const SectionCard: React.FC<{ icon: React.ReactNode; title: string; tooltipContent?: React.ReactNode; children: React.ReactNode }> = ({ icon, title, tooltipContent, children }) => (
-  <div className="bg-white/50 dark:bg-slate-800/50 p-4 rounded-xl border border-black/5 dark:border-white/5">
-    <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3 mb-4">
+  <div className="bg-card/50 p-4 rounded-xl border border-border/50">
+    <div className="flex items-center justify-between border-b border-border/50 pb-3 mb-4">
       <div className="flex items-center gap-3">
         {icon}
-        <h3 className="text-base font-bold text-inherit text-start">{title}</h3>
+        <h3 className="text-base font-bold text-heading text-start">{title}</h3>
       </div>
       {tooltipContent && <Tooltip content={tooltipContent} />}
     </div>
@@ -48,7 +48,7 @@ const MaintenanceResults: React.FC<any> = ({ state, results, formatNumber, t }) 
       tooltipContent={<span className="font-mono" dir="ltr">{constants.maintenanceFactor} x (kg)<sup>0.75</sup></span>}
     >
       <div className="space-y-4">
-        <div className="flex justify-between items-center text-sm p-2 bg-black/5 dark:bg-white/5 rounded-lg">
+        <div className="flex justify-between items-center text-sm p-2 bg-muted/50 rounded-lg">
           <span className="font-semibold flex items-center gap-2">
             <Icon name={SpeciesIcon} className="w-5 h-5" />
             {t('fluid.maintenance.dosageDaily')}
@@ -63,11 +63,11 @@ const MaintenanceResults: React.FC<any> = ({ state, results, formatNumber, t }) 
         </div>
         
         {(state.addDehydration || state.addOngoingLosses) && state.deficitTime ? (
-           <div className="text-center border-t border-black/10 dark:border-white/10 pt-4">
+           <div className="text-center border-t border-border/50 pt-4">
               <p className="text-sm font-semibold mb-2">{t('fluid.maintenance.initialRate')}</p>
               <div className="flex items-center justify-center gap-2">
                 <ResultPill value={formatNumber(results.totalFluidRateMlHour)} unit="ml/hr" className="w-32" />
-                <span className="font-semibold text-sm text-inherit/70">for {state.deficitTime}h</span>
+                <span className="font-semibold text-sm text-muted-foreground">for {state.deficitTime}h</span>
               </div>
            </div>
         ) : null}
@@ -157,7 +157,7 @@ const FluidResultsCard: React.FC<FluidResultsCardProps> = ({ state, dispatch, re
 
     return (
         <div className="space-y-4">
-            <h3 className="text-xl font-bold text-inherit text-start">{t('fluid.resultsTitle')}</h3>
+            <h3 className="text-xl font-bold text-heading text-start">{t('fluid.resultsTitle')}</h3>
             <MaintenanceResults {...sharedProps} />
             <ShockTherapy {...sharedProps} />
             <SurgicalFluids {...sharedProps} />

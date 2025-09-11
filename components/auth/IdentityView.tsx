@@ -36,14 +36,14 @@ const IdentityView: React.FC<IdentityViewProps> = ({ onSubmit, isLoading, error 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="relative">
-                <IconComponent className="absolute top-1/2 -translate-y-1/2 start-4 text-slate-400 dark:text-slate-500"/>
+                <IconComponent className="absolute top-1/2 -translate-y-1/2 start-4 text-muted-foreground"/>
                 <input
                     type={isPhoneInput ? "tel" : "email"}
                     value={identity}
                     onChange={(e) => setIdentity(e.target.value)}
                     placeholder={t('auth.emailPlaceholder')}
                     required
-                    className={`w-full py-3 ps-12 pe-4 bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-[var(--primary-500)] focus:border-[var(--primary-500)] transition text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-500 ${displayError ? 'border-red-500' : ''}`}
+                    className={`form-input w-full !py-3 !ps-12 !pe-4 !rounded-xl ${displayError ? '!border-red-500' : ''}`}
                     aria-invalid={!!displayError}
                 />
             </div>

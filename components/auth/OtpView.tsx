@@ -51,8 +51,8 @@ const OtpView: React.FC<OtpViewProps> = ({ identity, onComplete, onBack, isLoadi
   
   return (
     <div className="text-center">
-        <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1">{t(titleKey)}</h2>
-        <p className="text-slate-600 dark:text-slate-300 mb-4">
+        <h2 className="text-xl font-bold text-heading mb-1">{t(titleKey)}</h2>
+        <p className="text-muted-foreground mb-4">
             {t('auth.otp.subtitle').replace('{identity}', identity)}
         </p>
 
@@ -61,14 +61,14 @@ const OtpView: React.FC<OtpViewProps> = ({ identity, onComplete, onBack, isLoadi
                 <input
                     key={index}
                     // FIX: Wrapped the ref callback in curly braces to ensure it returns `void` and matches the expected Ref type.
-                    ref={el => { inputRefs.current[index] = el }}
+                    ref={el => { inputRefs.current[index] = el; }}
                     type="text"
                     inputMode="numeric"
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handleChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
-                    className={`w-12 h-14 text-center text-2xl font-bold bg-slate-200 dark:bg-slate-900 border rounded-lg focus:ring-2 focus:ring-[var(--primary-500)] focus:border-[var(--primary-500)] transition text-slate-900 dark:text-slate-100 ${error ? 'border-red-500' : 'border-slate-300 dark:border-slate-800'}`}
+                    className={`w-12 h-14 text-center text-2xl font-bold bg-muted border rounded-lg focus:ring-2 focus:ring-[var(--primary-500)] focus:border-[var(--primary-500)] transition text-foreground ${error ? 'border-red-500' : 'border-border'}`}
                     disabled={isLoading}
                 />
             ))}
@@ -79,12 +79,12 @@ const OtpView: React.FC<OtpViewProps> = ({ identity, onComplete, onBack, isLoadi
         {isLoading && <i className="fa-solid fa-spinner fa-spin text-2xl text-[var(--primary-500)]"></i>}
 
         <div className="text-sm">
-            <span className="text-slate-500 dark:text-slate-400">{t('auth.otp.noCode')} </span>
+            <span className="text-muted-foreground">{t('auth.otp.noCode')} </span>
             <button type="button" onClick={() => {}} className="font-semibold text-[var(--primary-600)] hover:underline">
                 {t('auth.otp.resend')}
             </button>
         </div>
-         <button type="button" onClick={onBack} className="mt-4 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:underline">
+         <button type="button" onClick={onBack} className="mt-4 text-sm font-semibold text-muted-foreground hover:underline">
             {t('auth.otp.back')}
         </button>
     </div>

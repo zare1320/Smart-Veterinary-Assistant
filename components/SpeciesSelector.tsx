@@ -19,7 +19,7 @@ const SpeciesSelector: React.FC<SpeciesSelectorProps> = ({ species, selectedSpec
           <div className={`species-card ${selectedSpecies === s.name ? 'selected' : ''}`}>
             {s.imageUrl && <img src={s.imageUrl} alt={s.name} />}
           </div>
-          <span className={`text-sm font-medium transition-colors ${selectedSpecies === s.name ? 'text-[var(--primary-600)] dark:text-[var(--primary-300)]' : 'text-slate-700 dark:text-slate-300'}`}>{s.name}</span>
+          <span className={`text-sm font-medium transition-colors ${selectedSpecies === s.name ? 'text-[var(--primary-600)] dark:text-[var(--primary-300)]' : 'text-muted-foreground'}`}>{s.name}</span>
         </div>
       ))}
     </div>

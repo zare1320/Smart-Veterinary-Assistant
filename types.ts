@@ -64,6 +64,7 @@ export interface NavItem {
   key: NavItemKey;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
+  path: string;
 }
 
 export interface Protocol {
@@ -73,10 +74,6 @@ export interface Protocol {
     description: string;
     imageUrl: string;
     content?: React.ReactNode | string;
-}
-
-export interface ScreenProps {
-    onNavigate: (screen: NavItemKey) => void;
 }
 
 export type DogGroup = 'Herding' | 'Hound' | 'Non-Sporting' | 'Sporting' | 'Terrier' | 'Toy' | 'Working';

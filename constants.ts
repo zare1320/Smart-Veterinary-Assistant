@@ -6,21 +6,25 @@ export const getNavItems = (t: (key: string) => string): NavItem[] => [
     key: 'home',
     label: t('navHome'),
     icon: HomeIcon,
+    path: '/',
   },
   {
     key: 'protocols',
     label: t('navProtocols'),
     icon: DescriptionIcon,
+    path: '/protocols',
   },
   {
     key: 'my-drugs',
     label: t('navMyDrugs'),
     icon: PillIcon,
+    path: '/my-drugs',
   },
   {
     key: 'settings',
     label: t('navSettings'),
     icon: SettingsIcon,
+    path: '/settings',
   },
 ];
 

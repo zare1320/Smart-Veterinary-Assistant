@@ -49,7 +49,7 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({ breeds, value, onChange, 
   }, []);
 
   const handleSelect = (breed: Breed) => {
-    onChange(breed.name[locale]);
+    onChange(breed.name[locale as keyof LocalizedString]);
     setIsOpen(false);
   };
 
@@ -71,7 +71,7 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({ breeds, value, onChange, 
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className="custom-form-input text-slate-900 dark:text-slate-100 text-start pr-10"
+          className="custom-form-input text-start pr-10"
           autoComplete="off"
           aria-autocomplete="list"
           aria-expanded={isOpen}
@@ -79,7 +79,7 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({ breeds, value, onChange, 
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 dark:text-slate-400"
+          className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground"
           aria-label="Toggle breed list"
         >
           <ChevronDownIcon className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -92,7 +92,7 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({ breeds, value, onChange, 
             initial={{ opacity: 0, y: -10, height: 0 }}
             animate={{ opacity: 1, y: 0, height: 'auto' }}
             exit={{ opacity: 0, y: -10, height: 0 }}
-            className="absolute z-10 w-full mt-2 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 max-h-60 overflow-y-auto"
+            className="absolute z-10 w-full mt-2 bg-card rounded-lg shadow-lg border border-border max-h-60 overflow-y-auto"
             role="listbox"
           >
             {filteredBreeds.length > 0 ? (
@@ -101,13 +101,13 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({ breeds, value, onChange, 
                   <button
                     type="button"
                     onClick={() => handleSelect(breed)}
-                    className="w-full text-start px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                    className="w-full text-start px-4 py-3 hover:bg-muted transition-colors"
                     role="option"
-                    aria-selected={value === breed.name[locale]}
+                    aria-selected={value === breed.name[locale as keyof LocalizedString]}
                   >
-                    <span className="font-medium text-slate-900 dark:text-slate-100">{breed.name[locale]}</span>
+                    <span className="font-medium text-heading">{breed.name[locale as keyof LocalizedString]}</span>
                     {displayInfoKey && breed[displayInfoKey] && (
-                      <span className="text-sm text-slate-500 dark:text-slate-400 block">
+                      <span className="text-sm text-muted-foreground block">
                         {String(breed[displayInfoKey])}
                       </span>
                     )}
@@ -115,7 +115,7 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({ breeds, value, onChange, 
                 </li>
               ))
             ) : (
-              <li className="px-4 py-3 text-slate-500 dark:text-slate-400">
+              <li className="px-4 py-3 text-muted-foreground">
                 {t('noBreedsFound')}
               </li>
             )}

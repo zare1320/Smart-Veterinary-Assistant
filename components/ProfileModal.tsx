@@ -50,7 +50,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, ed
           onClick={onClose}
         >
           <motion.div
-            className="bg-slate-50 dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md"
+            className="bg-card rounded-2xl shadow-xl w-full max-w-md"
             initial={{ y: "-50px", opacity: 0 }}
             animate={{ y: "0", opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 30 } }}
             exit={{ y: "50px", opacity: 0 }}
@@ -60,14 +60,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, ed
             aria-labelledby="profile-modal-title"
           >
             <form onSubmit={handleSubmit}>
-              <header className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700">
-                <h2 id="profile-modal-title" className="text-lg font-bold text-slate-900 dark:text-slate-100">
+              <header className="flex justify-between items-center p-4 border-b border-border">
+                <h2 id="profile-modal-title" className="text-lg font-bold text-heading">
                   {isEditing ? t('profileModal.editTitle') : t('profileModal.title')}
                 </h2>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                   aria-label={t('cancel')}
                 >
                   <XMarkIcon className="text-xl" />
@@ -75,7 +75,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, ed
               </header>
               <main className="p-6 space-y-4">
                  <div className="relative">
-                    <UserIcon className="absolute top-[2.4rem] start-3.5 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                    <UserIcon className="absolute top-[2.4rem] start-3.5 text-muted-foreground pointer-events-none" />
                     <LabeledInput 
                         label={t('profileModal.nameLabel')}
                         id="profileName"
@@ -87,7 +87,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, ed
                     />
                  </div>
                  <div className="relative">
-                    <ImageIcon className="absolute top-[2.4rem] start-3.5 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                    <ImageIcon className="absolute top-[2.4rem] start-3.5 text-muted-foreground pointer-events-none" />
                     <LabeledInput 
                         label={t('profileModal.imageUrlLabel')}
                         id="profileImageUrl"
@@ -99,7 +99,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, ed
                     />
                  </div>
               </main>
-              <footer className="flex justify-end items-center gap-3 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-b-2xl">
+              <footer className="flex justify-end items-center gap-3 p-4 bg-muted/50 rounded-b-2xl">
                 <Button type="button" variant="secondary" onClick={onClose}>
                   {t('cancel')}
                 </Button>

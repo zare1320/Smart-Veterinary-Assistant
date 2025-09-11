@@ -30,15 +30,15 @@ interface FormSectionProps {
 }
 
 export const FormSection: React.FC<FormSectionProps> = ({ title, icon, infoAction, children }) => (
-    <div className="border-t border-black/10 dark:border-white/10 pt-4">
+    <div className="border-t border-border/50 pt-4">
         <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
                 <Icon name={icon} className="text-lg text-[var(--primary-500)]" />
-                <h4 className="font-semibold text-slate-800 dark:text-slate-200">{title}</h4>
+                <h4 className="font-semibold text-foreground">{title}</h4>
             </div>
             {infoAction && (
                 <button onClick={infoAction} aria-label={`More info about ${title}`}>
-                    <Icon name="fa-circle-info" className="text-slate-400 dark:text-slate-500" />
+                    <Icon name="fa-circle-info" className="text-muted-foreground" />
                 </button>
             )}
         </div>
@@ -54,7 +54,7 @@ interface ToggleSwitchProps {
 }
 export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ label, checked, onChange }) => (
     <label className="flex items-center justify-between cursor-pointer">
-        <span className="font-medium text-slate-800 dark:text-slate-200">{label}</span>
+        <span className="font-medium text-foreground">{label}</span>
         <div className="relative inline-block w-11 me-2 align-middle select-none transition duration-200 ease-in">
             <input
                 type="checkbox"
@@ -81,11 +81,11 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({ unit, value, ...prop
                 type="range"
                 value={displayValue}
                 {...props}
-                className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
             />
-            <div className="font-mono text-center bg-slate-100 dark:bg-slate-700 rounded-md px-3 py-1 w-24">
-                <span className="font-bold text-slate-900 dark:text-slate-100">{localizeNumber(displayValue)}</span>
-                <span className="text-sm text-slate-500 dark:text-slate-400 ml-1">{unit}</span>
+            <div className="font-mono text-center bg-muted rounded-md px-3 py-1 w-24">
+                <span className="font-bold text-heading">{localizeNumber(displayValue)}</span>
+                <span className="text-sm text-muted-foreground ml-1">{unit}</span>
             </div>
         </div>
     );
@@ -95,9 +95,9 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({ unit, value, ...prop
 export const Tooltip: React.FC<{ content: React.ReactNode }> = ({ content }) => (
     <div className="relative group flex items-center">
         <Icon name="fa-circle-info" className="w-5 h-5 text-inherit/50 cursor-pointer" />
-        <div className="absolute bottom-full mb-2 start-1/2 -translate-x-1/2 w-max max-w-xs p-2 text-xs text-white bg-slate-800 dark:bg-slate-900 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 invisible group-hover:visible z-10 whitespace-nowrap">
+        <div className="absolute bottom-full mb-2 start-1/2 -translate-x-1/2 w-max max-w-xs p-2 text-xs text-primary-foreground bg-heading rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 invisible group-hover:visible z-10 whitespace-nowrap">
             {content}
-            <div className="absolute top-full start-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-slate-800 dark:border-t-slate-900"></div>
+            <div className="absolute top-full start-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-heading"></div>
         </div>
     </div>
 );
@@ -106,7 +106,7 @@ export const Tooltip: React.FC<{ content: React.ReactNode }> = ({ content }) => 
 const clsx = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ');
 export const ResultPill: React.FC<{ value: string; unit: string; label?: string; className?: string }> = ({ value, unit, label, className }) => (
   <div className={clsx("flex flex-col items-center", className)}>
-    {label && <span className="text-xs text-inherit/60 dark:text-inherit/60 mb-1.5 font-medium">{label}</span>}
+    {label && <span className="text-xs text-foreground/60 dark:text-foreground/60 mb-1.5 font-medium">{label}</span>}
     <div className="bg-sky-500/10 dark:bg-sky-500/10 text-sky-800 dark:text-sky-300 font-bold rounded-full px-4 py-1.5 text-center w-full">
       <span className="text-lg">{value}</span>
       <span className="text-xs ml-1 opacity-80">{unit}</span>

@@ -1,13 +1,13 @@
 import React, { useReducer, useEffect, useMemo, useCallback, useState, useId } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
 import { usePatient } from '../context/PatientContext';
-import type { ScreenProps } from '../types';
 import { BackButton, Button } from '../components/Button';
 import MissingPatientWeightBanner from '../components/MissingPatientWeightBanner';
 import { LabeledInput, LabeledSelect } from '../components/forms';
 import InfoModal from '../components/InfoModal';
 import PatientInfoDisplay from '../components/PatientInfoDisplay';
-import { HeartPulseIcon, FilePenIcon, ChartLineIcon, CircleQuestionIcon, ArrowLeftIcon, ArrowRightIcon } from '../components/Icons';
+import { HeartPulseIcon, FilePenIcon, ChartLineIcon, CircleQuestionIcon } from '../components/Icons';
 
 // Constants
 const NUM_PRESSURE_READINGS = 10;
@@ -65,9 +65,143 @@ function bpReducer(state: BpState, action: BpAction): BpState {
   }
 }
 
+// Sub-components for the screen
+const Section: React.FC<{ icon: React.ReactNode; title: string; children: React.ReactNode }> = ({ icon, title, children }) => (
+    <div className="glass-card p-6">
+        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border/50">
+            {/* FIX: Corrected incomplete className and provided a consistent style. */}
+            <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--primary-500)]/10 text-[var(--primary-500)]">
+                {icon}
+            </div>
+            <h2 className="text-lg font-bold text-heading">{title}</h2>
+        </div>
+        {children}
+    </div>
+);
+
+// FIX: Added the missing MeasurementDetails component.
+const MeasurementDetails: React.FC<{ state: BpState; onFieldChange: (field: keyof BpState, value: any) => void; t: (key: string) => string }> = ({ state, onFieldChange, t }) => {
+  const idPrefix = useId();
+  const positionOptions = ['lateral', 'sternal', 'standing', 'sitting'];
+  const cuffPositionOptions = ['rightFront', 'leftFront', 'rightRear', 'leftRear', 'tail'];
+  const stressLevelOptions = ['relaxed', 'tense', 'nervous', 'veryNervous', 'aggressive'];
+  const methodOptions = ['doppler', 'oscillometric'];
+
+  return (
+    <Section icon={<FilePenIcon />} title={t('bp.enterInformation')}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <LabeledSelect label={t('bp.patientPosition')} id={`${idPrefix}-patientPosition`} value={state.patientPosition} onChange={(e) => onFieldChange('patientPosition', e.target.value)}>
+            {positionOptions.map(key => <option key={key} value={key}>{t(`bp.positionOptions.${key}`)}</option>)}
+        </LabeledSelect>
+        <LabeledSelect label={t('bp.cuffPosition')} id={`${idPrefix}-cuffPosition`} value={state.cuffPosition} onChange={(e) => onFieldChange('cuffPosition', e.target.value)}>
+            {cuffPositionOptions.map(key => <option key={key} value={key}>{t(`bp.cuffPositionOptions.${key}`)}</option>)}
+        </LabeledSelect>
+        <LabeledInput label={t('bp.cuffSize')} id={`${idPrefix}-cuffSize`} type="number" value={state.cuffSize} onChange={(e) => onFieldChange('cuffSize', e.target.value)} unit="cm" />
+        <LabeledInput label={t('bp.time')} id={`${idPrefix}-time`} type="time" value={state.time} onChange={(e) => onFieldChange('time', e.target.value)} />
+        <LabeledSelect label={t('bp.stressLevel')} id={`${idPrefix}-stressLevel`} value={state.stressLevel} onChange={(e) => onFieldChange('stressLevel', e.target.value)}>
+            {stressLevelOptions.map(key => <option key={key} value={key}>{t(`bp.stressLevelOptions.${key}`)}</option>)}
+        </LabeledSelect>
+        <LabeledSelect label={t('bp.measurementMethod')} id={`${idPrefix}-measurementMethod`} value={state.measurementMethod} onChange={(e) => onFieldChange('measurementMethod', e.target.value)}>
+            {methodOptions.map(key => <option key={key} value={key}>{t(`bp.methodOptions.${key}`)}</option>)}
+        </LabeledSelect>
+        <LabeledInput label={t('bp.location')} id={`${idPrefix}-location`} value={state.location} onChange={(e) => onFieldChange('location', e.target.value)} />
+        <LabeledInput label={t('bp.dvmTech')} id={`${idPrefix}-dvmTech`} value={state.dvmTech} onChange={(e) => onFieldChange('dvmTech', e.target.value)} />
+      </div>
+    </Section>
+  );
+};
+
+// FIX: Added the missing PressureReadings component.
+const PressureReadings: React.FC<{
+  pressures: string[];
+  meanSbp: number | null;
+  onPressureChange: (index: number, value: string) => void;
+  t: (key: string) => string;
+  localizeNumber: (num: string | number) => string;
+}> = ({ pressures, meanSbp, onPressureChange, t, localizeNumber }) => {
+  const idPrefix = useId();
+  return (
+    <Section icon={<ChartLineIcon />} title={t('bp.data')}>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+        {pressures.map((p, i) => (
+          <LabeledInput
+            key={i}
+            label={`#${localizeNumber(i + 1)}`}
+            id={`${idPrefix}-pressure-${i}`}
+            type="number"
+            value={p}
+            onChange={(e) => onPressureChange(i, e.target.value)}
+            className="text-center"
+          />
+        ))}
+      </div>
+      <div className="mt-6 bg-gradient-to-br from-sky-500 to-indigo-500 rounded-2xl p-4 text-white shadow-lg shadow-sky-500/30 text-center">
+          <p className="text-sm opacity-80">{t('bp.meanSystolic')}</p>
+          <p className="text-3xl font-bold font-mono">{meanSbp !== null ? localizeNumber(meanSbp) : '---'} <span className="text-lg opacity-80">mmHg</span></p>
+      </div>
+    </Section>
+  );
+};
+
+// FIX: Added the missing RiskClassificationTable component.
+const RiskClassificationTable: React.FC<{ riskCategory: string | null; t: (key: string) => string; }> = ({ riskCategory, t }) => {
+  const categories = [
+    { key: 'normotensive', riskKey: 'minimal' },
+    { key: 'borderline', riskKey: 'low' },
+    { key: 'hypertensive', riskKey: 'moderate' },
+    { key: 'severelyHypertensive', riskKey: 'high' },
+  ];
+
+  const categoryStyles = {
+    minimal: 'bg-emerald-500/10 text-emerald-800 dark:text-emerald-300',
+    low: 'bg-yellow-500/10 text-yellow-800 dark:text-yellow-300',
+    moderate: 'bg-orange-500/10 text-orange-800 dark:text-orange-300',
+    high: 'bg-red-500/10 text-red-800 dark:text-red-300',
+  };
+
+  return (
+    <Section icon={<HeartPulseIcon />} title={t('bp.riskOfTod')}>
+        <div className="overflow-hidden rounded-lg border border-border">
+            <table className="w-full text-sm text-start">
+                <thead className="bg-muted/50">
+                    <tr>
+                        <th className="p-3 font-semibold">{t('bp.sbpMmHg')}</th>
+                        <th className="p-3 font-semibold">{t('bp.category')}</th>
+                        <th className="p-3 font-semibold">{t('bp.riskOfTod')}</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                    {categories.map(({ key, riskKey }) => (
+                        <tr key={key} className={riskCategory === key ? 'bg-secondary ring-2 ring-[var(--primary-500)]' : ''}>
+                            <td className="p-3 font-mono">{
+                                key === 'normotensive' ? '<150' :
+                                key === 'borderline' ? '150-159' :
+                                key === 'hypertensive' ? '160-179' :
+                                '≥180'
+                            }</td>
+                            <td className="p-3 font-semibold">{t(`bp.${key}`)}</td>
+                            <td className="p-3">
+                                <span className={`px-2 py-1 rounded-full font-semibold text-xs ${categoryStyles[riskKey as keyof typeof categoryStyles]}`}>
+                                    {t(`bp.${riskKey}`)}
+                                </span>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+        <div className="mt-4 text-xs text-muted-foreground text-start">
+            <p>{t('bp.sbpAbbr')}</p>
+            <p>{t('bp.todAbbr')}</p>
+        </div>
+    </Section>
+  );
+};
+
 // Main Component
-const BloodPressureCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
-    const { t, locale, localizeNumber } = useLocale();
+const BloodPressureCalculatorScreen: React.FC = () => {
+    const { t, localizeNumber } = useLocale();
+    const navigate = useNavigate();
     const { patientInfo } = usePatient();
     const [state, dispatch] = useReducer(bpReducer, createInitialState());
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
@@ -118,14 +252,14 @@ const BloodPressureCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) =>
             {!hasWeight && <MissingPatientWeightBanner />}
             <main className="container mx-auto p-4 md:p-6 space-y-6">
                  <div className="flex justify-between items-center mb-4">
-                    <BackButton onClick={() => onNavigate('home')} />
+                    <BackButton onClick={() => navigate('/')} />
                     <PatientInfoDisplay />
                 </div>
                 
                 <header className="relative text-center mb-6">
                     <div className="flex items-center justify-center gap-2">
                         <HeartPulseIcon className="w-8 h-8 text-red-500" />
-                        <h1 className="text-3xl md:text-4xl font-extrabold text-inherit">{t('bp.title')}</h1>
+                        <h1 className="text-3xl md:text-4xl font-extrabold text-heading">{t('bp.title')}</h1>
                     </div>
                      <div className="absolute top-1/2 -translate-y-1/2 end-0">
                         <Button variant="secondary" onClick={() => setIsInfoModalOpen(true)} className="!p-2.5 !rounded-full" aria-label={t('bp.about')}>
@@ -136,7 +270,7 @@ const BloodPressureCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) =>
 
                 <div className={`space-y-6 ${!hasWeight ? 'opacity-50 pointer-events-none' : ''}`}>
                     <div className="text-center">
-                        <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/jvim.15241" target="_blank" rel="noopener noreferrer" className="block text-sm text-inherit/70 hover:underline hover:text-[var(--primary-500)] transition-colors">
+                        <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/jvim.15241" target="_blank" rel="noopener noreferrer" className="block text-sm text-muted-foreground hover:underline hover:text-[var(--primary-500)] transition-colors">
                             {t('bp.guidelines')}
                         </a>
                     </div>
@@ -161,130 +295,6 @@ const BloodPressureCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) =>
                 </InfoModal>
             </main>
         </>
-    );
-};
-
-// Sub-components for the screen
-const Section: React.FC<{ icon: React.ReactNode; title: string; children: React.ReactNode }> = ({ icon, title, children }) => (
-    <div className="glass-card p-6">
-        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-black/10 dark:border-white/10">
-            <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--primary-500)]/10 text-[var(--primary-500)]">
-                {icon}
-            </div>
-            <h2 className="text-xl font-bold text-inherit text-start">{title}</h2>
-        </div>
-        {children}
-    </div>
-);
-
-const MeasurementDetails: React.FC<{ state: BpState, onFieldChange: (field: keyof BpState, value: any) => void, t: (key: string) => string }> = ({ state, onFieldChange, t }) => (
-    <Section icon={<FilePenIcon className="text-2xl" />} title={t('bp.enterInformation')}>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <LabeledSelect label={t('bp.patientPosition')} id="patientPosition" value={state.patientPosition} onChange={e => onFieldChange('patientPosition', e.target.value)}>
-                {Object.entries({
-                    'lateral': t('bp.positionOptions.lateral'), 
-                    'sternal': t('bp.positionOptions.sternal'), 
-                    'standing': t('bp.positionOptions.standing'),
-                    'sitting': t('bp.positionOptions.sitting')
-                }).map(([key, value]) => <option key={key} value={key}>{value}</option>)}
-            </LabeledSelect>
-            <LabeledSelect label={t('bp.cuffPosition')} id="cuffPosition" value={state.cuffPosition} onChange={e => onFieldChange('cuffPosition', e.target.value)}>
-                {Object.entries({
-                    'rightFront': t('bp.cuffPositionOptions.rightFront'), 
-                    'leftFront': t('bp.cuffPositionOptions.leftFront'), 
-                    'rightRear': t('bp.cuffPositionOptions.rightRear'), 
-                    'leftRear': t('bp.cuffPositionOptions.leftRear'), 
-                    'tail': t('bp.cuffPositionOptions.tail')
-                }).map(([key, value]) => <option key={key} value={key}>{value}</option>)}
-            </LabeledSelect>
-            <LabeledSelect label={t('bp.cuffSize')} id="cuffSize" value={state.cuffSize} onChange={e => onFieldChange('cuffSize', e.target.value)}>
-                {Array.from({ length: 25 }, (_, i) => 1 + i * 0.5).map(s => <option key={s} value={s}>{s}</option>)}
-            </LabeledSelect>
-            <LabeledInput label={t('bp.time')} id="time" type="time" value={state.time} onChange={e => onFieldChange('time', e.target.value)} />
-            <LabeledSelect label={t('bp.stressLevel')} id="stressLevel" value={state.stressLevel} onChange={e => onFieldChange('stressLevel', e.target.value)}>
-                {Object.entries({
-                    'relaxed': t('bp.stressLevelOptions.relaxed'),
-                    'tense': t('bp.stressLevelOptions.tense'),
-                    'nervous': t('bp.stressLevelOptions.nervous'),
-                    'veryNervous': t('bp.stressLevelOptions.veryNervous'),
-                    'aggressive': t('bp.stressLevelOptions.aggressive')
-                }).map(([key, value]) => <option key={key} value={key}>{value}</option>)}
-            </LabeledSelect>
-            <LabeledSelect label={t('bp.measurementMethod')} id="measurementMethod" value={state.measurementMethod} onChange={e => onFieldChange('measurementMethod', e.target.value)}>
-                {Object.entries({'doppler': t('bp.methodOptions.doppler'), 'oscillometric': t('bp.methodOptions.oscillometric')}).map(([key, value]) => <option key={key} value={key}>{value}</option>)}
-            </LabeledSelect>
-            <LabeledInput label={t('bp.location')} id="location" value={state.location} onChange={e => onFieldChange('location', e.target.value)} />
-            <LabeledInput label={t('bp.dvmTech')} id="dvmTech" value={state.dvmTech} onChange={e => onFieldChange('dvmTech', e.target.value)} />
-        </div>
-    </Section>
-);
-
-const PressureReadings: React.FC<{ pressures: string[], meanSbp: number | null, onPressureChange: (index: number, value: string) => void, t: (key:string)=>string, localizeNumber: (n: number | string) => string }> = ({ pressures, meanSbp, onPressureChange, t, localizeNumber }) => (
-    <Section icon={<ChartLineIcon className="text-2xl" />} title={t('bp.data')}>
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-            {pressures.map((p, i) => (
-                <LabeledInput key={i} id={`pressure-${i}`} label={`${t('bp.pressure')} ${localizeNumber(i + 1)}`} type="number" pattern="\d*" value={p} onChange={e => onPressureChange(i, e.target.value)} />
-            ))}
-        </div>
-        <div className="mt-6 text-center">
-            <h4 className="font-semibold text-inherit/80">{t('bp.meanSystolic')}</h4>
-            <p className="text-5xl font-bold text-inherit font-mono">{meanSbp ? localizeNumber(meanSbp) : '---'}</p>
-        </div>
-    </Section>
-);
-
-const RiskClassificationTable: React.FC<{ riskCategory: string | null, t: (key: string) => string }> = ({ riskCategory, t }) => {
-    const { locale } = useLocale();
-    const captionId = useId();
-    const RISK_LEVELS = [
-        { key: 'normotensive', sbp: '<150', risk: 'minimal' },
-        { key: 'borderline', sbp: '150-159', risk: 'low' },
-        { key: 'hypertensive', sbp: '160-179', risk: 'moderate' },
-        { key: 'severelyHypertensive', sbp: '≥180', risk: 'high' },
-    ];
-    const RISK_LEVEL_STYLES: { [key: string]: string } = {
-        normotensive: 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200',
-        borderline: 'bg-yellow-100 dark:bg-yellow-800/50 text-yellow-800 dark:text-yellow-200',
-        hypertensive: 'bg-orange-100 dark:bg-orange-800/50 text-orange-800 dark:text-orange-200',
-        severelyHypertensive: 'bg-red-200 dark:bg-red-900/50 text-red-800 dark:text-red-200',
-    };
-    return (
-        <Section icon={<i className="fa-solid fa-shield-halved text-2xl"></i>} title={t('bp.riskOfTod')}>
-            <div className="overflow-x-auto">
-                <table className="w-full text-center" aria-labelledby={captionId}>
-                    <caption id={captionId} className="sr-only">{t('bp.riskOfTod')}</caption>
-                    <thead>
-                        <tr className="border-b border-black/10 dark:border-white/10">
-                            <th scope="col" className="p-3 font-semibold text-sm">{t('bp.sbpMmHg')}</th>
-                            <th scope="col" className="p-3 font-semibold text-sm">{t('bp.category')}</th>
-                            <th scope="col" className="p-3 font-semibold text-sm">{t('bp.riskOfTod')}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {RISK_LEVELS.map(level => (
-                            <tr key={level.key} className={`transition-all duration-300 ${riskCategory === level.key ? 'bg-sky-400/10 dark:bg-sky-500/10' : ''}`}>
-                                <td className="p-2 relative">
-                                    {riskCategory === level.key && (
-                                        <div className={`absolute inset-y-0 ${locale === 'fa' ? 'right-0' : 'left-0'} flex items-center`}>
-                                            {locale === 'fa' ? <ArrowLeftIcon className="text-xl text-sky-500" /> : <ArrowRightIcon className="text-xl text-sky-500" />}
-                                        </div>
-                                    )}
-                                    <span className={`inline-block w-28 text-center px-3 py-1 font-bold text-base rounded-full ${RISK_LEVEL_STYLES[level.key] || ''}`}>
-                                        {level.sbp}
-                                    </span>
-                                </td>
-                                <td className="p-3">{t(`bp.${level.key}`)}</td>
-                                <td className="p-3">{t(`bp.${level.risk}`)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-             <div className="text-xs text-inherit/60 mt-4 text-center space-y-1">
-                <p>{t('bp.sbpAbbr')}</p>
-                <p>{t('bp.todAbbr')}</p>
-            </div>
-        </Section>
     );
 };
 

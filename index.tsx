@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { HashRouter } from 'react-router-dom';
 import App from './App';
 import { ThemeProvider } from './context/ThemeContext';
 import { PatientProvider } from './context/PatientContext';
@@ -18,8 +19,11 @@ root.render(
       <LocaleProvider>
         <UserProvider>
           <PatientProvider>
-            <App />
+            <HashRouter>
+              <App />
+            </HashRouter>
           </PatientProvider>
+        {/* FIX: Corrected typo in closing tag from User-Provider to UserProvider */}
         </UserProvider>
       </LocaleProvider>
     </ThemeProvider>

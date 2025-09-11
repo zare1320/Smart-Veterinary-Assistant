@@ -50,7 +50,7 @@ const PatientInfoForm: React.FC = () => {
     <div className="space-y-6">
       {/* Weight */}
       <div>
-        <label htmlFor="weight" className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-1 text-start">
+        <label htmlFor="weight" className="block text-sm font-medium text-card-foreground mb-1 text-start">
           {t('weight')} ({t('kg')})
         </label>
         <div className="relative">
@@ -61,14 +61,14 @@ const PatientInfoForm: React.FC = () => {
             value={patientInfo.weightInKg ?? ''}
             onChange={handleWeightChange}
             placeholder={t('enterWeight')}
-            className="custom-form-input text-slate-900 dark:text-slate-100 text-start"
+            className="custom-form-input text-start"
           />
         </div>
       </div>
 
       {/* Gender */}
       <div>
-        <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2 text-start">{t('gender')}</label>
+        <label className="block text-sm font-medium text-card-foreground mb-2 text-start">{t('gender')}</label>
         <SegmentedControl
           options={genderOptions}
           value={patientInfo.gender}
@@ -78,7 +78,7 @@ const PatientInfoForm: React.FC = () => {
 
       {/* Breed */}
       <div>
-        <label htmlFor="breed" className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-1 text-start">
+        <label htmlFor="breed" className="block text-sm font-medium text-card-foreground mb-1 text-start">
           {t('breedOptional')}
         </label>
         <BreedSelector
@@ -92,7 +92,7 @@ const PatientInfoForm: React.FC = () => {
 
       {/* Age Group */}
       <div>
-        <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2 text-start">{t('ageGroup')}</label>
+        <label className="block text-sm font-medium text-card-foreground mb-2 text-start">{t('ageGroup')}</label>
         <SegmentedControl
           options={ageGroupOptions}
           value={patientInfo.ageGroup}
@@ -102,7 +102,7 @@ const PatientInfoForm: React.FC = () => {
 
       {/* Clinical Signs */}
       <div>
-        <label htmlFor="clinicalSigns" className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-1 text-start">
+        <label htmlFor="clinicalSigns" className="block text-sm font-medium text-card-foreground mb-1 text-start">
           {t('clinicalSignsOptional')}
         </label>
         <textarea
@@ -112,7 +112,7 @@ const PatientInfoForm: React.FC = () => {
           onChange={handleInputChange}
           rows={3}
           placeholder={t('enterClinicalSigns')}
-          className="custom-form-input text-slate-900 dark:text-slate-100 text-start"
+          className="custom-form-input text-start"
         />
       </div>
     </div>

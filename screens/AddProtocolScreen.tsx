@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import type { NavItemKey, Protocol } from '../types';
+import { useNavigate, useLocation } from 'react-router-dom';
+import type { Protocol } from '../types';
 import { useLocale } from '../context/LocaleContext';
 import { ArrowLeftIcon, ArrowRightIcon } from '../components/Icons';
 import { LabeledInput, LabeledSelect, LabeledTextarea } from '../components/forms';
@@ -7,13 +8,13 @@ import { Button } from '../components/Button';
 
 const CUSTOM_PROTOCOLS_KEY = 'vet_custom_protocols';
 
-interface AddProtocolScreenProps {
-  onNavigate: (screen: NavItemKey) => void;
-  initialTitle?: string;
-}
-
-const AddProtocolScreen: React.FC<AddProtocolScreenProps> = ({ onNavigate, initialTitle = '' }) => {
+const AddProtocolScreen: React.FC = () => {
   const { t, locale } = useLocale();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const initialTitle = location.state?.initialTitle || '';
+
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<'Canine' | 'Feline' | 'Exotic' | 'Custom'>('Custom');
@@ -37,7 +38,7 @@ const AddProtocolScreen: React.FC<AddProtocolScreenProps> = ({ onNavigate, initi
     const existingProtocols: Protocol[] = JSON.parse(localStorage.getItem(CUSTOM_PROTOCOLS_KEY) || '[]');
     localStorage.setItem(CUSTOM_PROTOCOLS_KEY, JSON.stringify([...existingProtocols, newProtocol]));
 
-    onNavigate('protocols');
+    navigate('/protocols');
   };
 
   const categoryOptions = [
@@ -51,7 +52,7 @@ const AddProtocolScreen: React.FC<AddProtocolScreenProps> = ({ onNavigate, initi
     <div>
       <header className="sticky top-0 z-10 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm">
         <div className="flex items-center p-4 justify-between border-b border-slate-200 dark:border-slate-800">
-          <button onClick={() => onNavigate('protocols')} className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+          <button onClick={() => navigate('/protocols')} className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
             {locale === 'fa' ? <ArrowRightIcon className="text-xl" /> : <ArrowLeftIcon className="text-xl" />}
           </button>
           <h1 className="text-xl font-bold">{t('addProtocolTitle')}</h1>

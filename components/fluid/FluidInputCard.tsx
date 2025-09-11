@@ -21,7 +21,7 @@ const FluidInputCard: React.FC<FluidInputCardProps> = ({ state, dispatch, onFlui
     
     return (
         <div className="glass-card p-6">
-            <h3 className="text-xl font-bold text-inherit mb-6 text-start">{t('fluid.planTitle')}</h3>
+            <h3 className="text-xl font-bold text-heading mb-6 text-start">{t('fluid.planTitle')}</h3>
             <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {/* FIX: Added missing 'id' props to LabeledSelect components for accessibility. */}
@@ -39,7 +39,7 @@ const FluidInputCard: React.FC<FluidInputCardProps> = ({ state, dispatch, onFlui
                     </LabeledSelect>
                 </div>
                 
-                <div className="space-y-4 pt-4 border-t border-black/10 dark:border-white/10">
+                <div className="space-y-4 pt-4 border-t border-border/50">
                     <ToggleSwitch
                         label={t('fluid.dehydration.title')}
                         checked={state.addDehydration}
@@ -77,6 +77,8 @@ const FluidInputCard: React.FC<FluidInputCardProps> = ({ state, dispatch, onFlui
                 {(state.addDehydration || state.addOngoingLosses) && (
                     <FormSection title={t('fluid.replaceTimeTitle')} icon="fa-stopwatch">
                         <LabeledInput
+                            // FIX: Added the missing 'id' property to satisfy component props.
+                            id="deficit-time"
                             label={t('fluid.replaceTime')}
                             type="number"
                             value={state.deficitTime ?? ''}

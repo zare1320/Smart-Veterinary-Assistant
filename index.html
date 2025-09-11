@@ -18,7 +18,27 @@
       body {
         font-family: 'Vazirmatn', sans-serif;
       }
+      
+      /* ========================================================================
+         1. BASE COLOR PALETTES
+         ======================================================================== */
       :root {
+        /* New GREEN palette for LIGHT THEME (default) */
+        --primary-50: #EDF9F2;
+        --primary-100: #DDF4E7;
+        --primary-200: #BDE9D3;
+        --primary-300: #9CDFB9;
+        --primary-400: #7BD49F;
+        --primary-500: #67C090;
+        --primary-600: #52A979;
+        --primary-700: #408962;
+        --primary-800: #336C4E;
+        --primary-900: #29573F;
+        --primary-950: #173023;
+      }
+
+      html.dark {
+        /* Original TEAL palette for DARK THEME */
         --primary-50: #f0fdfa;
         --primary-100: #ccfbf1;
         --primary-200: #99f6e4;
@@ -31,295 +51,153 @@
         --primary-900: #134e4a;
         --primary-950: #042f2e;
       }
-      .toggle-checkbox:checked {
-        right: 0;
-        border-color: var(--primary-500);
-      }
-      .toggle-checkbox:checked + .toggle-label {
-        background-color: var(--primary-500);
+      
+      /* ========================================================================
+         2. SEMANTIC COLOR THEME VARIABLES
+         ======================================================================== */
+      :root {
+        --background: #F5FAF7;           /* Very light green-white */
+        --background-nav: #FFFFFF;       /* White for Nav in light mode */
+        --foreground: #26667F;           /* Dark teal text */
+        --foreground-muted: #408962;     /* Mid-green for less important text */
+        --heading: #124170;              /* Dark blue for titles */
+        --card: #ffffff;
+        --card-foreground: #26667F;
+        --primary: var(--primary-500);   /* #67C090 */
+        --primary-foreground: var(--primary-50); /* #EDF9F2 */
+        --secondary: var(--primary-100); /* #DDF4E7 */
+        --secondary-foreground: var(--primary-900); /* #29573F */
+        --muted: var(--primary-100);     /* #DDF4E7 */
+        --border: var(--primary-200);    /* #BDE9D3 */
+        --input: #ffffff;
+        --input-border: var(--primary-200);
+        --ring: var(--primary-500);      /* Focus ring */
       }
       
-      /* Custom Input Styles inspired by Uiverse.io by andrew-demchenk0 */
+      html.dark {
+        --background: #0f172a;           /* slate-900 */
+        --background-nav: #020617;       /* slate-950 for bottom nav */
+        --foreground: #e2e8f0;           /* slate-200 */
+        --foreground-muted: #94a3b8;     /* slate-400 */
+        --heading: #f8fafc;              /* slate-50 */
+        --card: #1e293b;                 /* slate-800 */
+        --card-foreground: #e2e8f0;
+        --primary: var(--primary-500);   /* #14b8a6 */
+        --primary-foreground: #ffffff;
+        --secondary: #334155;           /* slate-700 */
+        --secondary-foreground: #f8fafc;
+        --muted: #334155;               /* slate-700 */
+        --border: #334155;               /* slate-700 */
+        --input: #334155;               /* slate-700 */
+        --input-border: #475569;         /* slate-600 */
+        --ring: var(--primary-400);      /* #2dd4bf */
+      }
+      
+      /* ========================================================================
+         3. APPLY SEMANTIC VARIABLES TO BASE ELEMENTS & COMPONENTS
+         ======================================================================== */
+      body {
+        background-color: var(--background);
+        color: var(--foreground);
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      /* --- Component Base Styles --- */
+      .bg-card { background-color: var(--card); }
+      .text-heading { color: var(--heading); }
+      .text-foreground { color: var(--foreground); }
+      .text-muted-foreground { color: var(--foreground-muted); }
+      .border-border { border-color: var(--border); }
+      .bg-muted { background-color: var(--muted); }
+      
+      /* --- Form Inputs (unified style) --- */
+      .form-input, .custom-form-input, .search-input {
+        background-color: var(--input);
+        color: var(--foreground);
+        border: 1px solid var(--input-border);
+        transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+      }
+      .form-input::placeholder, .custom-form-input::placeholder, .search-input::placeholder {
+        color: var(--foreground-muted);
+        opacity: 0.7;
+      }
+      .form-input:focus, .search-input:focus {
+        border-color: var(--ring);
+        --tw-ring-color: var(--ring);
+        box-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--ring);
+        outline: none;
+      }
+      
       .custom-form-input {
-        border: 2px solid transparent;
         width: 100%;
         padding: 0.6rem 0.8rem;
-        outline: none;
-        overflow: hidden;
-        background-color: #F3F3F3;
         border-radius: 10px;
-        transition: all 0.5s;
+        border-width: 2px;
+        border-color: transparent;
+        background-color: var(--muted);
       }
-      .dark .custom-form-input {
-        background-color: #334155; /* slate-700 */
-      }
-      .custom-form-input::placeholder {
-        color: #64748b; /* slate-500 - Increased contrast */
-      }
-      .dark .custom-form-input::placeholder {
-        color: #94a3b8; /* slate-400 - Increased contrast */
-      }
-      .custom-form-input:hover,
-      .custom-form-input:focus {
-        border: 2px solid #4A9DEC;
-        box-shadow: 0px 0px 0px 7px rgb(74, 157, 236, 20%);
-        background-color: white;
-      }
-      .dark .custom-form-input:hover,
-      .dark .custom-form-input:focus {
-        background-color: #1e293b; /* slate-800 */
-      }
-
-      /* From Uiverse.io by andrew-demchenk0 */ 
-      .switch {
-        font-size: 17px;
-        position: relative;
-        display: inline-block;
-        width: 64px;
-        height: 34px;
-      }
-
-      .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-      }
-
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #73C0FC;
-        transition: .4s;
-        border-radius: 30px;
-      }
-
-      .slider:before {
-        position: absolute;
-        content: "";
-        height: 30px;
-        width: 30px;
-        border-radius: 20px;
-        left: 2px;
-        bottom: 2px;
-        z-index: 2;
-        background-color: #e8e8e8;
-        transition: .4s;
-      }
-
-      .sun svg {
-        position: absolute;
-        top: 6px;
-        left: 36px;
-        z-index: 1;
-        width: 24px;
-        height: 24px;
-      }
-
-      .moon svg {
-        fill: #73C0FC;
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        z-index: 1;
-        width: 24px;
-        height: 24px;
-      }
-
-      .sun svg {
-        animation: rotate 15s linear infinite;
-      }
-
-      @keyframes rotate {
-      
-        0% {
-          transform: rotate(0);
-        }
-
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      .moon svg {
-        animation: tilt 5s linear infinite;
-      }
-
-      @keyframes tilt {
-      
-        0% {
-          transform: rotate(0deg);
-        }
-
-        25% {
-          transform: rotate(-10deg);
-        }
-
-        75% {
-          transform: rotate(10deg);
-        }
-
-        100% {
-          transform: rotate(0deg);
-        }
-      }
-
-      .input:checked + .slider {
-        background-color: #183153;
-      }
-
-      .input:focus + .slider {
-        box-shadow: 0 0 1px #183153;
-      }
-
-      .input:checked + .slider:before {
-        transform: translateX(30px);
-      }
-
-      /* Species Card style from Uiverse.io by bhaveshxrawat, adapted for this app */
-      .species-card {
-        width: 6rem; /* 96px */
-        height: 6rem; /* 96px */
-        position: relative;
-        display: flex;
-        place-content: center;
-        place-items: center;
-        overflow: hidden;
-        border-radius: 9999px; /* rounded-full */
-        transition: transform 0.3s ease-in-out;
-      }
-
-      .species-card::before {
-        content: '';
-        position: absolute;
-        width: 150%;
-        height: 150%;
-        background-image: linear-gradient(180deg, var(--primary-400), #4A9DEC);
-        animation: rotBGimg 4s linear infinite;
-        transition: all 0.2s linear;
+      .custom-form-input:hover, .custom-form-input:focus {
+        border: 2px solid var(--ring);
+        box-shadow: 0px 0px 0px 7px color-mix(in srgb, var(--ring) 20%, transparent);
+        background-color: var(--card);
       }
       
-      .species-card.selected::before {
-        animation: none;
-        background-image: linear-gradient(180deg, var(--primary-300), var(--primary-500));
-      }
-
+      /* --- Species Card --- */
       .species-card::after {
-        content: '';
-        position: absolute;
-        background: #f8fafc; /* slate-50 */
-        inset: 5px;
-        border-radius: 9999px; /* rounded-full */
-        transition: background-color 0.3s;
+        background: var(--card);
       }
 
-      .dark .species-card::after {
-        background: #1e293b; /* slate-800 */
-      }
-
-      @keyframes rotBGimg {
-        from {
-          transform: rotate(0deg);
-        }
-
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      
-      .species-card img {
-        z-index: 1;
-        width: 100%;
-        height: 100%;
-        object-fit: contain; /* Prevents cropping */
-        padding: 0.25rem; /* Add breathing room */
-      }
-
-      .species-card:hover {
-        transform: scale(1.05);
-      }
-      
-      /* Drug Calculator Styles */
+      /* --- Glass Card --- */
       .glass-card {
-        background: rgba(255, 255, 255, 0.1);
+        background: color-mix(in srgb, var(--card) 85%, transparent);
         -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
+        border: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent);
         border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
       }
       .dark .glass-card {
-        background: rgba(30, 41, 59, 0.5); /* slate-800 with opacity */
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: color-mix(in srgb, var(--card) 50%, transparent);
       }
-      .search-input-container {
-        position: relative;
-        display: flex;
-        align-items: center;
+      
+      /* --- Toggle Switch --- */
+      .toggle-checkbox:checked {
+        right: 0;
+        border-color: var(--primary);
       }
-      .search-input-icon {
-        position: absolute;
-        left: 1rem;
-        color: #94a3b8; /* slate-400 */
-        z-index: 10;
+      .toggle-checkbox:checked + .toggle-label {
+        background-color: var(--primary);
       }
-      [dir="rtl"] .search-input-icon {
-        left: auto;
-        right: 1rem;
-      }
-      .search-input {
-        width: 100%;
-        border-radius: 9999px;
-        border: none;
-        background-color: #e2e8f0; /* slate-200 */
-        padding: 0.75rem 1rem 0.75rem 2.75rem;
-        color: #0f172a; /* slate-900 */
-      }
-      [dir="rtl"] .search-input {
-        padding: 0.75rem 2.75rem 0.75rem 1rem;
-      }
-      .dark .search-input {
-        background-color: #334155; /* slate-700 */
-        color: #f8fafc; /* slate-50 */
-      }
-      .search-input::placeholder {
-        color: #64748b; /* slate-500 */
-      }
-      .dark .search-input::placeholder {
-        color: #94a3b8; /* slate-400 */
-      }
-      .search-input:focus {
-        outline: 2px solid transparent;
-        outline-offset: 2px;
-        --tw-ring-color: var(--primary-500);
-        --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-        --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-        box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-      }
-      .form-input {
-        width: 100%;
-        border-radius: 0.5rem;
-        border: 1px solid #cbd5e1; /* slate-300 */
-        background-color: #f8fafc; /* slate-50 */
-        padding: 0.5rem 0.75rem;
-        color: #0f172a; /* slate-900 */
-        transition: border-color 0.2s, box-shadow 0.2s;
-      }
-      .dark .form-input {
-        border-color: #475569; /* slate-600 */
-        background-color: #334155; /* slate-700 */
-        color: #f8fafc; /* slate-50 */
-      }
-      .form-input:focus {
-        border-color: var(--primary-500);
-        --tw-ring-color: var(--primary-500);
-        --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-        --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-        box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-        outline: none;
-      }
+      
+      /* --- Search Input (from Drug Dose Calc) --- */
+      .search-input-container { position: relative; display: flex; align-items: center; }
+      .search-input-icon { position: absolute; left: 1rem; color: var(--foreground-muted); z-index: 10; }
+      [dir="rtl"] .search-input-icon { left: auto; right: 1rem; }
+      .search-input { width: 100%; border-radius: 9999px; border: none; background-color: var(--muted); padding: 0.75rem 1rem 0.75rem 2.75rem; }
+      [dir="rtl"] .search-input { padding: 0.75rem 2.75rem 0.75rem 1rem; }
+      
+      /* From Uiverse.io by andrew-demchenk0 */ 
+      .switch { font-size: 17px; position: relative; display: inline-block; width: 64px; height: 34px; }
+      .switch input { opacity: 0; width: 0; height: 0; }
+      .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #73C0FC; transition: .4s; border-radius: 30px; }
+      .slider:before { position: absolute; content: ""; height: 30px; width: 30px; border-radius: 20px; left: 2px; bottom: 2px; z-index: 2; background-color: #e8e8e8; transition: .4s; }
+      .sun svg { position: absolute; top: 6px; left: 36px; z-index: 1; width: 24px; height: 24px; }
+      .moon svg { fill: #73C0FC; position: absolute; top: 5px; left: 5px; z-index: 1; width: 24px; height: 24px; }
+      .sun svg { animation: rotate 15s linear infinite; }
+      @keyframes rotate { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+      .moon svg { animation: tilt 5s linear infinite; }
+      @keyframes tilt { 0% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } 100% { transform: rotate(0deg); } }
+      .input:checked + .slider { background-color: #183153; }
+      .input:focus + .slider { box-shadow: 0 0 1px #183153; }
+      .input:checked + .slider:before { transform: translateX(30px); }
+      
+      /* Species Card style from Uiverse.io by bhaveshxrawat, adapted for this app */
+      .species-card { width: 6rem; height: 6rem; position: relative; display: flex; place-content: center; place-items: center; overflow: hidden; border-radius: 9999px; transition: transform 0.3s ease-in-out; }
+      .species-card::before { content: ''; position: absolute; width: 150%; height: 150%; background-image: linear-gradient(180deg, var(--primary-400), #4A9DEC); animation: rotBGimg 4s linear infinite; transition: all 0.2s linear; }
+      .species-card.selected::before { animation: none; background-image: linear-gradient(180deg, var(--primary-300), var(--primary-500)); }
+      @keyframes rotBGimg { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      .species-card img { z-index: 1; width: 100%; height: 100%; object-fit: contain; padding: 0.25rem; }
+      .species-card:hover { transform: scale(1.05); }
+
        /* Shake animation for form validation errors */
       @keyframes shake {
         10%, 90% { transform: translate3d(-1px, 0, 0); }
@@ -327,33 +205,14 @@
         30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
         40%, 60% { transform: translate3d(4px, 0, 0); }
       }
-      .animate-shake {
-        animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
-      }
+      .animate-shake { animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both; }
 
       /* Print-specific styles */
       @media print {
-        body * {
-          visibility: hidden;
-        }
-        #printable-report, #printable-report * {
-          visibility: visible;
-        }
-        #printable-report {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          margin: 0;
-          padding: 1.5cm; /* Standard print margin */
-          box-shadow: none;
-          border: none;
-          color: black !important;
-        }
-        .print-no-border {
-            border: none !important;
-            background-color: transparent !important;
-        }
+        body * { visibility: hidden; }
+        #printable-report, #printable-report * { visibility: visible; }
+        #printable-report { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 1.5cm; box-shadow: none; border: none; color: black !important; }
+        .print-no-border { border: none !important; background-color: transparent !important; }
       }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -363,12 +222,13 @@
     "react-dom/": "https://esm.sh/react-dom@18.2.0/",
     "react/": "https://esm.sh/react@18.2.0/",
     "react": "https://esm.sh/react@18.2.0",
-    "framer-motion": "https://esm.sh/framer-motion@11.2.12?deps=react@18.2.0"
+    "framer-motion": "https://esm.sh/framer-motion@11.2.12?deps=react@18.2.0",
+    "react-router-dom": "https://esm.sh/react-router-dom@6.23.1?deps=react@18.2.0"
   }
 }
 </script>
 </head>
-  <body class="bg-slate-50 dark:bg-slate-900">
+  <body class="bg-background">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

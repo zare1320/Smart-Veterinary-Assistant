@@ -1,4 +1,3 @@
-
 // FIX: Created the translations file to be imported by the LocaleContext.
 // FIX: The original type definition for translations only allowed for a single level of nesting,
 // causing type errors for any nested objects (e.g., `animalSpecies`, `myMedList`).
@@ -588,6 +587,50 @@ export const translations: { [key: string]: TranslationBlock } = {
             label: "Pounds (lb)",
             description: "Imperial unit of mass (1 kg ≈ 2.20462 lb)."
         }
+    },
+    protocols: {
+      canineVaccination: {
+        title: "Vaccination Protocol for Puppies",
+        description: "A comprehensive guide to the principles and schedules of modern canine vaccination for puppies."
+      },
+      felineLeukemia: {
+        title: "Feline Leukemia Virus (FeLV) Treatment",
+        description: "Detailed protocol for managing FeLV in cats, including medication and supportive care."
+      },
+      canineParvovirus: {
+        title: "Canine Parvovirus Treatment",
+        description: "Intensive care protocol for treating parvovirus in dogs, focusing on hydration and symptom management."
+      },
+      felineURI: {
+        title: "Feline Upper Respiratory Infection (URI) Protocol",
+        description: "Treatment guidelines for managing URI in cats, including antibiotics and supportive care."
+      }
+    },
+    canineVaccinationContent: {
+      coreVaccinesTitle: "Core Vaccines",
+      coreVaccinesDesc: "Core vaccines are recommended for all puppies and dogs with an unknown vaccination history. These protect against diseases that are common, have high morbidity/mortality rates, and are a public health risk.",
+      cdvName: "Canine Distemper Virus (CDV)",
+      cdvDesc: "A severe, highly contagious viral disease affecting the respiratory, gastrointestinal, and nervous systems.",
+      cav2Name: "Canine Adenovirus-2 (CAV-2)",
+      cav2Desc: "Protects against infectious canine hepatitis (caused by CAV-1) and is a component of the kennel cough complex.",
+      cpv2Name: "Canine Parvovirus (CPV-2)",
+      cpv2Desc: "A highly contagious and often fatal viral disease that causes severe vomiting and diarrhea, particularly in puppies.",
+      rabiesName: "Rabies Virus",
+      rabiesDesc: "A fatal viral disease of the nervous system that can affect all mammals, including humans. Vaccination is legally required in most areas.",
+      puppyScheduleTitle: "Puppy Vaccination Schedule",
+      puppyScheduleDesc: "This is a general guideline. Your veterinarian will tailor a specific protocol for your puppy based on their individual risk factors and your geographic location.",
+      tableHeaderAge: "Age",
+      tableHeaderRecs: "Recommended Vaccines",
+      scheduleRow1Age: "6-8 Weeks",
+      scheduleRow1Recs: "DHPP (Distemper, Hepatitis, Parainfluenza, Parvovirus) - 1st dose",
+      scheduleRow2Age: "10-12 Weeks",
+      scheduleRow2Recs: "DHPP - 2nd dose. Optional: Leptospirosis, Bordetella, Canine Influenza based on risk.",
+      scheduleRow3Age: "14-16 Weeks",
+      scheduleRow3Recs: "DHPP - 3rd (final puppy) dose. Rabies (as required by law, often around 16 weeks). Optional: Leptospirosis, Bordetella, Canine Influenza boosters.",
+      boostersTitle: "Post-Puppy Boosters",
+      boostersDesc: "After the initial puppy series, boosters are required to maintain immunity.",
+      boosterPoint1: "<strong>1 Year Old:</strong> A booster dose of DHPP and Rabies is typically given one year after the final puppy vaccination.",
+      boosterPoint2: "<strong>Adult Dogs (after 1-year booster):</strong> Rabies vaccine is typically boosted every 1-3 years, depending on the vaccine label and local laws. DHPP is often boosted every 3 years. Other non-core vaccines may require annual boosters."
     }
   },
   fa: {
@@ -1169,6 +1212,50 @@ export const translations: { [key: string]: TranslationBlock } = {
             label: "پوند (lb)",
             description: "واحد امپریال برای جرم (۱ کیلوگرم ≈ ۲.۲۰۴۶۲ پوند)."
         }
+    },
+    protocols: {
+      canineVaccination: {
+          title: "پروتکل واکسیناسیون توله‌سگ‌ها",
+          description: "راهنمای جامع اصول و برنامه‌های واکسیناسیون مدرن سگ‌سانان برای توله‌سگ‌ها."
+      },
+      felineLeukemia: {
+          title: "درمان ویروس لوسمی گربه‌سانان (FeLV)",
+          description: "پروتکل دقیق برای مدیریت FeLV در گربه‌ها، شامل دارودرمانی و مراقبت‌های حمایتی."
+      },
+      canineParvovirus: {
+          title: "درمان پاروویروس سگ‌سانان",
+          description: "پروتکل مراقبت‌های ویژه برای درمان پاروویروس در سگ‌ها، با تمرکز بر هیدراتاسیون و مدیریت علائم."
+      },
+      felineURI: {
+          title: "پروتکل عفونت دستگاه تنفسی فوقانی گربه‌سانان (URI)",
+          description: "دستورالعمل‌های درمانی برای مدیریت URI در گربه‌ها، شامل آنتی‌بیوتیک‌ها و مراقبت‌های حمایتی."
+      }
+    },
+    canineVaccinationContent: {
+      coreVaccinesTitle: "واکسن‌های اصلی (Core)",
+      coreVaccinesDesc: "واکسن‌های اصلی برای تمام توله‌سگ‌ها و سگ‌هایی با سابقه واکسیناسیون نامشخص توصیه می‌شود. این واکسن‌ها در برابر بیماری‌هایی محافظت ایجاد می‌کنند که شایع هستند، میزان ابتلا و مرگ‌ومیر بالایی دارند و برای بهداشت عمومی خطرناک محسوب می‌شوند.",
+      cdvName: "ویروس دیستمپر سگ‌سانان (CDV)",
+      cdvDesc: "یک بیماری ویروسی شدید و بسیار مسری که سیستم تنفسی، گوارشی و عصبی را تحت تأثیر قرار می‌دهد.",
+      cav2Name: "آدنوویروس-۲ سگ‌سانان (CAV-2)",
+      cav2Desc: "در برابر هپاتیت عفونی سگ‌سانان (ناشی از CAV-1) محافظت می‌کند و یکی از اجزای کمپلکس سرفه کنل است.",
+      cpv2Name: "پاروویروس سگ‌سانان (CPV-2)",
+      cpv2Desc: "یک بیماری ویروسی بسیار مسری و اغلب کشنده که باعث استفراغ و اسهال شدید، به ویژه در توله‌سگ‌ها می‌شود.",
+      rabiesName: "ویروس هاری",
+      rabiesDesc: "یک بیماری ویروسی کشنده سیستم عصبی که می‌تواند تمام پستانداران، از جمله انسان را مبتلا کند. واکسیناسیون در اکثر مناطق از نظر قانونی الزامی است.",
+      puppyScheduleTitle: "برنامه واکسیناسیون توله‌سگ",
+      puppyScheduleDesc: "این یک راهنمای کلی است. دامپزشک شما بر اساس عوامل خطر فردی توله‌سگ و موقعیت جغرافیایی شما، یک پروتکل خاص را تنظیم خواهد کرد.",
+      tableHeaderAge: "سن",
+      tableHeaderRecs: "واکسن‌های توصیه‌شده",
+      scheduleRow1Age: "۶-۸ هفتگی",
+      scheduleRow1Recs: "DHPP (دیستمپر، هپاتیت، پاراآنفلوآنزا، پاروویروس) - دوز اول",
+      scheduleRow2Age: "۱۰-۱۲ هفتگی",
+      scheduleRow2Recs: "DHPP - دوز دوم. اختیاری: لپتوسپیروز، بوردتلا، آنفلوآنزای سگ‌سانان بر اساس ریسک.",
+      scheduleRow3Age: "۱۴-۱۶ هفتگی",
+      scheduleRow3Recs: "DHPP - دوز سوم (آخرین دوز تولگی). هاری (طبق الزامات قانونی، اغلب حدود ۱۶ هفتگی). اختیاری: یادآورهای لپتوسپیروز، بوردتلا، آنفلوآنزای سگ‌سانان.",
+      boostersTitle: "واکسن‌های یادآور پس از تولگی",
+      boostersDesc: "پس از سری اولیه واکسن‌های تولگی، برای حفظ ایمنی به دوزهای یادآور نیاز است.",
+      boosterPoint1: "<strong>۱ سالگی:</strong> یک دوز یادآور DHPP و هاری معمولاً یک سال پس از آخرین واکسن تولگی تزریق می‌شود.",
+      boosterPoint2: "<strong>سگ‌های بالغ (پس از یادآور ۱ سالگی):</strong> واکسن هاری معمولاً هر ۱ تا ۳ سال، بسته به برچسب واکسن و قوانین محلی، تکرار می‌شود. DHPP اغلب هر ۳ سال تکرار می‌شود. سایر واکسن‌های غیراصلی ممکن است به یادآورهای سالانه نیاز داشته باشند."
     }
   }
 };

@@ -1,17 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import SpeciesSelector from '../components/SpeciesSelector';
 import PatientInfoForm from '../components/PatientInfoForm';
 import VetTools from '../components/VetTools';
 import { getSpeciesList } from '../constants';
 import { usePatient } from '../context/PatientContext';
-import type { ScreenProps } from '../types';
 import { useLocale } from '../context/LocaleContext';
 
-const HomeScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
+const HomeScreen: React.FC = () => {
   const { patientInfo, updatePatientInfo } = usePatient();
   const { t } = useLocale();
   const speciesList = getSpeciesList(t);
+  const navigate = useNavigate();
 
   const handleSelectSpecies = (speciesName: string) => {
     // If the same species is clicked, deselect it.
@@ -42,8 +43,8 @@ const HomeScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
       <Header />
       <main className="p-4 space-y-6">
         {/* Main Interactive Patient Card */}
-        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-4 sm:p-6 transition-all duration-500">
-            <h2 className="text-xl font-bold text-start mb-4 text-slate-900 dark:text-slate-100">{t('species')}</h2>
+        <div className="bg-card rounded-3xl shadow-xl p-4 sm:p-6 transition-all duration-500">
+            <h2 className="text-xl font-bold text-start mb-4 text-heading">{t('species')}</h2>
             <SpeciesSelector
               species={speciesList}
               selectedSpecies={patientInfo.species}
@@ -59,7 +60,7 @@ const HomeScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
               }`}
               aria-hidden={!!patientInfo.species}
             >
-              <p className="text-slate-500 dark:text-slate-400 font-medium text-lg">
+              <p className="text-muted-foreground font-medium text-lg">
                 {t('selectSpeciesPrompt')}
               </p>
             </div>
@@ -73,7 +74,7 @@ const HomeScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
             >
                 <div className="overflow-hidden">
                     {/* Divider */}
-                    <hr className="border-slate-200 dark:border-slate-700 mb-6"/>
+                    <hr className="border-border mb-6"/>
                     <PatientInfoForm />
                 </div>
             </div>
@@ -81,7 +82,7 @@ const HomeScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
 
         {/* VET TOOLS - also animated and dependent on species selection */}
         <div className={`transition-all duration-500 ease-in-out ${patientInfo.species ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
-             <VetTools onNavigate={onNavigate} />
+             <VetTools />
         </div>
 
       </main>

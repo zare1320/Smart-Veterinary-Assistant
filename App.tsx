@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import type { NavItemKey, Protocol, MedicationProfile, Medication } from './types';
+import React from 'react';
+import { Routes, Route, useLocation, Navigate, Outlet } from 'react-router-dom';
 import { getNavItems } from './constants';
 import BottomNav from './components/BottomNav';
 import HomeScreen from './screens/HomeScreen';
@@ -26,128 +26,66 @@ import { useLocale } from './context/LocaleContext';
 import { useUser } from './context/UserContext';
 import RegisterScreen from './screens/RegisterScreen';
 
-const App: React.FC = () => {
-  const [activeScreen, setActiveScreen] = useState<NavItemKey>('home');
-  const [selectedProtocol, setSelectedProtocol] = useState<Protocol | null>(null);
-  const [initialProtocolTitle, setInitialProtocolTitle] = useState<string>('');
-  const [reportData, setReportData] = useState<{ profile: MedicationProfile; medications: Medication[] } | null>(null);
+const MainLayout: React.FC = () => {
+  const location = useLocation();
   const { t } = useLocale();
-  const { user, login } = useUser();
   const navItems = getNavItems(t);
 
-  useEffect(() => {
-    if (user && !user.isProfileComplete) {
-      setActiveScreen('profile');
-    } else if (activeScreen === 'profile' && user?.isProfileComplete) {
-      // If profile was just completed, navigate back home.
-      setActiveScreen('home');
-    }
-  }, [user]);
-
-  if (!user) {
-    return <RegisterScreen onAuthSuccess={login} />;
-  }
-
-  const handleSelectProtocol = (protocol: Protocol) => {
-    setSelectedProtocol(protocol);
-    setActiveScreen('protocol-detail');
-  };
+  const showBottomNav = navItems.some(item => location.pathname.startsWith(item.path));
   
-  const handleNavigate = (screen: NavItemKey) => {
-    if (user && !user.isProfileComplete && screen !== 'profile') {
-      // Prevent navigation away from profile completion
-      return;
-    }
-    setActiveScreen(screen);
-  }
-
-  const handleAddProtocol = (title: string) => {
-      setInitialProtocolTitle(title);
-      setActiveScreen('add-protocol');
-  }
-
-  const handleGenerateReport = (data: { profile: MedicationProfile; medications: Medication[] }) => {
-    setReportData(data);
-    setActiveScreen('medication-report');
-  };
-
-  const renderScreen = () => {
-    switch (activeScreen) {
-      case 'home':
-        return <HomeScreen onNavigate={handleNavigate} />;
-      case 'protocols':
-        return <ProtocolsScreen onNavigate={handleNavigate} onSelectProtocol={handleSelectProtocol} onAddProtocol={handleAddProtocol} />;
-      case 'protocol-detail':
-        return <ProtocolDetailScreen protocol={selectedProtocol!} onNavigate={handleNavigate} />;
-      case 'add-protocol':
-        return <AddProtocolScreen onNavigate={handleNavigate} initialTitle={initialProtocolTitle} />;
-      case 'my-drugs':
-        return <MyDrugsScreen onNavigate={handleNavigate} onGenerateReport={handleGenerateReport} />;
-      case 'settings':
-        return <SettingsScreen onNavigate={handleNavigate} />;
-      case 'profile':
-        return <ProfileScreen onNavigate={handleNavigate} />;
-      case 'language-settings':
-        return <LanguageSettingsScreen onNavigate={handleNavigate} />;
-      case 'theme-settings':
-          return <ThemeSettingsScreen onNavigate={handleNavigate} />;
-      case 'sync-settings':
-          return <SyncSettingsScreen onNavigate={handleNavigate} />;
-      case 'privacy-policy':
-          return <PrivacyPolicyScreen onNavigate={handleNavigate} />;
-      case 'terms-of-service':
-          return <TermsOfServiceScreen onNavigate={handleNavigate} />;
-      case 'weight-unit-settings':
-          return <WeightUnitSettingsScreen onNavigate={handleNavigate} />;
-      case 'drug-dose-calculator':
-        return <DrugDoseCalculatorScreen onNavigate={handleNavigate} />;
-      case 'fluid-therapy-calculator':
-        return <FluidTherapyCalculatorScreen onNavigate={handleNavigate} />;
-      case 'blood-pressure-calculator':
-        return <BloodPressureCalculatorScreen onNavigate={handleNavigate} />;
-      case 'blood-transfusion-calculator':
-        return <BloodTransfusionCalculatorScreen onNavigate={handleNavigate} />;
-      case 'pet-age-calculator':
-        return <PetAgeCalculatorScreen onNavigate={handleNavigate} />;
-      case 'drug-interaction-checker':
-        return <DrugInteractionScreen onNavigate={handleNavigate} />;
-      case 'medication-report':
-        return <MedicationReportScreen reportData={reportData!} onNavigate={handleNavigate} />;
-      default:
-        return <HomeScreen onNavigate={handleNavigate} />;
-    }
-  };
-
-  const showBottomNav = ![
-    'profile', 
-    'language-settings',
-    'theme-settings',
-    'sync-settings',
-    'privacy-policy',
-    'terms-of-service',
-    'weight-unit-settings',
-    'drug-dose-calculator',
-    'fluid-therapy-calculator',
-    'blood-pressure-calculator',
-    'blood-transfusion-calculator',
-    'pet-age-calculator',
-    'protocol-detail',
-    'add-protocol',
-    'drug-interaction-checker',
-    'medication-report'
-  ].includes(activeScreen) && (user?.isProfileComplete ?? false);
-
-
   return (
-    <div className="min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      {showBottomNav && (
-          <BottomNav items={navItems} activeItem={activeScreen} onItemClick={handleNavigate} />
-      )}
+    <div className="min-h-screen text-foreground">
+      {showBottomNav && <BottomNav items={navItems} />}
       <main className={`transition-all duration-300 ${showBottomNav ? 'pb-20 md:pb-0 md:pl-24' : ''}`}>
-          {renderScreen()}
+        <Outlet />
       </main>
     </div>
   );
 };
 
+const App: React.FC = () => {
+  const { user, login } = useUser();
+  const location = useLocation();
+
+  if (!user) {
+    return <RegisterScreen onAuthSuccess={login} />;
+  }
+
+  // If the user's profile is not complete, force them to the profile screen
+  if (!user.isProfileComplete && location.pathname !== '/profile') {
+    return <Navigate to="/profile" replace />;
+  }
+
+  return (
+    <Routes>
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<HomeScreen />} />
+        <Route path="/protocols" element={<ProtocolsScreen />} />
+        <Route path="/my-drugs" element={<MyDrugsScreen />} />
+        <Route path="/settings" element={<SettingsScreen />} />
+      </Route>
+
+      {/* FIX: Added missing routes for screens that are not part of the main layout */}
+      {/* Routes without the main layout/nav */}
+      <Route path="/profile" element={<ProfileScreen />} />
+      <Route path="/settings/language" element={<LanguageSettingsScreen />} />
+      <Route path="/settings/theme" element={<ThemeSettingsScreen />} />
+      <Route path="/settings/sync" element={<SyncSettingsScreen />} />
+      <Route path="/settings/privacy-policy" element={<PrivacyPolicyScreen />} />
+      <Route path="/settings/terms-of-service" element={<TermsOfServiceScreen />} />
+      <Route path="/settings/weight-unit" element={<WeightUnitSettingsScreen />} />
+      <Route path="/calculators/drug-dose" element={<DrugDoseCalculatorScreen />} />
+      <Route path="/calculators/fluid-therapy" element={<FluidTherapyCalculatorScreen />} />
+      <Route path="/calculators/blood-pressure" element={<BloodPressureCalculatorScreen />} />
+      <Route path="/calculators/blood-transfusion" element={<BloodTransfusionCalculatorScreen />} />
+      <Route path="/calculators/pet-age" element={<PetAgeCalculatorScreen />} />
+      <Route path="/protocols/:protocolId" element={<ProtocolDetailScreen />} />
+      <Route path="/add-protocol" element={<AddProtocolScreen />} />
+      <Route path="/drug-interaction-checker" element={<DrugInteractionScreen />} />
+      <Route path="/medication-report" element={<MedicationReportScreen />} />
+    </Routes>
+  );
+};
+
+// FIX: Added default export for App component
 export default App;

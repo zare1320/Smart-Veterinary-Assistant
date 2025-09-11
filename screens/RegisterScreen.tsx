@@ -1,10 +1,12 @@
-import React, { useReducer, useState } from 'react';
+import React, { useReducer } from 'react';
 import { useLocale } from '../context/LocaleContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PawIcon, GoogleIcon, GlobeIcon } from '../components/Icons';
 import { authService } from '../services/authService';
 import IdentityView from '../components/auth/IdentityView';
 import OtpView from '../components/auth/OtpView';
+import { useTheme } from '../context/ThemeContext';
+import ThemeToggle from '../components/ThemeToggle';
 
 type View = 'identity' | 'otp';
 type Status = 'idle' | 'loading' | 'error';
@@ -54,9 +56,15 @@ interface RegisterScreenProps {
 const RegisterScreen: React.FC<RegisterScreenProps> = ({ onAuthSuccess }) => {
     const { t, locale, setLocale } = useLocale();
     const [state, dispatch] = useReducer(authReducer, initialState);
+    const { effectiveTheme, setThemeSetting } = useTheme();
 
     const toggleLocale = () => {
         setLocale(locale === 'fa' ? 'en' : 'fa');
+    };
+
+    const handleThemeToggle = () => {
+        const newTheme = effectiveTheme === 'dark' ? 'light' : 'dark';
+        setThemeSetting(newTheme);
     };
 
     const handleIdentitySubmit = async (identity: string) => {
@@ -97,11 +105,15 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onAuthSuccess }) => {
 
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 dark:bg-slate-950 p-4 relative">
-            <div className="absolute top-4 end-4">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 relative">
+            <div className="absolute top-4 end-4 flex items-center gap-2">
+                <ThemeToggle 
+                  isDarkMode={effectiveTheme === 'dark'}
+                  onToggle={handleThemeToggle}
+                />
                 <button 
                     onClick={toggleLocale} 
-                    className="flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-200"
+                    className="flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold bg-muted hover:bg-secondary transition-colors text-foreground"
                 >
                     <GlobeIcon />
                     <span>{locale === 'fa' ? 'English' : 'فارسی'}</span>
@@ -110,8 +122,8 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onAuthSuccess }) => {
             <div className="w-full max-w-sm mx-auto">
                 <div className="flex flex-col items-center justify-center mb-8">
                     <PawIcon className="text-5xl text-[var(--primary-500)]" />
-                    <h1 className="text-2xl font-bold mt-2 text-slate-800 dark:text-slate-100">{t('auth.welcomeTitle')}</h1>
-                    <p className="text-slate-500 dark:text-slate-400 text-center">{t('auth.welcomeSubtitle')}</p>
+                    <h1 className="text-2xl font-bold mt-2 text-heading">{t('auth.welcomeTitle')}</h1>
+                    <p className="text-muted-foreground text-center">{t('auth.welcomeSubtitle')}</p>
                 </div>
 
                 <div className="relative overflow-hidden">
@@ -143,12 +155,12 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onAuthSuccess }) => {
                 </div>
                 
                  <div className="flex items-center my-6">
-                    <hr className="flex-grow border-slate-300 dark:border-slate-800"/>
-                    <span className="mx-4 text-xs font-medium text-slate-400 dark:text-slate-500">{t('auth.or')}</span>
-                    <hr className="flex-grow border-slate-300 dark:border-slate-800"/>
+                    <hr className="flex-grow border-border"/>
+                    <span className="mx-4 text-xs font-medium text-muted-foreground">{t('auth.or')}</span>
+                    <hr className="flex-grow border-border"/>
                 </div>
 
-                <button onClick={handleGoogleSignIn} disabled={state.status === 'loading'} className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50">
+                <button onClick={handleGoogleSignIn} disabled={state.status === 'loading'} className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-card border border-border rounded-xl font-semibold text-foreground hover:bg-muted transition-colors disabled:opacity-50">
                     <GoogleIcon className="w-5 h-5"/>
                     {t('auth.continueWithGoogle')}
                 </button>

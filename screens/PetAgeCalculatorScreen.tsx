@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
 import { Icon } from '../components/Icons';
 import InfoModal from '../components/InfoModal';
 import { BackButton } from '../components/Button';
-import type { ScreenProps } from '../types';
 import ModernDatePicker from '../components/ModernDatePicker';
 
 // A new, visually prominent component for displaying calculation results
@@ -80,9 +80,9 @@ const CurrentAgeCalculator: React.FC = () => {
                 <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-inherit mb-2 text-start">{t('otherPage.ageCalculator.calendarType')}</label>
-                        <div className="flex items-center bg-black/10 dark:bg-black/20 p-1 rounded-lg">
-                            <button onClick={() => setCalendarType('gregorian')} className={`flex-1 px-3 py-1 text-sm font-semibold rounded-md transition-all ${calendarType === 'gregorian' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-slate-100' : 'text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-black/20'}`}>{t('otherPage.ageCalculator.gregorian')}</button>
-                            <button onClick={() => setCalendarType('jalali')} className={`flex-1 px-3 py-1 text-sm font-semibold rounded-md transition-all ${calendarType === 'jalali' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-slate-100' : 'text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-black/20'}`}>{t('otherPage.ageCalculator.jalali')}</button>
+                        <div className="flex items-center bg-muted/50 p-1 rounded-lg">
+                            <button onClick={() => setCalendarType('gregorian')} className={`flex-1 px-3 py-1 text-sm font-semibold rounded-md transition-all ${calendarType === 'gregorian' ? 'bg-card shadow' : 'text-muted-foreground hover:bg-card/50'}`}>{t('otherPage.ageCalculator.gregorian')}</button>
+                            <button onClick={() => setCalendarType('jalali')} className={`flex-1 px-3 py-1 text-sm font-semibold rounded-md transition-all ${calendarType === 'jalali' ? 'bg-card shadow' : 'text-muted-foreground hover:bg-card/50'}`}>{t('otherPage.ageCalculator.jalali')}</button>
                         </div>
                     </div>
                     <ModernDatePicker
@@ -181,9 +181,9 @@ const HumanYearsCalculator: React.FC = () => {
             
             <div className="mb-6">
                 <label className="block text-sm font-medium text-inherit mb-2 text-start">{t('otherPage.ageCalculator.calculationMethod')}</label>
-                <div className="flex items-center bg-black/10 dark:bg-black/20 p-1 rounded-lg">
-                    <button onClick={() => setCalculationMethod('formula')} className={`flex-1 px-3 py-1 text-sm font-semibold rounded-md transition-all ${calculationMethod === 'formula' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-slate-100' : 'text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-black/20'}`}>{t('otherPage.ageCalculator.formula')}</button>
-                    <button onClick={() => setCalculationMethod('table')} className={`flex-1 px-3 py-1 text-sm font-semibold rounded-md transition-all ${calculationMethod === 'table' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-slate-100' : 'text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-black/20'}`}>{t('otherPage.ageCalculator.table')}</button>
+                <div className="flex items-center bg-muted/50 p-1 rounded-lg">
+                    <button onClick={() => setCalculationMethod('formula')} className={`flex-1 px-3 py-1 text-sm font-semibold rounded-md transition-all ${calculationMethod === 'formula' ? 'bg-card shadow' : 'text-muted-foreground hover:bg-card/50'}`}>{t('otherPage.ageCalculator.formula')}</button>
+                    <button onClick={() => setCalculationMethod('table')} className={`flex-1 px-3 py-1 text-sm font-semibold rounded-md transition-all ${calculationMethod === 'table' ? 'bg-card shadow' : 'text-muted-foreground hover:bg-card/50'}`}>{t('otherPage.ageCalculator.table')}</button>
                 </div>
             </div>
 
@@ -232,29 +232,29 @@ const HumanYearsCalculator: React.FC = () => {
             </div>
 
             <InfoModal isOpen={isTableModalOpen} onClose={() => setIsTableModalOpen(false)} title={t('otherPage.ageCalculator.traditionalTableTitle')}>
-                 <div className="overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
+                 <div className="overflow-x-auto rounded-lg border border-border">
                     <table className="w-full text-center">
-                        <thead className="bg-black/5 dark:bg-black/20">
+                        <thead className="bg-muted">
                             <tr>
-                                <th rowSpan={2} className="p-3 text-sm font-semibold tracking-wide border-b border-e border-black/10 dark:border-white/10">{t('otherPage.ageCalculator.tableHeaders.petYears')}</th>
-                                <th rowSpan={2} className="p-3 text-sm font-semibold tracking-wide border-b border-e border-black/10 dark:border-white/10">{t('otherPage.ageCalculator.tableHeaders.feline')}</th>
-                                <th colSpan={4} className="p-3 text-sm font-semibold tracking-wide border-b border-black/10 dark:border-white/10">{t('otherPage.ageCalculator.tableHeaders.canine')}</th>
+                                <th rowSpan={2} className="p-3 text-sm font-semibold tracking-wide border-b border-e border-border">{t('otherPage.ageCalculator.tableHeaders.petYears')}</th>
+                                <th rowSpan={2} className="p-3 text-sm font-semibold tracking-wide border-b border-e border-border">{t('otherPage.ageCalculator.tableHeaders.feline')}</th>
+                                <th colSpan={4} className="p-3 text-sm font-semibold tracking-wide border-b border-border">{t('otherPage.ageCalculator.tableHeaders.canine')}</th>
                             </tr>
                             <tr>
-                                <th className="p-3 text-sm font-semibold tracking-wide border-b border-e border-black/10 dark:border-white/10">{t('otherPage.ageCalculator.weightRanges.0-20')}</th>
-                                <th className="p-3 text-sm font-semibold tracking-wide border-b border-e border-black/10 dark:border-white/10">{t('otherPage.ageCalculator.weightRanges.20-50')}</th>
-                                <th className="p-3 text-sm font-semibold tracking-wide border-b border-e border-black/10 dark:border-white/10">{t('otherPage.ageCalculator.weightRanges.50-90')}</th>
-                                <th className="p-3 text-sm font-semibold tracking-wide border-b border-black/10 dark:border-white/10">{t('otherPage.ageCalculator.weightRanges.>90')}</th>
+                                <th className="p-3 text-sm font-semibold tracking-wide border-b border-e border-border">{t('otherPage.ageCalculator.weightRanges.0-20')}</th>
+                                <th className="p-3 text-sm font-semibold tracking-wide border-b border-e border-border">{t('otherPage.ageCalculator.weightRanges.20-50')}</th>
+                                <th className="p-3 text-sm font-semibold tracking-wide border-b border-e border-border">{t('otherPage.ageCalculator.weightRanges.50-90')}</th>
+                                <th className="p-3 text-sm font-semibold tracking-wide border-b border-border">{t('otherPage.ageCalculator.weightRanges.>90')}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {agingTableData.map(row => (
-                                <tr key={row.pet} className="border-b border-black/5 dark:border-white/5 last:border-0 hover:bg-black/5 dark:hover:bg-white/5">
-                                    <td className="p-2 font-mono font-bold border-e border-black/10 dark:border-white/10">{localizeNumber(row.pet)}</td>
-                                    <td className="p-2 font-mono border-e border-black/10 dark:border-white/10">{localizeNumber(row.feline)}</td>
-                                    <td className="p-2 font-mono border-e border-black/10 dark:border-white/10">{localizeNumber(row.canine['0-20'])}</td>
-                                    <td className="p-2 font-mono border-e border-black/10 dark:border-white/10">{localizeNumber(row.canine['20-50'])}</td>
-                                    <td className="p-2 font-mono border-e border-black/10 dark:border-white/10">{localizeNumber(row.canine['50-90'])}</td>
+                                <tr key={row.pet} className="border-b border-border/50 last:border-0 hover:bg-muted/50">
+                                    <td className="p-2 font-mono font-bold border-e border-border">{localizeNumber(row.pet)}</td>
+                                    <td className="p-2 font-mono border-e border-border">{localizeNumber(row.feline)}</td>
+                                    <td className="p-2 font-mono border-e border-border">{localizeNumber(row.canine['0-20'])}</td>
+                                    <td className="p-2 font-mono border-e border-border">{localizeNumber(row.canine['20-50'])}</td>
+                                    <td className="p-2 font-mono border-e border-border">{localizeNumber(row.canine['50-90'])}</td>
                                     <td className="p-2 font-mono">{row.canine['>90'] ? localizeNumber(row.canine['>90']) : '-'}</td>
                                 </tr>
                             ))}
@@ -273,15 +273,16 @@ const HumanYearsCalculator: React.FC = () => {
 };
 
 
-const PetAgeCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
+const PetAgeCalculatorScreen: React.FC = () => {
     const { t } = useLocale();
+    const navigate = useNavigate();
     return (
         <main className="container mx-auto p-4 md:p-6">
             <div className="mb-6">
-                <BackButton onClick={() => onNavigate('home')} />
+                <BackButton onClick={() => navigate('/')} />
             </div>
             <div className="text-center py-4 mb-8">
-                <h2 className="text-3xl md:text-4xl font-extrabold text-inherit">{t('otherPage.ageCalculator.pageTitle')}</h2>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-heading">{t('otherPage.ageCalculator.pageTitle')}</h2>
             </div>
             <div className="flex flex-col gap-8">
                 <CurrentAgeCalculator />

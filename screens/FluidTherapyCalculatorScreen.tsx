@@ -1,7 +1,7 @@
 import React, { useReducer, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePatient } from '../context/PatientContext';
 import { useLocale } from '../context/LocaleContext';
-import type { ScreenProps } from '../types';
 import { AnimalSpecies } from '../types';
 import { ActionTypes, FluidCalculatorAction, FluidCalculatorState } from '../components/fluid/FluidCalculatorTypes';
 import MissingPatientWeightBanner from '../components/MissingPatientWeightBanner';
@@ -54,9 +54,10 @@ function fluidCalculatorReducer(state: FluidCalculatorState, action: FluidCalcul
     }
 }
 
-const FluidTherapyCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
+const FluidTherapyCalculatorScreen: React.FC = () => {
     const { patientInfo } = usePatient();
     const { t } = useLocale();
+    const navigate = useNavigate();
 
     const getAnimalSpecies = (speciesName: string | null): AnimalSpecies | null => {
         if (!speciesName) return null;
@@ -110,12 +111,12 @@ const FluidTherapyCalculatorScreen: React.FC<ScreenProps> = ({ onNavigate }) => 
             {!hasWeight && <MissingPatientWeightBanner />}
             <div className="container mx-auto p-4 md:p-6">
                  <header className="flex justify-between items-center mb-4">
-                    <BackButton onClick={() => onNavigate('home')} />
+                    <BackButton onClick={() => navigate('/')} />
                     <PatientInfoDisplay />
                 </header>
 
                 <div className="text-center mb-6">
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-inherit">{t('calculatorFluidTherapyTitle')}</h2>
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-heading">{t('calculatorFluidTherapyTitle')}</h2>
                 </div>
 
                 <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 ${!hasWeight ? 'opacity-50 pointer-events-none' : ''}`}>

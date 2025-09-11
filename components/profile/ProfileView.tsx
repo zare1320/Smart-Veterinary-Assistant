@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocale } from '../../context/LocaleContext';
 import { useTheme } from '../../context/ThemeContext';
-import type { User, NavItemKey } from '../../types';
+import type { User } from '../../types';
 import { Button } from '../Button';
 import { ArrowLeftIcon, ArrowRightIcon, LogOutIcon, PencilIcon } from '../Icons';
 
@@ -9,7 +9,7 @@ interface ProfileViewProps {
     user: User;
     onEdit: () => void;
     onLogout: () => void;
-    onNavigate: (screen: NavItemKey) => void;
+    onNavigate: (path: string) => void;
 }
 
 const InfoRow: React.FC<{ label: string; value?: string }> = ({ label, value }) => {
@@ -29,14 +29,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({ user, onEdit, onLogout, onNav
     const initials = user.profile.fullName ? user.profile.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : (user.email || user.phone || '?')[0].toUpperCase();
 
     const roleMap: {[key:string]: string} = {
-        student: t('profile.role.student'),
-        dvm: t('profile.role.dvm'),
+        student: t('profile.form.role.student'),
+        dvm: t('profile.form.role.dvm'),
     };
 
     return (
         <div>
             <header className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 sticky top-0 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm z-10">
-                <button onClick={() => onNavigate('settings')} className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+                <button onClick={() => onNavigate('/settings')} className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
                     {locale === 'fa' ? <ArrowRightIcon /> : <ArrowLeftIcon />}
                 </button>
                 <h1 className="text-lg font-bold">{t('profile.view.title')}</h1>

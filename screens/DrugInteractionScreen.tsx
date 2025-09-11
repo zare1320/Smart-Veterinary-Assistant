@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
 import { BackButton } from '../components/Button';
 import { FlaskIcon, SearchIcon, XMarkIcon, TriangleExclamationIcon } from '../components/Icons';
-import type { ScreenProps } from '../types';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // --- Mock Data (self-contained for this component) ---
@@ -90,8 +90,9 @@ const InteractionResultCard: React.FC<{ result: Interaction & { drugNames: [stri
 
 // --- Main Component ---
 
-const DrugInteractionScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
+const DrugInteractionScreen: React.FC = () => {
   const { t } = useLocale();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDrugs, setSelectedDrugs] = useState<InteractionDrug[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -146,17 +147,17 @@ const DrugInteractionScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
   return (
     <div className="container mx-auto p-4 md:p-6 min-h-screen">
       <div className="flex justify-between items-center mb-4">
-        <BackButton onClick={() => onNavigate('my-drugs')} />
+        <BackButton onClick={() => navigate('/my-drugs')} />
       </div>
       <header className="text-center mb-6">
         <div className="flex items-center justify-center gap-2">
             <FlaskIcon className="w-8 h-8 text-[var(--primary-500)]" />
-            <h1 className="text-3xl md:text-4xl font-extrabold text-inherit">{t('interactions.title')}</h1>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-heading">{t('interactions.title')}</h1>
         </div>
       </header>
 
       <div className="max-w-3xl mx-auto space-y-8">
-        <div className="text-sm text-center text-slate-600 dark:text-slate-400 space-y-1">
+        <div className="text-sm text-center text-muted-foreground space-y-1">
             <p>{t('interactions.intro1')}</p>
             <p>{t('interactions.intro2')}</p>
         </div>
@@ -176,14 +177,14 @@ const DrugInteractionScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
                  <AnimatePresence>
                     {searchResults.length > 0 && (
                         <motion.ul 
-                            className="absolute top-full mt-2 w-full bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 z-10 max-h-60 overflow-y-auto"
+                            className="absolute top-full mt-2 w-full bg-card rounded-lg shadow-lg border-border z-10 max-h-60 overflow-y-auto"
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                         >
                             {searchResults.map(drug => (
                                 <li key={drug.id}>
-                                    <button onClick={() => addDrug(drug)} className="w-full text-start px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                    <button onClick={() => addDrug(drug)} className="w-full text-start px-4 py-2 hover:bg-muted transition-colors">
                                         {drug.name}
                                     </button>
                                 </li>
@@ -193,13 +194,13 @@ const DrugInteractionScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
                 </AnimatePresence>
             </div>
             <div className="mt-4">
-                <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 text-start">{t('interactions.selectedDrugs')}</h2>
+                <h2 className="text-sm font-semibold text-muted-foreground mb-2 text-start">{t('interactions.selectedDrugs')}</h2>
                 <div className="flex flex-wrap gap-2">
                     <AnimatePresence>
                         {selectedDrugs.map(drug => (
                             <motion.div 
                                 key={drug.id}
-                                className="flex items-center gap-2 bg-[var(--primary-100)] dark:bg-[var(--primary-900)] text-[var(--primary-700)] dark:text-[var(--primary-200)] rounded-full px-3 py-1 text-sm font-semibold"
+                                className="flex items-center gap-2 bg-secondary text-secondary-foreground rounded-full px-3 py-1 text-sm font-semibold"
                                 initial={{ opacity: 0, scale: 0.5 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.5 }}
@@ -214,7 +215,7 @@ const DrugInteractionScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
                     </AnimatePresence>
                 </div>
                 {selectedDrugs.length < 2 && (
-                    <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-4">{t('interactions.noDrugsSelected')}</p>
+                    <p className="text-center text-sm text-muted-foreground mt-4">{t('interactions.noDrugsSelected')}</p>
                 )}
             </div>
         </div>
@@ -222,7 +223,7 @@ const DrugInteractionScreen: React.FC<ScreenProps> = ({ onNavigate }) => {
         {/* Results Section */}
         {selectedDrugs.length >= 2 && (
              <div className="space-y-4">
-                <h2 className="text-xl font-bold text-start">{t('interactions.resultsTitle')}</h2>
+                <h2 className="text-xl font-bold text-start text-heading">{t('interactions.resultsTitle')}</h2>
                 {interactionResults.length > 0 ? (
                     <div className="space-y-3">
                         <AnimatePresence>

@@ -55,7 +55,7 @@ const MedicationModal: React.FC<MedicationModalProps> = ({ isOpen, onClose, onSa
           onClick={onClose}
         >
           <motion.div
-            className="bg-slate-50 dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md"
+            className="bg-card rounded-2xl shadow-xl w-full max-w-md"
             initial={{ y: "-50px", opacity: 0 }}
             animate={{ y: "0", opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 30 } }}
             exit={{ y: "50px", opacity: 0 }}
@@ -65,14 +65,14 @@ const MedicationModal: React.FC<MedicationModalProps> = ({ isOpen, onClose, onSa
             aria-labelledby="medication-modal-title"
           >
             <form onSubmit={handleSubmit}>
-              <header className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700">
-                <h2 id="medication-modal-title" className="text-lg font-bold text-slate-900 dark:text-slate-100">
+              <header className="flex justify-between items-center p-4 border-b border-border">
+                <h2 id="medication-modal-title" className="text-lg font-bold text-heading">
                   {isEditing ? t('medicationModal.editTitle') : t('medicationModal.addTitle')}
                 </h2>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                   aria-label={t('cancel')}
                 >
                   <XMarkIcon className="text-xl" />
@@ -105,7 +105,7 @@ const MedicationModal: React.FC<MedicationModalProps> = ({ isOpen, onClose, onSa
                     required
                 />
               </main>
-              <footer className="flex justify-end items-center gap-3 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-b-2xl">
+              <footer className="flex justify-end items-center gap-3 p-4 bg-muted/50 rounded-b-2xl">
                 <Button type="button" variant="secondary" onClick={onClose}>
                   {t('cancel')}
                 </Button>

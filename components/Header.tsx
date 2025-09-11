@@ -6,7 +6,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="flex items-center justify-center p-4 bg-transparent">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{t('appName')}</h1>
+      <h1 className="text-2xl font-bold text-heading">{t('appName')}</h1>
     </header>
   );
 };

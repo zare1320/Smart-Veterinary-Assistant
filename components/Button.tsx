@@ -11,7 +11,7 @@ export const BackButton: React.FC<BackButtonProps> = ({ onClick }) => {
     return (
         <button
             onClick={onClick}
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold hover:bg-muted transition-colors"
             aria-label={t('back')}
         >
             {locale === 'fa' ? <ArrowRightIcon /> : <ArrowLeftIcon />}
@@ -30,7 +30,7 @@ export const Button: React.FC<ButtonProps> = ({ variant = 'primary', children, c
     
     const variantClasses = {
         primary: 'bg-[var(--primary-500)] text-white hover:bg-[var(--primary-600)] focus:ring-[var(--primary-500)]',
-        secondary: 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-100 hover:bg-slate-300 dark:hover:bg-slate-600 focus:ring-slate-500'
+        secondary: 'bg-muted text-foreground hover:bg-secondary focus:ring-ring'
     };
 
     return (

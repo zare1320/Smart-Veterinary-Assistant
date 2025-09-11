@@ -1,28 +1,26 @@
 import React, { useState } from 'react';
-import type { NavItemKey, MedicationProfile, Medication } from '../types';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import type { MedicationProfile, Medication } from '../types';
 import { useLocale } from '../context/LocaleContext';
 import { useUser } from '../context/UserContext';
 import { Button } from '../components/Button';
 import { ArrowLeftIcon, ArrowRightIcon, PawIcon, PrintIcon } from '../components/Icons';
 
-interface MedicationReportScreenProps {
-  reportData: {
-    profile: MedicationProfile;
-    medications: Medication[];
-  };
-  onNavigate: (screen: NavItemKey) => void;
-}
-
-const MedicationReportScreen: React.FC<MedicationReportScreenProps> = ({ reportData, onNavigate }) => {
+const MedicationReportScreen: React.FC = () => {
   const { t, locale } = useLocale();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useUser();
   const [notes, setNotes] = useState('');
 
+  const reportData = location.state as { profile: MedicationProfile; medications: Medication[] } | null;
+
   if (!reportData || !user) {
-    // Should not happen with correct navigation flow
     return (
-      <div className="p-4">
-        Error: Missing report data. <button onClick={() => onNavigate('my-drugs')}>Go Back</button>
+      <div className="p-4 text-center">
+        <h1 className="text-2xl font-bold text-heading">Error: Missing Report Data</h1>
+        <p className="text-muted-foreground mt-2">Please generate a report from the "My Meds" screen first.</p>
+        <Link to="/my-drugs" className="mt-4 inline-block text-[var(--primary-600)] hover:underline">Go Back</Link>
       </div>
     );
   }
@@ -39,18 +37,18 @@ const MedicationReportScreen: React.FC<MedicationReportScreenProps> = ({ reportD
   };
   
   const roleMap: {[key:string]: string} = {
-      student: t('profile.role.student'),
-      dvm: t('profile.role.dvm'),
+      student: t('profile.form.role.student'),
+      dvm: t('profile.form.role.dvm'),
   };
 
   return (
-    <div className="bg-slate-200 dark:bg-slate-950 min-h-screen">
-      <header className="sticky top-0 z-10 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm print:hidden">
+    <div className="bg-background min-h-screen">
+      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm print:hidden">
         <div className="flex items-center p-4 justify-between">
-          <button onClick={() => onNavigate('my-drugs')} className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+          <button onClick={() => navigate('/my-drugs')} className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-muted transition-colors">
             {locale === 'fa' ? <ArrowRightIcon className="text-xl" /> : <ArrowLeftIcon className="text-xl" />}
           </button>
-          <h1 className="text-xl font-bold leading-tight tracking-[-0.015em] text-center">{t('medicationReport.title')}</h1>
+          <h1 className="text-xl font-bold leading-tight tracking-[-0.015em] text-center text-heading">{t('medicationReport.title')}</h1>
           <div className="w-10">
             <Button onClick={handlePrint} variant="primary" className="!p-2.5">
               <PrintIcon />
@@ -63,7 +61,7 @@ const MedicationReportScreen: React.FC<MedicationReportScreenProps> = ({ reportD
         {/* The Printable Report Area */}
         <div id="printable-report" className="max-w-4xl mx-auto bg-white p-8 sm:p-12 shadow-lg text-slate-900 font-sans">
           {/* Report Header */}
-          <div className="flex justify-between items-start pb-4 border-b">
+          <div className="flex justify-between items-start pb-4 border-b border-slate-300">
             <div className="text-left">
               <h2 className="text-2xl font-bold text-slate-800">{t('medicationReport.prescription')}</h2>
               <p className="text-sm text-slate-500">{t('medicationReport.issuedOn')}: {today}</p>
@@ -77,7 +75,7 @@ const MedicationReportScreen: React.FC<MedicationReportScreenProps> = ({ reportD
           </div>
 
           {/* Patient Info */}
-          <div className="mt-8 pb-4 border-b">
+          <div className="mt-8 pb-4 border-b border-slate-300">
             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-2">{t('medicationReport.patientInfo')}</h3>
             <div className="flex items-center gap-4">
                 <img src={profile.imageUrl} alt={profile.name} className="w-12 h-12 rounded-full object-cover"/>

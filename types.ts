@@ -253,3 +253,16 @@ export interface User {
     profile: UserProfile;
     settings: UserSettings;
 }
+
+// --- Toxicity Calculator Types ---
+export interface Plant {
+    id: number;
+    name: string;
+    commonNames: string[];
+    scientificName: string;
+    family: string;
+    isToxicToDogs: boolean;
+    isToxicToCats: boolean;
+    isNonToxic: boolean;
+    aspcaUrl: string;
+}

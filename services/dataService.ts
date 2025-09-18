@@ -1,8 +1,9 @@
-import type { Species, Protocol, Drug, DrugCategory, MedicationProfile, Medication } from '../types';
+import type { Species, Protocol, Drug, DrugCategory, MedicationProfile, Medication, Plant } from '../types';
 import { getSpeciesList } from '../constants';
 import { dogBreeds, catBreeds, birdBreeds, mammalBreeds, reptileBreeds, amphibianBreeds, fishBreeds } from './_breedDataSource';
 import { allDrugs, drugCategories } from './_drugDataSource';
 import { getDefaultProtocols } from './_protocolDataSource';
+import { poisonousPlants } from './_plantDataSource';
 
 // --- API Simulation ---
 // A short delay to simulate network latency
@@ -78,6 +79,11 @@ const getAllDrugs = async (): Promise<Drug[]> => {
 
 const getDrugCategories = async (): Promise<DrugCategory[]> => {
     return MOCK_API(drugCategories);
+}
+
+// --- Poisonous Plants ---
+const getPoisonousPlants = async (): Promise<Plant[]> => {
+    return MOCK_API(poisonousPlants);
 }
 
 // FIX: Added missing data service functions for "My Meds" feature to resolve property-not-found errors.
@@ -184,6 +190,7 @@ export const dataService = {
     getProtocolById,
     getAllDrugs,
     getDrugCategories,
+    getPoisonousPlants,
     getProfiles,
     getMedications,
     saveProfile,

@@ -809,6 +809,15 @@ export const translations: { [key: string]: TranslationBlock } = {
                 l2Content3: "If Xylitol is listed second, divide the total Sugar Alcohol volume by 2 for a rough estimate of Xylitol volume (in the image below, 1 gram ÷ 2 = 500mg of Xylitol per serving)",
                 close: "Close"
             }
+        },
+        plants: {
+            title: "Poisonous Plants",
+            searchPlaceholder: "Search Plants...",
+            intro: "Search the list of Poisonous Plants below by Name or Common Name. The icons indicate if the plant is <strong>Toxic</strong> {toxicIcon} or <strong>Non-toxic</strong> {nonToxicIcon} in <strong>Dogs</strong> {dogIcon} or <strong>Cats</strong> {catIcon}. Each plant listed links to the ASPCA Poisonous Plant page.",
+            legendTitle: "Poisonous Plants List",
+            commonNames: "Common Names",
+            scientificName: "Scientific Names",
+            family: "Family"
         }
     },
     // New Translations
@@ -1779,6 +1788,15 @@ export const translations: { [key: string]: TranslationBlock } = {
                 l2Content3: "اگر زایلیتول دوم ذکر شده باشد، حجم کل الکل قندی را بر ۲ تقسیم کنید تا تخمین تقریبی از حجم زایلیتول به دست آید (در تصویر زیر، ۱ گرم ÷ ۲ = ۵۰۰ میلی‌گرم زایلیتول در هر سروینگ).",
                 close: "بستن"
             }
+        },
+        plants: {
+            title: "گیاهان سمی",
+            searchPlaceholder: "جستجوی گیاهان...",
+            intro: "لیست گیاهان سمی زیر را بر اساس نام یا نام رایج جستجو کنید. آیکون‌ها نشان می‌دهند که آیا گیاه <strong>سمی</strong> {toxicIcon} است یا <strong>غیر سمی</strong> {nonToxicIcon} در <strong>سگ‌ها</strong> {dogIcon} یا <strong>گربه‌ها</strong> {catIcon}. هر گیاه لیست شده به صفحه گیاهان سمی ASPCA پیوند دارد.",
+            legendTitle: "لیست گیاهان سمی",
+            commonNames: "نام‌های رایج",
+            scientificName: "نام‌های علمی",
+            family: "خانواده"
         }
     },
     // New Translations

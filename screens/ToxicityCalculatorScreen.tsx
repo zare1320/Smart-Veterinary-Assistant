@@ -2,13 +2,16 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
 import { BackButton, Button } from '../components/Button';
-import { CookieBiteIcon, ScaleIcon, LeafIcon, CandyCaneIcon, SkullIcon, TriangleExclamationIcon, DogIcon, CatIcon, CircleQuestionIcon, InfoCircleIcon } from '../components/Icons';
+import { CookieBiteIcon, ScaleIcon, LeafIcon, CandyCaneIcon, SkullIcon, TriangleExclamationIcon, DogIcon, CatIcon, CircleQuestionIcon, InfoCircleIcon, SearchIcon, SmileIcon, ExternalLinkIcon } from '../components/Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePatientStore } from '../stores/usePatientStore';
 import MissingPatientWeightBanner from '../components/MissingPatientWeightBanner';
 import PatientInfoDisplay from '../components/PatientInfoDisplay';
 import InfoModal from '../components/InfoModal';
 import AccordionItem from '../components/AccordionItem';
+import type { Plant } from '../types';
+import { dataService } from '../services/dataService';
+import { PlantListSkeleton } from '../components/skeletons/PlantListSkeleton';
 
 // --- TYPE DEFINITIONS ---
 type ToxinTab = 'chocolate' | 'rodenticides' | 'xylitol' | 'plants';
@@ -103,7 +106,7 @@ const ToxicityCalculatorScreen: React.FC = () => {
     const { species: patientSpecies, weightInKg: patientWeight } = usePatientStore();
 
     // --- STATE MANAGEMENT ---
-    const [activeTab, setActiveTab] = useState<ToxinTab>('xylitol');
+    const [activeTab, setActiveTab] = useState<ToxinTab>('plants');
     const [isRodenticideInfoModalOpen, setIsRodenticideInfoModalOpen] = useState(false);
     const [isChocolateInfoModalOpen, setIsChocolateInfoModalOpen] = useState(false);
     const [isXylitolInfoModalOpen, setIsXylitolInfoModalOpen] = useState(false);
@@ -126,8 +129,22 @@ const ToxicityCalculatorScreen: React.FC = () => {
     const [gramsPerServing, setGramsPerServing] = useState('');
     const [servings, setServings] = useState('');
     const [xylitolResult, setXylitolResult] = useState<{ dose: number; level: 'safe' | 'hypoglycemia' | 'liver_failure' } | null>(null);
+    // Plants state
+    const [allPlants, setAllPlants] = useState<Plant[]>([]);
+    const [plantSearchQuery, setPlantSearchQuery] = useState('');
+    const [isPlantsLoading, setIsPlantsLoading] = useState(true);
 
     const hasWeight = (patientWeight && patientWeight > 0) || (activeTab === 'xylitol' && parseFloat(xylitolWeightKg) > 0);
+
+    useEffect(() => {
+        if (activeTab === 'plants' && allPlants.length === 0) {
+            setIsPlantsLoading(true);
+            dataService.getPoisonousPlants().then(data => {
+                setAllPlants(data);
+                setIsPlantsLoading(false);
+            });
+        }
+    }, [activeTab, allPlants.length]);
 
 
     // --- DERIVED VALUES ---
@@ -146,6 +163,16 @@ const ToxicityCalculatorScreen: React.FC = () => {
         });
         return Object.entries(groups);
     }, []);
+
+    const filteredPlants = useMemo(() => {
+        if (!plantSearchQuery) return allPlants;
+        const query = plantSearchQuery.toLowerCase();
+        return allPlants.filter(plant =>
+            plant.name.toLowerCase().includes(query) ||
+            plant.commonNames.some(name => name.toLowerCase().includes(query)) ||
+            plant.scientificName.toLowerCase().includes(query)
+        );
+    }, [allPlants, plantSearchQuery]);
 
     // --- HANDLERS for synced inputs ---
     const handleAmountChange = (val: string, unit: 'g' | 'oz', setterGrams: React.Dispatch<React.SetStateAction<string>>, setterOz: React.Dispatch<React.SetStateAction<string>>) => {
@@ -400,14 +427,66 @@ const ToxicityCalculatorScreen: React.FC = () => {
         </div>
     );
 
+    const renderPlantsTab = () => (
+        <div className="space-y-4">
+            <div className="relative">
+                <SearchIcon className="absolute start-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                    type="search"
+                    value={plantSearchQuery}
+                    onChange={e => setPlantSearchQuery(e.target.value)}
+                    placeholder={t('toxicity.plants.searchPlaceholder')}
+                    className="form-input w-full !rounded-full !ps-12 !py-3 bg-card"
+                />
+            </div>
+    
+            <div className="text-sm text-start text-muted-foreground p-2">
+                <p className="font-bold text-center mb-2 text-heading">{t('toxicity.plants.legendTitle')}</p>
+                <p dangerouslySetInnerHTML={{ __html: t('toxicity.plants.intro', {
+                    toxicIcon: `<i class="fa-solid fa-skull-crossbones text-red-500"></i>`,
+                    nonToxicIcon: `<i class="fa-solid fa-face-smile text-emerald-500"></i>`,
+                    dogIcon: `<i class="fa-solid fa-dog"></i>`,
+                    catIcon: `<i class="fa-solid fa-cat"></i>`,
+                })}} />
+            </div>
+            <hr className="border-border"/>
+            
+            {isPlantsLoading ? (
+                <PlantListSkeleton />
+            ) : (
+                <div className="space-y-2">
+                    {filteredPlants.map(plant => (
+                        <div key={plant.id} className="bg-card p-4 rounded-lg">
+                            <div className="flex justify-between items-start gap-4">
+                                <div className="flex-grow">
+                                    <a href={plant.aspcaUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-lg font-bold text-red-600 dark:text-red-400 hover:underline">
+                                        {plant.name}
+                                        <ExternalLinkIcon className="w-4 h-4" />
+                                    </a>
+                                    {plant.commonNames.length > 0 && <p className="text-sm text-muted-foreground"><span className="font-semibold">{t('toxicity.plants.commonNames')}:</span> {plant.commonNames.join(', ')}</p>}
+                                    <p className="text-sm text-muted-foreground"><span className="font-semibold">{t('toxicity.plants.scientificName')}:</span> {plant.scientificName} {plant.family && <> <span className="font-semibold">{t('toxicity.plants.family')}:</span> {plant.family}</>}</p>
+                                </div>
+                                <div className="flex items-center gap-2 text-xl flex-shrink-0">
+                                    {plant.isNonToxic ? <SmileIcon className="text-emerald-500" /> : <SkullIcon className="text-red-500" />}
+                                    {plant.isToxicToDogs && <DogIcon />}
+                                    {plant.isToxicToCats && <CatIcon />}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+
     return (
         <>
-        {activeTab !== 'xylitol' && !patientWeight && <MissingPatientWeightBanner />}
+        {activeTab !== 'xylitol' && activeTab !== 'plants' && !patientWeight && <MissingPatientWeightBanner />}
         <div className="min-h-screen">
             <header className="bg-card/80 backdrop-blur-sm sticky top-0 z-10">
                 <div className="flex justify-between items-center p-4">
                     <BackButton onClick={() => navigate('/')} />
-                    {activeTab !== 'xylitol' && <PatientInfoDisplay />}
+                    {activeTab !== 'xylitol' && activeTab !== 'plants' && <PatientInfoDisplay />}
                 </div>
                 <div className="flex justify-around border-b border-border">
                     {TABS.map(tab => (
@@ -419,7 +498,7 @@ const ToxicityCalculatorScreen: React.FC = () => {
                 </div>
             </header>
             
-            <main className={`p-4 max-w-xl mx-auto ${!hasWeight ? 'opacity-50 pointer-events-none' : ''}`}>
+            <main className={`p-4 max-w-xl mx-auto ${!hasWeight && activeTab !== 'plants' ? 'opacity-50 pointer-events-none' : ''}`}>
                 <div className="flex items-center justify-center gap-2 relative mb-6">
                     <h1 className="text-3xl md:text-4xl font-extrabold text-heading">
                         {t(`toxicity.tabs.${activeTab}`)}
@@ -451,6 +530,7 @@ const ToxicityCalculatorScreen: React.FC = () => {
                         {activeTab === 'chocolate' ? renderChocolateTab() :
                          activeTab === 'rodenticides' ? renderRodenticideTab() :
                          activeTab === 'xylitol' ? renderXylitolTab() :
+                         activeTab === 'plants' ? renderPlantsTab() :
                          (
                             <div className="text-center py-20 glass-card">
                                 <p className="text-muted-foreground">{t('comingSoon')}</p>

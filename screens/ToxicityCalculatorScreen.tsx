@@ -81,8 +81,6 @@ const TOXICITY_LEVELS: Record<string, Record<ToxicityLevel, { minDose: number; n
     }
 };
 
-const KG_TO_LB = 2.20462;
-
 // --- UI SUB-COMPONENTS ---
 const Section: React.FC<{ title: string; children: React.ReactNode; icon: React.ReactNode; className?: string; step: number; infoAction?: () => void; }> = ({ title, children, icon, className, step, infoAction }) => (
     <div className={`bg-card rounded-2xl shadow-md p-4 sm:p-6 text-start ${className}`}>
@@ -106,7 +104,7 @@ const ToxicityCalculatorScreen: React.FC = () => {
     const { species: patientSpecies, weightInKg: patientWeight } = usePatientStore();
 
     // --- STATE MANAGEMENT ---
-    const [activeTab, setActiveTab] = useState<ToxinTab>('plants');
+    const [activeTab, setActiveTab] = useState<ToxinTab>('xylitol');
     const [isRodenticideInfoModalOpen, setIsRodenticideInfoModalOpen] = useState(false);
     const [isChocolateInfoModalOpen, setIsChocolateInfoModalOpen] = useState(false);
     const [isXylitolInfoModalOpen, setIsXylitolInfoModalOpen] = useState(false);
@@ -122,9 +120,6 @@ const ToxicityCalculatorScreen: React.FC = () => {
     const [displayRodenticideAmountOz, setDisplayRodenticideAmountOz] = useState('');
     const [rodenticideResult, setRodenticideResult] = useState<ToxicityResult | null>(null);
      // Xylitol state
-    const [xylitolWeightKg, setXylitolWeightKg] = useState<string>(patientWeight ? patientWeight.toFixed(2) : '');
-    const [displayXylitolWeightLbs, setDisplayXylitolWeightLbs] = useState(patientWeight ? (patientWeight * KG_TO_LB).toFixed(2) : '');
-    const [xylitolSpecies, setXylitolSpecies] = useState<ComponentSpecies>('dog');
     const [mgPerServing, setMgPerServing] = useState('');
     const [gramsPerServing, setGramsPerServing] = useState('');
     const [servings, setServings] = useState('');
@@ -133,8 +128,9 @@ const ToxicityCalculatorScreen: React.FC = () => {
     const [allPlants, setAllPlants] = useState<Plant[]>([]);
     const [plantSearchQuery, setPlantSearchQuery] = useState('');
     const [isPlantsLoading, setIsPlantsLoading] = useState(true);
+    
+    const hasWeight = patientWeight && patientWeight > 0;
 
-    const hasWeight = (patientWeight && patientWeight > 0) || (activeTab === 'xylitol' && parseFloat(xylitolWeightKg) > 0);
 
     useEffect(() => {
         if (activeTab === 'plants' && allPlants.length === 0) {
@@ -224,11 +220,11 @@ const ToxicityCalculatorScreen: React.FC = () => {
 
     useEffect(() => {
         // Xylitol Calculation
-        const weight = parseFloat(xylitolWeightKg as string);
+        const weight = patientWeight;
         const mg = parseFloat(mgPerServing);
         const numServings = parseFloat(servings);
     
-        if (weight > 0 && mg > 0 && numServings > 0) {
+        if (weight && weight > 0 && mg > 0 && numServings > 0) {
             const totalMg = mg * numServings;
             const dose = totalMg / weight; // mg/kg
             const doseGrams = dose / 1000; // g/kg
@@ -243,7 +239,7 @@ const ToxicityCalculatorScreen: React.FC = () => {
         } else {
             setXylitolResult(null);
         }
-    }, [xylitolWeightKg, mgPerServing, servings]);
+    }, [patientWeight, mgPerServing, servings]);
 
 
     const TABS = [
@@ -347,35 +343,7 @@ const ToxicityCalculatorScreen: React.FC = () => {
                 <p className="text-sm text-muted-foreground">{t('toxicity.xylitol.aboutContent')}</p>
             </AccordionItem>
 
-            <Section icon={<ScaleIcon />} step={1} title={t('toxicity.xylitol.section1Title')}>
-                <div className="grid grid-cols-2 gap-4 items-end">
-                    <div>
-                        <label className="block text-sm font-medium mb-1">{t('toxicity.chocolate.pounds')}</label>
-                        <input type="number" value={displayXylitolWeightLbs} onChange={e => {
-                            setDisplayXylitolWeightLbs(e.target.value);
-                            const kg = parseFloat(e.target.value) / KG_TO_LB;
-                            setXylitolWeightKg(isNaN(kg) ? '' : kg.toString());
-                        }} className="form-input w-full" placeholder='lbs' />
-                    </div>
-                     <div>
-                        <label className="block text-sm font-medium mb-1">{t('toxicity.chocolate.kilograms')}</label>
-                        <input type="number" value={xylitolWeightKg} onChange={e => {
-                            setXylitolWeightKg(e.target.value);
-                             const lbs = parseFloat(e.target.value) * KG_TO_LB;
-                            setDisplayXylitolWeightLbs(isNaN(lbs) ? '' : lbs.toFixed(2));
-                        }} className="form-input w-full" placeholder='kg' />
-                    </div>
-                </div>
-                 <div className="mt-4">
-                    <label className="block text-sm font-medium mb-2 text-center">{t('toxicity.chocolate.selectSpecies')}</label>
-                    <div className="flex items-center justify-center gap-3 bg-muted p-1 rounded-lg">
-                        <button onClick={() => setXylitolSpecies('dog')} className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md font-semibold transition-colors ${xylitolSpecies === 'dog' ? 'bg-card shadow' : 'hover:bg-card/50'}`}><DogIcon/> {t('speciesDog')}</button>
-                        <button onClick={() => setXylitolSpecies('cat')} className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md font-semibold transition-colors ${xylitolSpecies === 'cat' ? 'bg-card shadow' : 'hover:bg-card/50'}`}><CatIcon/> {t('speciesCat')}</button>
-                    </div>
-                </div>
-            </Section>
-
-            <Section icon={<CandyCaneIcon />} step={2} title={t('toxicity.xylitol.section2Title')} infoAction={() => setIsXylitolInfoModalOpen(true)}>
+            <Section icon={<CandyCaneIcon />} step={1} title={t('toxicity.xylitol.section1Title')} infoAction={() => setIsXylitolInfoModalOpen(true)}>
                  <div className="grid grid-cols-2 gap-4">
                      <div>
                         <label className="block text-sm font-medium mb-1">{t('toxicity.xylitol.mgPerServing')}</label>
@@ -396,15 +364,15 @@ const ToxicityCalculatorScreen: React.FC = () => {
                 </div>
             </Section>
             
-            <Section icon={<CookieBiteIcon />} step={3} title={t('toxicity.xylitol.section3Title')}>
+            <Section icon={<CookieBiteIcon />} step={2} title={t('toxicity.xylitol.section2Title')}>
                 <label className="block text-sm font-medium mb-1">{t('toxicity.xylitol.servingsIngested')}</label>
                 <input type="number" value={servings} onChange={e => setServings(e.target.value)} className="form-input w-full" placeholder="Units"/>
             </Section>
             
             <div className="bg-card rounded-2xl shadow-md p-4 sm:p-6 text-start">
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary text-primary-foreground rounded-full font-bold text-lg">4</div>
-                    <h2 className="text-lg font-bold text-heading">{t('toxicity.xylitol.section4Title')}</h2>
+                    <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary text-primary-foreground rounded-full font-bold text-lg">3</div>
+                    <h2 className="text-lg font-bold text-heading">{t('toxicity.xylitol.section3Title')}</h2>
                 </div>
                 {xylitolResult ? (
                     <div className="text-center space-y-4">
@@ -481,12 +449,12 @@ const ToxicityCalculatorScreen: React.FC = () => {
 
     return (
         <>
-        {activeTab !== 'xylitol' && activeTab !== 'plants' && !patientWeight && <MissingPatientWeightBanner />}
+        {!hasWeight && activeTab !== 'plants' && <MissingPatientWeightBanner />}
         <div className="min-h-screen">
             <header className="bg-card/80 backdrop-blur-sm sticky top-0 z-10">
                 <div className="flex justify-between items-center p-4">
                     <BackButton onClick={() => navigate('/')} />
-                    {activeTab !== 'xylitol' && activeTab !== 'plants' && <PatientInfoDisplay />}
+                    {activeTab !== 'plants' && <PatientInfoDisplay />}
                 </div>
                 <div className="flex justify-around border-b border-border">
                     {TABS.map(tab => (

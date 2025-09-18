@@ -71,7 +71,7 @@ const TransfusionRateInfo: React.FC = () => {
         { label: t('transfusion.rate.catsLabel'), value: t('transfusion.rate.catsValue') },
     ];
     return (
-        <div className="glass-card p-6">
+        <div className="bg-card p-6">
             <h4 className="text-xl font-bold text-inherit mb-4 flex items-center gap-2 text-start">
                 <GaugeHighIcon className="text-2xl text-inherit/80" />
                 {t('transfusion.rate.title')}
@@ -97,7 +97,7 @@ const MonitoringInfo: React.FC = () => {
         { title: t('transfusion.monitoring.step4.title'), text: t('transfusion.monitoring.step4.text'), icon: <i className="fa-solid fa-hand"></i>, isAlert: true },
     ];
     return (
-        <div className="glass-card p-6">
+        <div className="bg-card p-6">
             <h4 className="text-xl font-bold text-inherit mb-4 flex items-center gap-2 text-start">
                 <DesktopIcon className="text-2xl text-inherit/80" />
                 {t('transfusion.monitoring.title')}
@@ -123,7 +123,7 @@ const MonitoringInfo: React.FC = () => {
 const ReactionsInfo: React.FC = () => {
     const { t } = useLocale();
     return (
-         <div className="glass-card p-6">
+         <div className="bg-card p-6">
             <h4 className="text-xl font-bold text-inherit mb-4 flex items-center gap-2 text-start">
                 <TriangleExclamationIcon className="text-2xl text-inherit/80" />
                 {t('transfusion.reactions.title')}
@@ -204,7 +204,7 @@ const BloodTransfusionCalculatorScreen: React.FC = () => {
           {isSupportedSpecies ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
-                  <div className="glass-card p-6 space-y-6">
+                  <div className="bg-card p-6 space-y-6">
                     <LabeledSlider id="desiredPcv" label={t('transfusion.desiredPcv')} value={desiredPcv} onChange={setDesiredPcv} min={10} max={70} icon={<PencilIcon />} unit="%" />
                     <LabeledSlider id="currentPcv" label={t('transfusion.currentPcv')} value={currentPcv} onChange={setCurrentPcv} min={5} max={50} icon={<PencilIcon />} unit="%" />
                     <LabeledSlider id="donorPcv" label={t('transfusion.donorPcv')} value={donorPcv} onChange={setDonorPcv} min={30} max={80} icon={<PencilIcon />} unit="%" />

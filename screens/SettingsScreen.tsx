@@ -44,7 +44,7 @@ const ProfileCard: React.FC<{ onNavigate: (path: string) => void }> = ({ onNavig
     };
 
     return (
-        <div className="bg-card rounded-2xl shadow-lg p-5">
+        <div className="bg-card p-5">
             <div className="flex items-center gap-4">
                 <div className="flex-shrink-0 w-16 h-16 rounded-full bg-gradient-to-br from-[var(--primary-200)] to-[var(--primary-400)] dark:from-[var(--primary-800)] dark:to-[var(--primary-600)] flex items-center justify-center text-3xl font-bold text-[var(--primary-700)] dark:text-[var(--primary-200)]">
                     {initials}
@@ -56,7 +56,7 @@ const ProfileCard: React.FC<{ onNavigate: (path: string) => void }> = ({ onNavig
             </div>
             <button 
                 onClick={() => onNavigate('/profile')} 
-                className="mt-4 w-full text-center py-2.5 px-4 rounded-lg bg-[var(--primary-500)] text-white font-semibold hover:bg-[var(--primary-600)] transition-colors text-sm shadow-[0_4px_14px_0_rgb(0,0,0,10%)] hover:shadow-[0_6px_20px_0_rgb(0,0,0,20%)]"
+                className="mt-4 w-full text-center py-2.5 px-4 rounded-lg bg-[var(--accent)] text-white font-semibold hover:bg-[var(--accent-hover)] transition-colors text-sm shadow-[0_4px_14px_0_rgb(0,0,0,10%)] hover:shadow-[0_6px_20px_0_rgb(0,0,0,20%)]"
             >
                 {t('profile.view.editButton')}
             </button>
@@ -67,7 +67,7 @@ const ProfileCard: React.FC<{ onNavigate: (path: string) => void }> = ({ onNavig
 const SettingsSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <section>
         <h3 className="px-4 text-sm font-semibold text-muted-foreground mb-2 uppercase tracking-wider text-start">{title}</h3>
-        <div className="bg-card rounded-xl shadow-md overflow-hidden">
+        <div className="bg-card overflow-hidden">
             {children}
         </div>
     </section>

@@ -49,7 +49,7 @@ const HomeScreen: React.FC = () => {
       <Header />
       <main className="p-4 space-y-6">
         {/* Main Interactive Patient Card */}
-        <div className="bg-card rounded-3xl shadow-xl p-4 sm:p-6 transition-all duration-500">
+        <div className="bg-card p-4 sm:p-6 transition-all duration-500">
             <h2 className="text-xl font-bold text-start mb-4 text-heading">{t('species')}</h2>
             {isLoading ? (
                 <SpeciesSelectorSkeleton />

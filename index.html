@@ -56,41 +56,47 @@
          2. SEMANTIC COLOR THEME VARIABLES
          ======================================================================== */
       :root {
-        --background: #F5FAF7;           /* Very light green-white */
-        --background-nav: #FFFFFF;       /* White for Nav in light mode */
-        --foreground: #26667F;           /* Dark teal text */
-        --foreground-muted: #408962;     /* Mid-green for less important text */
-        --heading: #124170;              /* Dark blue for titles */
+        --background: linear-gradient(180deg, #F5FAF7 0%, #ffffff 100%);
+        --background-nav: #FFFFFF;
+        --foreground: #26667F;
+        --foreground-muted: #408962;
+        --heading: #124170;
         --card: #ffffff;
         --card-foreground: #26667F;
-        --primary: var(--primary-500);   /* #67C090 */
-        --primary-foreground: var(--primary-50); /* #EDF9F2 */
-        --secondary: var(--primary-100); /* #DDF4E7 */
-        --secondary-foreground: var(--primary-900); /* #29573F */
-        --muted: var(--primary-100);     /* #DDF4E7 */
-        --border: var(--primary-200);    /* #BDE9D3 */
+        --primary: var(--primary-500);
+        --primary-foreground: var(--primary-50);
+        --secondary: var(--primary-100);
+        --secondary-foreground: var(--primary-900);
+        --muted: var(--primary-100);
+        --border: var(--primary-200);
         --input: #ffffff;
         --input-border: var(--primary-200);
-        --ring: var(--primary-500);      /* Focus ring */
+        --ring: var(--primary-500);
+        --accent: #f97316; /* orange-500 */
+        --accent-hover: #ea580c; /* orange-600 */
+        --accent-foreground: #ffffff;
       }
       
       html.dark {
-        --background: #0f172a;           /* slate-900 */
-        --background-nav: #020617;       /* slate-950 for bottom nav */
-        --foreground: #e2e8f0;           /* slate-200 */
-        --foreground-muted: #94a3b8;     /* slate-400 */
-        --heading: #f8fafc;              /* slate-50 */
-        --card: #1e293b;                 /* slate-800 */
+        --background: linear-gradient(180deg, #0f172a 0%, #131c31 100%);
+        --background-nav: #020617;
+        --foreground: #e2e8f0;
+        --foreground-muted: #94a3b8;
+        --heading: #f8fafc;
+        --card: #1e293b;
         --card-foreground: #e2e8f0;
-        --primary: var(--primary-500);   /* #14b8a6 */
+        --primary: var(--primary-500);
         --primary-foreground: #ffffff;
-        --secondary: #334155;           /* slate-700 */
+        --secondary: #334155;
         --secondary-foreground: #f8fafc;
-        --muted: #334155;               /* slate-700 */
-        --border: #334155;               /* slate-700 */
-        --input: #334155;               /* slate-700 */
-        --input-border: #475569;         /* slate-600 */
-        --ring: var(--primary-400);      /* #2dd4bf */
+        --muted: #334155;
+        --border: #334155;
+        --input: #334155;
+        --input-border: #475569;
+        --ring: var(--primary-400);
+        --accent: #f97316;
+        --accent-hover: #fb923c;
+        --accent-foreground: #ffffff;
       }
       
       /* ========================================================================
@@ -103,7 +109,18 @@
       }
 
       /* --- Component Base Styles --- */
-      .bg-card { background-color: var(--card); }
+      .bg-card {
+        background-color: var(--card);
+        border-radius: 1.5rem; /* 24px */
+        border: 1px solid var(--border);
+        box-shadow: 0 8px 16px -4px rgb(0 0 0 / 0.05), 0 0 1px 0 rgb(0 0 0 / 0.05);
+        transition: box-shadow 0.3s ease;
+      }
+      html.dark .bg-card {
+        border-color: #334155;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1), inset 0 1px 0 0 rgb(255 255 255 / 0.03);
+      }
+      
       .text-heading { color: var(--heading); }
       .text-foreground { color: var(--foreground); }
       .text-muted-foreground { color: var(--foreground-muted); }
@@ -159,18 +176,6 @@
       /* --- Species Card --- */
       .species-card::after {
         background: var(--card);
-      }
-
-      /* --- Glass Card --- */
-      .glass-card {
-        background: color-mix(in srgb, var(--card) 85%, transparent);
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
-        border: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent);
-        border-radius: 20px;
-      }
-      .dark .glass-card {
-        background: color-mix(in srgb, var(--card) 50%, transparent);
       }
       
       /* --- Toggle Switch --- */

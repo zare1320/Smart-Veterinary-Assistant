@@ -164,7 +164,7 @@ const MyDrugsScreen: React.FC = () => {
                     <h1 className="text-xl font-bold leading-tight tracking-tight text-heading">{t('myMedList.title')}</h1>
                     <button 
                         onClick={() => openProfileModal(null)}
-                        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--primary-500)] text-white hover:bg-[var(--primary-600)] transition-colors shadow-md"
+                        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition-colors shadow-md"
                         aria-label={t('profileModal.title')}
                     >
                         <PlusIcon className="text-xl" />
@@ -183,7 +183,7 @@ const MyDrugsScreen: React.FC = () => {
                                 <div key={profile.id} className="relative shrink-0">
                                     <motion.button
                                         onClick={() => setActiveProfileId(profile.id)}
-                                        className={`flex items-center gap-3 p-3 rounded-xl transition-colors duration-300 w-full ${activeProfileId === profile.id ? 'bg-card shadow-lg' : 'bg-muted/60 hover:bg-muted'}`}
+                                        className={`flex items-center gap-3 p-3 rounded-xl transition-colors duration-300 w-full ${activeProfileId === profile.id ? 'bg-card' : 'bg-muted/60 hover:bg-muted'}`}
                                         variants={profileButtonVariants}
                                         animate={activeProfileId === profile.id ? 'active' : 'inactive'}
                                         whileHover={activeProfileId === profile.id ? 'hoverActive' : 'hoverInactive'}
@@ -228,7 +228,7 @@ const MyDrugsScreen: React.FC = () => {
                                         initial="hidden"
                                         animate="visible"
                                         exit="exit"
-                                        className="bg-card p-4 rounded-lg shadow-sm flex items-center gap-4"
+                                        className="bg-card p-4 flex items-center gap-4"
                                     >
                                         <div className="flex-shrink-0 bg-secondary text-secondary-foreground p-3 rounded-full">
                                             <PillIcon className="text-2xl"/>
@@ -253,7 +253,7 @@ const MyDrugsScreen: React.FC = () => {
                                 ))}
                             </AnimatePresence>
                             <div className="pt-4">
-                               <Button onClick={() => openMedicationModal(null)} variant="primary" className="w-full !rounded-lg">
+                               <Button onClick={() => openMedicationModal(null)} variant="primary" className="w-full">
                                     <PlusIcon className="me-2" /> {t('myMedList.addMedication')}
                                 </Button>
                             </div>
@@ -283,7 +283,7 @@ const MyDrugsScreen: React.FC = () => {
                              return (
                                  <motion.button 
                                     key={tool.title} 
-                                    className="w-full text-start bg-card p-4 rounded-lg shadow-sm flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full text-start bg-card p-4 flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed"
                                     onClick={() => {
                                         if (tool.path === '/medication-report' && activeProfile) {
                                             navigate(tool.path, { state: { profile: activeProfile, medications: activeMedications } });

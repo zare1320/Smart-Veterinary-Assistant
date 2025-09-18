@@ -31,7 +31,7 @@ const ThemeSettingsScreen: React.FC = () => {
         <div className="w-10"></div>
       </header>
       <main className="p-4">
-        <div className="bg-card rounded-lg shadow-sm divide-y divide-border">
+        <div className="bg-card divide-y divide-border">
           {options.map((option) => (
             <motion.button
               key={option.key}

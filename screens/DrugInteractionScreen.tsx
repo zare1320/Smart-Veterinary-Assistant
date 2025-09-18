@@ -182,7 +182,7 @@ const DrugInteractionScreen: React.FC = () => {
         </div>
         
         {/* Search and Selected Drugs Section */}
-        <div className="glass-card p-4 sm:p-6">
+        <div className="bg-card p-4 sm:p-6">
             <div className="relative">
                 <SearchIcon className="search-input-icon" />
                 <input

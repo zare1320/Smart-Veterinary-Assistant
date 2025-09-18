@@ -67,7 +67,7 @@ function bpReducer(state: BpState, action: BpAction): BpState {
 
 // Sub-components for the screen
 const Section: React.FC<{ icon: React.ReactNode; title: string; children: React.ReactNode }> = ({ icon, title, children }) => (
-    <div className="glass-card p-6">
+    <div className="bg-card p-6">
         <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border/50">
             {/* FIX: Corrected incomplete className and provided a consistent style. */}
             <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--primary-500)]/10 text-[var(--primary-500)]">

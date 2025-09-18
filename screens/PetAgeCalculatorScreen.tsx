@@ -71,7 +71,7 @@ const CurrentAgeCalculator: React.FC = () => {
     }, [birthDate, t, localizeNumber]);
 
     return (
-        <div className="glass-card p-6 md:p-8">
+        <div className="bg-card p-6 md:p-8">
             <h3 className="text-2xl font-bold text-inherit mb-4 flex items-center gap-2 text-start">
                 <Icon iconName="fa-cake-candles" className="text-3xl text-inherit/80" />
                 {t('otherPage.ageCalculator.currentAgeTitle')}
@@ -173,7 +173,7 @@ const HumanYearsCalculator: React.FC = () => {
     };
 
     return (
-        <div className="glass-card p-6 md:p-8">
+        <div className="bg-card p-6 md:p-8">
             <h3 className="text-2xl font-bold text-inherit mb-2 flex items-center gap-2 text-start">
                 <Icon iconName="fa-users" className="text-3xl text-inherit/80" />
                 {t('otherPage.ageCalculator.humanYearsTitle')}

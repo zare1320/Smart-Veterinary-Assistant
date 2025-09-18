@@ -83,7 +83,7 @@ const TOXICITY_LEVELS: Record<string, Record<ToxicityLevel, { minDose: number; n
 
 // --- UI SUB-COMPONENTS ---
 const Section: React.FC<{ title: string; children: React.ReactNode; icon: React.ReactNode; className?: string; step: number; infoAction?: () => void; }> = ({ title, children, icon, className, step, infoAction }) => (
-    <div className={`bg-card rounded-2xl shadow-md p-4 sm:p-6 text-start ${className}`}>
+    <div className={`bg-card p-4 sm:p-6 text-start ${className}`}>
         <div className="flex items-center gap-3 mb-4">
             <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary text-primary-foreground rounded-full font-bold text-lg">{step}</div>
             <h2 className="text-lg font-bold text-heading flex-grow">{title}</h2>
@@ -105,6 +105,8 @@ const ToxicityCalculatorScreen: React.FC = () => {
 
     // --- STATE MANAGEMENT ---
     const [activeTab, setActiveTab] = useState<ToxinTab>('xylitol');
+    const hasWeight = patientWeight && patientWeight > 0;
+
     const [isRodenticideInfoModalOpen, setIsRodenticideInfoModalOpen] = useState(false);
     const [isChocolateInfoModalOpen, setIsChocolateInfoModalOpen] = useState(false);
     const [isXylitolInfoModalOpen, setIsXylitolInfoModalOpen] = useState(false);
@@ -129,9 +131,6 @@ const ToxicityCalculatorScreen: React.FC = () => {
     const [plantSearchQuery, setPlantSearchQuery] = useState('');
     const [isPlantsLoading, setIsPlantsLoading] = useState(true);
     
-    const hasWeight = patientWeight && patientWeight > 0;
-
-
     useEffect(() => {
         if (activeTab === 'plants' && allPlants.length === 0) {
             setIsPlantsLoading(true);
@@ -266,7 +265,7 @@ const ToxicityCalculatorScreen: React.FC = () => {
                         <input type="number" value={chocolateAmountGrams} onChange={e => handleAmountChange(e.target.value, 'g', setChocolateAmountGrams, setDisplayChocolateAmountOz)} className="form-input w-full" placeholder={t('toxicity.chocolate.gramsIngested')} />
                     </div>
                 </Section>
-                <div className="bg-card rounded-2xl shadow-md p-4 sm:p-6">
+                <div className="bg-card p-4 sm:p-6">
                     <h2 className="text-lg font-bold text-heading mb-4 text-start flex items-center gap-2"><TriangleExclamationIcon/> {t('toxicity.chocolate.section4Title')}</h2>
                     {chocolateResult ? (
                         <div className="space-y-4">
@@ -312,7 +311,7 @@ const ToxicityCalculatorScreen: React.FC = () => {
                         <input type="number" value={rodenticideAmountGrams} onChange={e => handleAmountChange(e.target.value, 'g', setRodenticideAmountGrams, setDisplayRodenticideAmountOz)} className="form-input w-full" placeholder={t('toxicity.chocolate.gramsIngested')} />
                     </div>
                 </Section>
-                <div className="bg-card rounded-2xl shadow-md p-4 sm:p-6">
+                <div className="bg-card p-4 sm:p-6">
                     <h2 className="text-lg font-bold text-heading mb-4 text-start flex items-center gap-2"><TriangleExclamationIcon/> {t('toxicity.chocolate.section4Title')}</h2>
                     {rodenticideResult ? (
                         <div className="flex flex-col items-center gap-4">
@@ -369,7 +368,7 @@ const ToxicityCalculatorScreen: React.FC = () => {
                 <input type="number" value={servings} onChange={e => setServings(e.target.value)} className="form-input w-full" placeholder="Units"/>
             </Section>
             
-            <div className="bg-card rounded-2xl shadow-md p-4 sm:p-6 text-start">
+            <div className="bg-card p-4 sm:p-6 text-start">
                 <div className="flex items-center gap-3 mb-4">
                     <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary text-primary-foreground rounded-full font-bold text-lg">3</div>
                     <h2 className="text-lg font-bold text-heading">{t('toxicity.xylitol.section3Title')}</h2>
@@ -424,7 +423,7 @@ const ToxicityCalculatorScreen: React.FC = () => {
             ) : (
                 <div className="space-y-2">
                     {filteredPlants.map(plant => (
-                        <div key={plant.id} className="bg-card p-4 rounded-lg">
+                        <div key={plant.id} className="bg-card p-4">
                             <div className="flex justify-between items-start gap-4">
                                 <div className="flex-grow">
                                     <a href={plant.aspcaUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-lg font-bold text-red-600 dark:text-red-400 hover:underline">
@@ -500,7 +499,7 @@ const ToxicityCalculatorScreen: React.FC = () => {
                          activeTab === 'xylitol' ? renderXylitolTab() :
                          activeTab === 'plants' ? renderPlantsTab() :
                          (
-                            <div className="text-center py-20 glass-card">
+                            <div className="text-center py-20 bg-card">
                                 <p className="text-muted-foreground">{t('comingSoon')}</p>
                             </div>
                         )}

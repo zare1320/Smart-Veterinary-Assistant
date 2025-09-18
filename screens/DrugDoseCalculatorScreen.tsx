@@ -326,7 +326,7 @@ const DrugDoseCalculatorScreen: React.FC = () => {
                     </div>
 
                     {/* Right Panel: Calculator */}
-                    <div className="md:col-span-2 glass-card min-h-[400px]">
+                    <div className="md:col-span-2 bg-card min-h-[400px]">
                          <AnimatePresence mode="wait">
                             <motion.div
                                 key={selectedDrugId || 'prompt'}

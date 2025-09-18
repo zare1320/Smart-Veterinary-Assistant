@@ -37,7 +37,7 @@ const SyncSettingsScreen: React.FC = () => {
         <div className="w-10"></div>
       </header>
       <main className="p-4 sm:p-6 max-w-2xl mx-auto space-y-6">
-        <div className="bg-card rounded-2xl shadow-sm p-6 text-center">
+        <div className="bg-card p-6 text-center">
             <p className="text-sm text-muted-foreground">{t('sync.lastSync')}</p>
             <p className="text-lg font-semibold mt-1 text-heading">{new Date().toLocaleString(locale)}</p>
             <Button onClick={handleSyncNow} disabled={isSyncing} className="mt-4 w-full sm:w-auto">
@@ -49,7 +49,7 @@ const SyncSettingsScreen: React.FC = () => {
             </Button>
         </div>
         
-        <div className="bg-card rounded-2xl shadow-sm p-6 space-y-4">
+        <div className="bg-card p-6 space-y-4">
             <h3 className="text-lg font-bold text-start text-heading">{t('sync.autoSync')}</h3>
              <div>
                 <label htmlFor="syncFrequency" className="block text-sm font-medium text-foreground mb-1 text-start">
@@ -75,7 +75,7 @@ const SyncSettingsScreen: React.FC = () => {
             </div>
         </div>
 
-         <div className="bg-card rounded-2xl shadow-sm p-6 space-y-4">
+         <div className="bg-card p-6 space-y-4">
             <h3 className="text-lg font-bold text-start text-heading">{t('sync.dataUsage')}</h3>
             <label className="flex items-center justify-between cursor-pointer">
                 <div className="text-start">

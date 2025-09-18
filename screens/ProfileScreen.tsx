@@ -41,7 +41,7 @@ const ProfileScreen: React.FC = () => {
         <div className="min-h-screen bg-background">
             {isEditing ? (
                 <div className="p-4 sm:p-6 max-w-2xl mx-auto flex items-center justify-center min-h-screen">
-                    <div className="bg-card rounded-2xl shadow-xl p-6 w-full">
+                    <div className="bg-card p-6 w-full">
                         <ProfileForm onSave={handleSave} onCancel={handleCancel} />
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useLocale } from '../../context/LocaleContext';
-import { LabeledSelect, LabeledInput } from '../forms';
+import { LabeledSelect } from '../forms';
 import { ToggleSwitch, CustomSlider, FormSection } from './FluidFormComponents';
 import { FluidInputCardProps, ActionTypes, DripSet } from './FluidCalculatorTypes';
 
@@ -12,7 +12,7 @@ const FLUID_TYPES_KEYS = [
 const FLUID_VOLUMES = [20, 50, 100, 250, 500, 1000];
 const DRIP_SETS: DripSet[] = [10, 15, 20, 60];
 
-const FluidInputCard: React.FC<FluidInputCardProps> = ({ state, dispatch, onFluidTypeChange }) => {
+const FluidInputCard: React.FC<FluidInputCardProps> = ({ state, dispatch, onFluidTypeChange, onDehydrationInfoClick, onLossesInfoClick }) => {
     const { t } = useLocale();
 
     const handleDispatch = useCallback((type: ActionTypes, payload: any) => {
@@ -20,7 +20,7 @@ const FluidInputCard: React.FC<FluidInputCardProps> = ({ state, dispatch, onFlui
     }, [dispatch]);
     
     return (
-        <div className="glass-card p-6">
+        <div className="bg-card p-6">
             <h3 className="text-xl font-bold text-heading mb-6 text-start">{t('fluid.planTitle')}</h3>
             <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -53,39 +53,43 @@ const FluidInputCard: React.FC<FluidInputCardProps> = ({ state, dispatch, onFlui
                 </div>
                 
                 {state.addDehydration && (
-                    <FormSection title={t('fluid.dehydration.title')} icon="fa-droplet">
+                    <FormSection title={t('fluid.dehydration.title')} icon="fa-droplet" infoAction={onDehydrationInfoClick}>
                         <CustomSlider
-                            min={0} max={15} step={1}
-                            value={state.dehydrationPercent}
-                            onChange={(e) => handleDispatch(ActionTypes.SetDehydrationPercent, Number(e.target.value))}
                             unit="%"
+                            value={state.dehydrationPercent}
+                            onChange={(e) => handleDispatch(ActionTypes.SetDehydrationPercent, e.target.value ? Number(e.target.value) : null)}
+                            min="0"
+                            max="15"
+                            step="1"
                         />
                     </FormSection>
                 )}
                 
                 {state.addOngoingLosses && (
-                     <FormSection title={t('fluid.ongoingLosses.title')} icon="fa-arrow-trend-down">
-                        <CustomSlider
-                            min={0} max={500} step={10}
-                            value={state.ongoingLosses}
-                            onChange={(e) => handleDispatch(ActionTypes.SetOngoingLosses, Number(e.target.value))}
-                            unit="ml"
+                     <FormSection title={t('fluid.ongoingLosses.title')} icon="fa-arrow-trend-down" infoAction={onLossesInfoClick}>
+                        <input
+                            type="number"
+                            value={state.ongoingLosses ?? ''}
+                            onChange={(e) => handleDispatch(ActionTypes.SetOngoingLosses, e.target.value ? Number(e.target.value) : null)}
+                            className="form-input w-full"
+                            placeholder="ml/day"
                         />
                     </FormSection>
                 )}
-
+                
                 {(state.addDehydration || state.addOngoingLosses) && (
                     <FormSection title={t('fluid.replaceTimeTitle')} icon="fa-stopwatch">
-                        <LabeledInput
-                            // FIX: Added the missing 'id' property to satisfy component props.
-                            id="deficit-time"
-                            label={t('fluid.replaceTime')}
-                            type="number"
-                            value={state.deficitTime ?? ''}
-                            onChange={(e) => handleDispatch(ActionTypes.SetDeficitTime, e.target.value === '' ? null : Number(e.target.value))}
-                            min="1"
-                            unit={t('fluid.volume.hours')}
-                        />
+                        <div className="flex items-center gap-2">
+                            <span>{t('fluid.replaceTime')}</span>
+                            <input 
+                                type="number" 
+                                value={state.deficitTime ?? ''}
+                                onChange={(e) => handleDispatch(ActionTypes.SetDeficitTime, e.target.value ? Number(e.target.value) : null)}
+                                className="form-input w-24 text-center"
+                                placeholder="e.g. 24"
+                            />
+                            <span>{t('fluid.volume.hours')}</span>
+                        </div>
                     </FormSection>
                 )}
             </div>

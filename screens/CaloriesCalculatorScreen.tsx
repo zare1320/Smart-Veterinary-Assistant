@@ -70,7 +70,7 @@ const ResultCard: React.FC<{ label: string; value: string; unit: string; icon: R
 
 
 const Section: React.FC<{ title: string; children: React.ReactNode; icon: React.ReactNode; className?: string; }> = ({ title, children, icon, className }) => (
-    <div className={`glass-card p-4 sm:p-6 ${className}`}>
+    <div className={`bg-card p-4 sm:p-6 ${className}`}>
         <div className="flex items-center gap-3 mb-4">
             <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary">{icon}</div>
             <h2 className="text-lg font-bold text-heading">{title}</h2>
@@ -208,7 +208,7 @@ const CaloriesCalculatorScreen: React.FC = () => {
 
                     {/* --- RIGHT SIDE (RESULTS) --- */}
                     <div className="lg:col-span-2">
-                        <div className="bg-card rounded-2xl shadow-md p-4 sm:p-6 sticky top-24">
+                        <div className="bg-card p-4 sm:p-6 sticky top-24">
                              <div className="flex items-center gap-3 mb-4">
                                 <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary"><i className="fa-solid fa-chart-line"></i></div>
                                 <h2 className="text-lg font-bold text-heading">{t('caloriesCalculator.results')}</h2>

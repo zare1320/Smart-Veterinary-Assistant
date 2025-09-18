@@ -28,7 +28,7 @@ const ProtocolCard: React.FC<{ protocol: Protocol; onSelect: () => void }> = ({ 
         <motion.div layout variants={cardContainerVariants} initial="hidden" animate="visible" exit="exit">
             <motion.button 
                 onClick={onSelect} 
-                className="bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 w-full"
+                className="bg-card overflow-hidden transition-shadow duration-300 w-full"
                 variants={cardButtonVariants}
                 whileHover="hover"
                 whileTap="tap"

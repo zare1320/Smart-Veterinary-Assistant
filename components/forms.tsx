@@ -26,12 +26,12 @@ interface LabeledSelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
   id: string;
 }
 
-export const LabeledSelect: React.FC<LabeledSelectProps> = ({ label, id, children, ...props }) => (
+export const LabeledSelect: React.FC<LabeledSelectProps> = ({ label, id, children, className, ...props }) => (
   <div>
     <label htmlFor={id} className="block text-sm font-medium text-card-foreground mb-1 text-start">
       {label}
     </label>
-    <select id={id} {...props} className="custom-form-input">
+    <select id={id} {...props} className={`custom-form-input ${className || ''}`}>
       {children}
     </select>
   </div>

@@ -6,6 +6,7 @@ import MissingPatientWeightBanner from '../components/MissingPatientWeightBanner
 import { BackButton, Button } from '../components/Button';
 import PatientInfoDisplay from '../components/PatientInfoDisplay';
 import InfoModal from '../components/InfoModal';
+import AccordionItem from '../components/AccordionItem';
 import { LabeledSlider } from '../components/forms';
 import { 
     BloodIcon, 
@@ -14,7 +15,6 @@ import {
     GaugeHighIcon,
     DesktopIcon,
     TriangleExclamationIcon,
-    CalculatorIcon,
 } from '../components/Icons';
 
 // --- Custom Hook for calculator logic ---
@@ -238,20 +238,41 @@ const BloodTransfusionCalculatorScreen: React.FC = () => {
           )}
         </div>
 
-        <InfoModal isOpen={isInfoModalOpen} onClose={handleCloseInfoModal} title={t('transfusion.about.title')}>
-          <div className="space-y-4">
-            <div>
-              <h4 className="font-bold text-lg mb-2 flex items-center gap-2">
-                  <CalculatorIcon />
-                  {t('transfusion.about.formulaTitle')}
-              </h4>
+        <InfoModal isOpen={isInfoModalOpen} onClose={handleCloseInfoModal} title={t('transfusion.infoModal.title')}>
+          <div className="space-y-0 divide-y divide-border">
+            <AccordionItem title={t('transfusion.infoModal.aboutTitle')}>
               <div className="bg-muted p-4 rounded-lg font-mono text-center text-sm" dir="ltr">
-                <p>{t('transfusion.about.formula')}</p>
+                <p>{t('transfusion.infoModal.formula')}</p>
                 <p className="mt-2 text-xs font-sans">
-                  {t('transfusion.about.formulaN')}
+                  {t('transfusion.infoModal.formulaN')}
                 </p>
               </div>
-            </div>
+            </AccordionItem>
+            <AccordionItem title={t('transfusion.infoModal.processingTitle')}>
+               <p>{t('transfusion.infoModal.contentComingSoon')}</p>
+            </AccordionItem>
+            <AccordionItem title={t('transfusion.infoModal.crossmatchTitle')} defaultOpen={true}>
+              <h5 className="font-bold">{t('transfusion.infoModal.canineTitle')}</h5>
+              <ul>
+                <li>{t('transfusion.infoModal.caninePoint1')}</li>
+                <li>{t('transfusion.infoModal.caninePoint2')}</li>
+                <li>{t('transfusion.infoModal.caninePoint3')}</li>
+                <li>{t('transfusion.infoModal.caninePoint4')}</li>
+                <li>{t('transfusion.infoModal.caninePoint5')}</li>
+                <li>{t('transfusion.infoModal.caninePoint6')}</li>
+                <li>{t('transfusion.infoModal.caninePoint7')}</li>
+                <li>{t('transfusion.infoModal.caninePoint8')}</li>
+              </ul>
+              <h5 className="font-bold mt-4">{t('transfusion.infoModal.felineTitle')}</h5>
+               <ul>
+                <li>{t('transfusion.infoModal.felinePoint1')}</li>
+                <li>{t('transfusion.infoModal.felinePoint2')}</li>
+                <li>{t('transfusion.infoModal.felinePoint3')}</li>
+                <li>{t('transfusion.infoModal.felinePoint4')}</li>
+                <li>{t('transfusion.infoModal.felinePoint5')}</li>
+                <li dangerouslySetInnerHTML={{ __html: t('transfusion.infoModal.felinePoint6') }}></li>
+              </ul>
+            </AccordionItem>
           </div>
         </InfoModal>
       </main>

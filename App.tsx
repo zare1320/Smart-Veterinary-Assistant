@@ -1,10 +1,12 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, useLocation, Navigate, Outlet } from 'react-router-dom';
 import { getNavItems } from './constants';
 import BottomNav from './components/BottomNav';
 import { useLocale } from './context/LocaleContext';
 import { useUserStore } from './stores/useUserStore';
 import SuspenseLoader from './components/SuspenseLoader';
+import { authService } from './services/authService';
+import toast from 'react-hot-toast';
 
 // --- Lazy Loaded Screens ---
 const HomeScreen = lazy(() => import('./screens/HomeScreen'));
@@ -23,6 +25,8 @@ const FluidTherapyCalculatorScreen = lazy(() => import('./screens/FluidTherapyCa
 const BloodPressureCalculatorScreen = lazy(() => import('./screens/BloodPressureCalculatorScreen'));
 const BloodTransfusionCalculatorScreen = lazy(() => import('./screens/BloodTransfusionCalculatorScreen'));
 const PetAgeCalculatorScreen = lazy(() => import('./screens/PetAgeCalculatorScreen'));
+const CaloriesCalculatorScreen = lazy(() => import('./screens/CaloriesCalculatorScreen'));
+const ToxicityCalculatorScreen = lazy(() => import('./screens/ToxicityCalculatorScreen'));
 const ProtocolDetailScreen = lazy(() => import('./screens/ProtocolDetailScreen'));
 const AddProtocolScreen = lazy(() => import('./screens/AddProtocolScreen'));
 const DrugInteractionScreen = lazy(() => import('./screens/DrugInteractionScreen'));
@@ -50,6 +54,25 @@ const MainLayout: React.FC = () => {
 const App: React.FC = () => {
   const { user, login } = useUserStore();
   const location = useLocation();
+  const { t } = useLocale();
+
+  useEffect(() => {
+    const handleAuthCallback = async () => {
+        try {
+            const email = await authService.handleGoogleCallback();
+            if (email) {
+                login(email);
+            }
+        } catch (error: any) {
+            console.error("Google Sign-In failed:", error);
+            toast.error(error.message || 'An error occurred during Google Sign-In.');
+        }
+    };
+    // Only run this on initial load if the user is not already logged in
+    if (!user) {
+        handleAuthCallback();
+    }
+  }, [login, t, user]);
 
   if (!user) {
     return (
@@ -87,6 +110,8 @@ const App: React.FC = () => {
         <Route path="/calculators/blood-pressure" element={<BloodPressureCalculatorScreen />} />
         <Route path="/calculators/blood-transfusion" element={<BloodTransfusionCalculatorScreen />} />
         <Route path="/calculators/pet-age" element={<PetAgeCalculatorScreen />} />
+        <Route path="/calculators/calories" element={<CaloriesCalculatorScreen />} />
+        <Route path="/calculators/toxicity" element={<ToxicityCalculatorScreen />} />
         <Route path="/protocols/:protocolId" element={<ProtocolDetailScreen />} />
         <Route path="/add-protocol" element={<AddProtocolScreen />} />
         <Route path="/drug-interaction-checker" element={<DrugInteractionScreen />} />

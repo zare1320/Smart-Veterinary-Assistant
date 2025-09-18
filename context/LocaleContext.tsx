@@ -8,7 +8,7 @@ type Locale = 'en' | 'fa';
 interface LocaleContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: string) => string;
+  t: (key: string, options?: { [key: string]: string | number }) => string;
   localizeNumber: (num: string | number) => string;
 }
 
@@ -40,8 +40,8 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
     root.dir = locale === 'fa' ? 'rtl' : 'ltr';
   }, [locale]);
 
-  // FIX: Implemented nested key access for translations to resolve type errors and support nested translation objects. The previous implementation did not handle dot-notation keys (e.g., 'parent.child').
-  const t = useCallback((key: string): string => {
+  // FIX: Updated the translation function `t` to support an optional `options` object for placeholder replacements (e.g., { value: 'someValue' }). This resolves errors where `t` was called with more than one argument.
+  const t = useCallback((key: string, options?: { [key: string]: string | number }): string => {
     const keys = key.split('.');
     let current: any = translations[locale];
     for (const k of keys) {
@@ -51,8 +51,16 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
         return key; // Not found, return the key as fallback
       }
     }
-    // If the path leads to an object instead of a string, return the key.
-    return typeof current === 'string' ? current : key;
+    
+    let result = typeof current === 'string' ? current : key;
+
+    if (options && typeof result === 'string') {
+      for (const optionKey in options) {
+        result = result.replace(new RegExp(`\\{${optionKey}\\}`, 'g'), String(options[optionKey]));
+      }
+    }
+
+    return result;
   }, [locale]);
   
   const localizeNumber = useCallback((num: string | number): string => {

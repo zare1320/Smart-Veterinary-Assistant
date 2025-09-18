@@ -12,11 +12,6 @@ interface UserState {
   updateSettings: (settingsData: Partial<UserSettings>) => void;
 }
 
-const getInitialUser = (): User | null => {
-    const storedUser = localStorage.getItem(VET_CURRENT_USER_KEY);
-    return storedUser ? JSON.parse(storedUser) : null;
-}
-
 const getAllUsers = (): User[] => {
     const users = localStorage.getItem(VET_USERS_KEY);
     return users ? JSON.parse(users) : [];
@@ -25,6 +20,39 @@ const getAllUsers = (): User[] => {
 const saveAllUsers = (users: User[]) => {
     localStorage.setItem(VET_USERS_KEY, JSON.stringify(users));
 };
+
+const getInitialUser = (): User | null => {
+    const storedUser = localStorage.getItem(VET_CURRENT_USER_KEY);
+    if (storedUser) {
+        return JSON.parse(storedUser);
+    }
+
+    // If no user is stored, create and set the default user.
+    const defaultUser: User = {
+      id: '09130535853',
+      phone: '09130535853',
+      isProfileComplete: true,
+      profile: {
+        fullName: 'مسعود زارع',
+        role: 'dvm',
+        licenseNumber: '2047361',
+        province: 'یزد',
+      },
+      settings: {
+        weightUnit: 'kg'
+      },
+    };
+
+    const allUsers = getAllUsers();
+    const userExists = allUsers.some(u => u.id === defaultUser.id);
+    if (!userExists) {
+        const updatedUsers = [...allUsers, defaultUser];
+        saveAllUsers(updatedUsers);
+    }
+
+    localStorage.setItem(VET_CURRENT_USER_KEY, JSON.stringify(defaultUser));
+    return defaultUser;
+}
 
 export const useUserStore = create<UserState>((set) => ({
   user: getInitialUser(),

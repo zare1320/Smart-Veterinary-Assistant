@@ -142,6 +142,20 @@
         background-color: var(--card);
       }
       
+      /* --- Form Validation States --- */
+      .custom-form-input.error { border-color: #ef4444 !important; }
+      .custom-form-input.error:hover, .custom-form-input.error:focus {
+        border-color: #ef4444 !important;
+        --tw-ring-color: #ef4444;
+        box-shadow: 0px 0px 0px 7px color-mix(in srgb, var(--tw-ring-color) 20%, transparent) !important;
+      }
+      .custom-form-input.success { border-color: #10b981 !important; }
+      .custom-form-input.success:hover, .custom-form-input.success:focus {
+        border-color: #10b981 !important;
+        --tw-ring-color: #10b981;
+        box-shadow: 0px 0px 0px 7px color-mix(in srgb, var(--tw-ring-color) 20%, transparent) !important;
+      }
+      
       /* --- Species Card --- */
       .species-card::after {
         background: var(--card);
@@ -205,6 +219,25 @@
         40%, 60% { transform: translate3d(4px, 0, 0); }
       }
       .animate-shake { animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both; }
+      
+      /* Gentle float animation for the logo */
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+          filter: drop-shadow(0 5px 15px color-mix(in srgb, var(--primary-500) 10%, transparent));
+        }
+        50% {
+          transform: translateY(-10px);
+          filter: drop-shadow(0 20px 25px color-mix(in srgb, var(--primary-500) 15%, transparent));
+        }
+        100% {
+          transform: translateY(0px);
+          filter: drop-shadow(0 5px 15px color-mix(in srgb, var(--primary-500) 10%, transparent));
+        }
+      }
+      .animate-float {
+        animation: float 4s ease-in-out infinite;
+      }
 
       /* Print-specific styles */
       @media print {

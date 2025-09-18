@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useUserStore } from '../../stores/useUserStore';
 import { useLocale } from '../../context/LocaleContext';
 import type { UserProfile, UserRole } from '../../types';
 import { LabeledInput, LabeledSelect } from '../forms';
 import { Button } from '../Button';
 import { UserIcon, UniversityIcon, IdCardIcon, MapPinIcon, AwardIcon } from '../Icons';
+import { motion, AnimatePresence } from 'framer-motion';
+import { translations } from '../../locales/translations';
 
 interface ProfileFormProps {
     onSave: () => void;
@@ -23,30 +25,77 @@ const Icon: React.FC<{ icon: React.ReactNode }> = ({ icon }) => (
 
 export const ProfileForm: React.FC<ProfileFormProps> = ({ onSave, onCancel }) => {
     const { user, updateProfile } = useUserStore();
-    const { t } = useLocale();
+    const { t, locale } = useLocale();
     const [profile, setProfile] = useState<UserProfile>(user!.profile);
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+    
+    const provinceList = translations[locale].provinces as Record<string, string>;
+    
+    const errors = useMemo(() => {
+        const err: { [key: string]: string | null } = {};
+        const numericOnlyRegex = /^\d+$/;
+        const licenseNumberRegex = /^\d{7}$/;
+
+        if (!profile.fullName.trim()) {
+            err.fullName = t('profile.error.required');
+        } else if (profile.fullName.trim().split(/\s+/).length < 2) {
+            err.fullName = t('profile.error.fullNameInvalid');
+        }
+        
+        if (!profile.role) err.role = t('profile.error.required');
+
+        if (profile.role === 'student') {
+            if (!profile.university?.trim()) err.university = t('profile.error.required');
+            if (profile.studentId && !numericOnlyRegex.test(profile.studentId)) {
+                err.studentId = t('profile.error.invalidStudentId');
+            }
+        }
+        
+        if (profile.role === 'dvm') {
+            if (!profile.licenseNumber?.trim()) {
+                err.licenseNumber = t('profile.error.required');
+            } else if (!licenseNumberRegex.test(profile.licenseNumber)) {
+                err.licenseNumber = t('profile.error.invalidLicenseNumber');
+            }
+            if (!profile.province?.trim()) err.province = t('profile.error.required');
+        }
+        
+        return err;
+    }, [profile, t]);
+
+    const isFormValid = Object.values(errors).every(error => error === null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setProfile({ ...profile, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        if (name === 'role') {
+             setProfile({
+                ...profile,
+                role: value as UserRole,
+                university: '', studentId: '', province: '', licenseNumber: ''
+            });
+            // Reset touched status for dependent fields
+             setTouched(prev => ({ ...prev, university: false, licenseNumber: false, province: false }));
+        } else {
+            setProfile({ ...profile, [name]: value });
+        }
     };
-
-    const validate = (): boolean => {
-        const newErrors: { [key: string]: string } = {};
-        if (!profile.fullName.trim()) newErrors.fullName = t('profile.error.required');
-        if (!profile.role) newErrors.role = t('profile.error.required');
-        if (profile.role === 'student' && !profile.university?.trim()) newErrors.university = t('profile.error.required');
-        if (profile.role === 'dvm' && !profile.licenseNumber?.trim()) newErrors.licenseNumber = t('profile.error.required');
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+    
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setTouched(prev => ({ ...prev, [e.target.name]: true }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (validate()) {
+        setTouched({ fullName: true, role: true, university: true, licenseNumber: true, province: true, studentId: true });
+        if (isFormValid) {
             updateProfile(profile);
             onSave();
         }
+    };
+    
+    const getFieldState = (fieldName: keyof UserProfile) => {
+        if (!touched[fieldName]) return '';
+        return errors[fieldName] ? 'error' : 'success';
     };
 
     const roleOptions = [
@@ -67,25 +116,38 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ onSave, onCancel }) =>
                     name="fullName"
                     value={profile.fullName}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     placeholder={t('profile.form.fullNamePlaceholder')}
                     required
-                    className="!ps-10"
+                    className={`!ps-10 ${getFieldState('fullName')}`}
                 />
-                {errors.fullName && <p className="text-sm text-red-500 mt-1 text-start">{errors.fullName}</p>}
+                 <AnimatePresence>
+                    {touched.fullName && errors.fullName && (
+                        <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-sm text-red-500 mt-1 text-start">{errors.fullName}</motion.p>
+                    )}
+                 </AnimatePresence>
             </IconWrapper>
             
-            <LabeledSelect
-                label={t('profile.form.roleLabel')}
-                id="role"
-                name="role"
-                value={profile.role || ''}
-                onChange={(e) => setProfile({ ...profile, role: e.target.value as UserRole, university: '', studentId: '', province: '', licenseNumber: '' })}
-                required
-            >
-                <option value="" disabled>{t('profile.form.rolePlaceholder')}</option>
-                {roleOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-            </LabeledSelect>
-            {errors.role && <p className="text-sm text-red-500 mt-1 text-start">{errors.role}</p>}
+            <div>
+                <LabeledSelect
+                    label={t('profile.form.roleLabel')}
+                    id="role"
+                    name="role"
+                    value={profile.role || ''}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    required
+                    className={getFieldState('role')}
+                >
+                    <option value="" disabled>{t('profile.form.rolePlaceholder')}</option>
+                    {roleOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                </LabeledSelect>
+                 <AnimatePresence>
+                    {touched.role && errors.role && (
+                       <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-sm text-red-500 mt-1 text-start">{errors.role}</motion.p>
+                    )}
+                </AnimatePresence>
+            </div>
 
             {profile.role === 'student' && (
                 <>
@@ -97,11 +159,16 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ onSave, onCancel }) =>
                             name="university"
                             value={profile.university || ''}
                             onChange={handleChange}
+                            onBlur={handleBlur}
                             placeholder={t('profile.form.universityPlaceholder')}
                             required
-                            className="!ps-10"
+                            className={`!ps-10 ${getFieldState('university')}`}
                         />
-                         {errors.university && <p className="text-sm text-red-500 mt-1 text-start">{errors.university}</p>}
+                         <AnimatePresence>
+                            {touched.university && errors.university && (
+                                <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-sm text-red-500 mt-1 text-start">{errors.university}</motion.p>
+                            )}
+                        </AnimatePresence>
                     </IconWrapper>
                     <IconWrapper>
                         <Icon icon={<IdCardIcon />} />
@@ -111,27 +178,43 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ onSave, onCancel }) =>
                             name="studentId"
                             value={profile.studentId || ''}
                             onChange={handleChange}
+                            onBlur={handleBlur}
                             placeholder={t('profile.form.studentIdPlaceholder')}
-                            className="!ps-10"
+                            className={`!ps-10 ${getFieldState('studentId')}`}
                         />
+                         <AnimatePresence>
+                            {touched.studentId && errors.studentId && (
+                                <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-sm text-red-500 mt-1 text-start">{errors.studentId}</motion.p>
+                            )}
+                        </AnimatePresence>
                     </IconWrapper>
                 </>
             )}
 
             {profile.role === 'dvm' && (
                 <>
-                    <IconWrapper>
-                        <Icon icon={<MapPinIcon />} />
-                        <LabeledInput
+                    <div>
+                        <LabeledSelect
                             label={t('profile.form.provinceLabel')}
                             id="province"
                             name="province"
                             value={profile.province || ''}
                             onChange={handleChange}
-                            placeholder={t('profile.form.provincePlaceholder')}
-                            className="!ps-10"
-                        />
-                    </IconWrapper>
+                            onBlur={handleBlur}
+                            required
+                            className={getFieldState('province')}
+                        >
+                            <option value="" disabled>{t('profile.form.provincePlaceholder')}</option>
+                            {Object.entries(provinceList).map(([key, name]) => (
+                                <option key={key} value={name}>{name}</option>
+                            ))}
+                        </LabeledSelect>
+                        <AnimatePresence>
+                            {touched.province && errors.province && (
+                                <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-sm text-red-500 mt-1 text-start">{errors.province}</motion.p>
+                            )}
+                        </AnimatePresence>
+                    </div>
                     <IconWrapper>
                         <Icon icon={<AwardIcon />} />
                         <LabeledInput
@@ -140,11 +223,16 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ onSave, onCancel }) =>
                             name="licenseNumber"
                             value={profile.licenseNumber || ''}
                             onChange={handleChange}
+                            onBlur={handleBlur}
                             placeholder={t('profile.form.licenseNumberPlaceholder')}
                             required
-                            className="!ps-10"
+                            className={`!ps-10 ${getFieldState('licenseNumber')}`}
                         />
-                         {errors.licenseNumber && <p className="text-sm text-red-500 mt-1 text-start">{errors.licenseNumber}</p>}
+                        <AnimatePresence>
+                             {touched.licenseNumber && errors.licenseNumber && (
+                                <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-sm text-red-500 mt-1 text-start">{errors.licenseNumber}</motion.p>
+                            )}
+                        </AnimatePresence>
                     </IconWrapper>
                 </>
             )}
@@ -153,7 +241,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ onSave, onCancel }) =>
                 <Button type="button" variant="secondary" onClick={onCancel} className="w-full">
                     {t('profile.form.cancelButton')}
                 </Button>
-                <Button type="submit" variant="primary" className="w-full">
+                <Button type="submit" variant="primary" className="w-full" disabled={!isFormValid}>
                     {t('profile.form.saveButton')}
                 </Button>
             </div>

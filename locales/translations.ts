@@ -1,3 +1,4 @@
+import React from 'react';
 // FIX: Created the translations file to be imported by the LocaleContext.
 // FIX: The original type definition for translations only allowed for a single level of nesting,
 // causing type errors for any nested objects (e.g., `animalSpecies`, `myMedList`).
@@ -19,6 +20,8 @@ export const translations: { [key: string]: TranslationBlock } = {
     saveChanges: "Save Changes",
     noBreedsFound: "No breeds found",
     moreInfo: "More info",
+    comingSoon: "Coming Soon...",
+
 
     // Navigation
     navHome: "Home",
@@ -66,6 +69,7 @@ export const translations: { [key: string]: TranslationBlock } = {
     geriatric: "Geriatric",
     clinicalSignsOptional: "Clinical Signs (Optional)",
     enterClinicalSigns: "e.g., lethargy, vomiting...",
+    weightErrorInvalid: "Please enter a valid, positive weight.",
 
     // Vet Tools
     tools: "Vet Tools",
@@ -104,6 +108,13 @@ export const translations: { [key: string]: TranslationBlock } = {
         saveProtocol: "Save Protocol",
     },
     custom: "Custom",
+    protocol: {
+        error: {
+            titleRequired: "Title is required.",
+            descriptionRequired: "Description is required.",
+            contentRequired: "Content is required."
+        }
+    },
 
     // My Meds Screen
     myMedList: {
@@ -202,7 +213,9 @@ export const translations: { [key: string]: TranslationBlock } = {
             back: "Use a different method"
         },
         error: {
-            invalidEmail: "Please enter a valid email or mobile number.",
+            invalidEmail: "Please enter a valid email.",
+            invalidPhone: "Please enter a valid 11-digit mobile number (e.g., 09123456789).",
+            invalidIdentity: "Please enter a valid email or mobile number.",
             invalidCode: "The code you entered is incorrect. Please try again."
         }
     },
@@ -227,7 +240,7 @@ export const translations: { [key: string]: TranslationBlock } = {
             studentIdLabel: "Student ID Number",
             studentIdPlaceholder: "Enter your student ID",
             provinceLabel: "Province/State",
-            provincePlaceholder: "e.g., California",
+            provincePlaceholder: "Select a province",
             licenseNumberLabel: "Veterinary License Number",
             licenseNumberPlaceholder: "Enter your license number",
             role: {
@@ -236,7 +249,10 @@ export const translations: { [key: string]: TranslationBlock } = {
             }
         },
         error: {
-            required: "This field is required"
+            required: "This field is required",
+            invalidStudentId: "Student ID must contain only numbers.",
+            invalidLicenseNumber: "License number must be a 7-digit number.",
+            fullNameInvalid: "Please enter your full name (first and last name)."
         }
     },
 
@@ -396,12 +412,6 @@ export const translations: { [key: string]: TranslationBlock } = {
         currentPcv: "Patient's Current PCV",
         donorPcv: "Donor PCV",
         bloodVolumeNeeded: "Blood Volume Needed",
-        about: {
-            title: "About This Calculator",
-            formulaTitle: "Calculation Formula",
-            formula: "Volume (ml) = Weight (kg) * N * (Desired PCV - Patient PCV) / Donor PCV",
-            formulaN: "N = 90 for dogs, 60 for cats (blood volume constant)",
-        },
         rate: {
             title: "Transfusion Rates",
             startLabel: "Start Rate (first 15-30 min)",
@@ -422,6 +432,31 @@ export const translations: { [key: string]: TranslationBlock } = {
             title: "Transfusion Reactions",
             immuneHemolytic: { title: "Acute Immune-Mediated Hemolytic", summary: "Most severe. Type B cat gets Type A blood.", signsTitle: "Signs", signs: "Fever, tachycardia, hypotension, vomiting, collapse." },
             immuneNonHemolytic: { title: "Febrile Non-Hemolytic", summary: "Most common. Reaction to WBCs or platelets.", signsTitle: "Signs", signs: "Fever, urticaria, pruritus." },
+        },
+        infoModal: {
+            title: "Transfusion Information",
+            aboutTitle: "About & Formula",
+            processingTitle: "Processing & Storage",
+            crossmatchTitle: "Cross-matching",
+            formula: "Volume (ml) = Weight (kg) * N * (Desired PCV - Patient PCV) / Donor PCV",
+            formulaN: "N = 90 for dogs, 60 for cats (blood volume constant)",
+            contentComingSoon: "Detailed information for this section is coming soon.",
+            canineTitle: "Canine",
+            caninePoint1: "12 canine blood types",
+            caninePoint2: "Designated DEA and a number (DEA 1, DEA 2, DEA 3, etc.)",
+            caninePoint3: "Most important are DEA 1.1 and 1.2",
+            caninePoint4: "DEA 1.1 Positive = universal recipient",
+            caninePoint5: "DEA 1.1, DEA 1.2 Negative = universal donor",
+            caninePoint6: "Cross-match does not need to be performed on a first-time transfusion",
+            caninePoint7: "Sensitization takes ~3 days",
+            caninePoint8: "Cross-match needed 72 hours after dog receives transfusion",
+            felineTitle: "Feline",
+            felinePoint1: "AB blood type system",
+            felinePoint2: "Types: A, B, AB (rare)",
+            felinePoint3: "Have natural occurring alloantibodies to other blood groups = No universal donor",
+            felinePoint4: "Type A: Weak anti-B alloantibodies, mild reaction if transfused with B blood",
+            felinePoint5: "Type B: High anti-A alloantibodies, severe reaction if transfused with A blood",
+            felinePoint6: "<strong>ALL CATS SHOULD BE CROSS-MATCHED</strong>"
         }
     },
     errors: {
@@ -513,6 +548,268 @@ export const translations: { [key: string]: TranslationBlock } = {
         disclaimer: "This prescription is based on the information provided for the above-named patient and is intended for their use only. Please administer all medications as directed and contact your veterinarian if you have any questions or if the patient's condition worsens. Keep all medications out of reach of children and other animals.",
         printReport: "Print Report",
         issuedOn: "Issued on",
+    },
+    // Calories Calculator
+    caloriesCalculator: {
+        title: "Calories Calculator",
+        description: "Estimate daily energy needs",
+        weightAndBcs: "Weight & BCS",
+        bcs: "Body Condition Score (BCS)",
+        bcsCharts: "BCS Charts",
+        bcsValue: "BCS: {value}/9",
+        bcsChartTitleCanine: "Canine Body Condition Score Chart",
+        bcsChartTitleFeline: "Feline Body Condition Score Chart",
+        bcsChartAltText: "Body Condition Score Chart",
+        merEstimates: "*Equations for MER are ESTIMATES, individual animals can vary by as much as 50% from the predicted values.",
+        canine: "Canine",
+        feline: "Feline",
+        petCriteria: "Pet Criteria",
+        results: "Results",
+        rer: "RER",
+        mer: "MER",
+        rerSubtitle: "Resting Energy",
+        merSubtitle: "Maintenance Energy",
+        dailyH2O: "Daily H2O Requirement",
+        feedingPlan: "Feeding Plan",
+        kcalPerUnit: "Kcal per Cup or Can",
+        enterCaloriesPlaceholder: "e.g., 350",
+        foodAmount: "Food Amount",
+        idealWeight: "Ideal Weight",
+        bcsDesc: "Estimated based on BCS",
+        bcsLabels: {
+            thin: "Too Thin",
+            ideal: "Ideal",
+            heavy: "Too Heavy",
+        },
+        criteria: {
+            neuteredAdultCanine: "Neutered Adult",
+            intactAdultCanine: "Intact Adult",
+            inactiveObeseCanine: "Inactive/obese",
+            weightLossCanine: "Weight Loss",
+            weightGainCanine: "Weight Gain",
+            puppy0_4Canine: "Puppy 0-4 months",
+            puppy4_12Canine: "Puppy 4-12 months",
+            neuteredAdultFeline: "Neutered Adult",
+            intactAdultFeline: "Intact Adult",
+            inactiveObeseFeline: "Inactive/obese",
+            weightLossFeline: "Weight Loss",
+            weightGainFeline: "Weight Gain",
+            kittenFeline: "Kitten <1 year",
+        }
+    },
+    // Toxicity Calculator
+    toxicity: {
+        title: "Toxicity",
+        description: "Check common poisonings",
+        tabs: {
+            chocolate: "Chocolate",
+            rodenticides: "Rodenticides",
+            xylitol: "Xylitol",
+            plants: "Plants"
+        },
+        chocolate: {
+            section1Title: "Weight - Species",
+            pounds: "Pounds",
+            kilograms: "Kilograms",
+            selectSpecies: "Select Species",
+            section2Title: "Chocolate Type Ingested",
+            chocolate: "Chocolate",
+            section3Title: "Volume of Chocolate Ingested",
+            ouncesIngested: "Ounces Ingested",
+            gramsIngested: "Grams Ingested",
+            section4Title: "Results",
+            resultsTitle: "Results",
+            results: {
+                prompt: "Enter weight and amount to see results.",
+                level: {
+                    safe: "Safe",
+                    mild: "Mild",
+                    moderate: "Moderate",
+                    severe: "Severe / Lethal"
+                },
+                symptoms: {
+                    safe: "No significant effects expected at this dose.",
+                    mild: "Mild signs such as vomiting, diarrhea, and polydipsia may be observed.",
+                    moderate: "Cardiotoxic effects, such as tachycardia and arrhythmias, may occur.",
+                    severe: "Risk of seizures, coma, and potentially lethal outcome. Immediate veterinary intervention is required."
+                },
+                catWarning: "Note: Cats are more sensitive to theobromine than dogs. These toxicity levels are based on dogs; veterinary consultation is strongly advised for any ingestion by a cat."
+            },
+            types: {
+                white: "White Chocolate",
+                milk: "Milk Chocolate",
+                dark: "Dark Chocolate",
+                semisweet: "Semi-sweet Chocolate",
+                bakers: "Baker's (unsweetened)",
+                dry_cocoa: "Dry Cocoa Powder",
+                instant_cocoa: "Instant Cocoa Powder",
+                cocoa_beans: "Cocoa Beans",
+                coffee_beans: "Coffee Beans/Grounds",
+                cocoa_hulls: "Cocoa Bean Hulls/Mulch"
+            },
+            infoModal: {
+                title: "Chocolate Info",
+                incidence: {
+                    title: "Incidence/Prevalence",
+                    p1: "ASPCA Animal Poison Control Center 2006: number 7 hazard encountered by pets.",
+                    p2: "Dark chocolate is about 10 times as toxic as milk chocolate.",
+                    p3: "Small dogs or dogs with a history of diabetes, pancreatitis, or heart problems are more sensitive to chocolate than larger, healthy dogs.",
+                    p4: "The most cases involving chocolate toxicity are associated with dogs.",
+                    p5: "More common during the holiday season due to increased availability.",
+                    p6: "Cocoa shell mulch; increasing in popularity for landscaping."
+                },
+                methylxanthines: {
+                    title: "Methylxanthines (Theobromine & Caffeine)",
+                    p1: "Chocolate contains substances known as methylxanthines (specifically caffeine and theobromine), which dogs are far more sensitive to than people. Different types of chocolate contain varying amounts of methylxanthines. In general, though, the darker and more bitter the chocolate the greater the danger.",
+                    p2: "The amount of toxic theobromine varies with the type of chocolate. The darker and more bitter the chocolate, the more dangerous it is to your pets. Cooking or baking chocolate and high quality dark chocolate contains between 130-450 mg of theobromine per ounce of the product, while common milk chocolate only contains about 44-58 mg/ounce.",
+                    p3: "White chocolate barely poses any threat of chocolate poisoning, with only 0.25 mg of theobromine per ounce of chocolate (that said, dogs can still get sick from all that fat and sugar, resulting in pancreatitis!).",
+                    p4: "This means that for a medium size dog, weighing 50 pounds it would take only 1 ounce of baker's chocolate or 8 ounces of milk chocolate to potentially show signs of poisoning."
+                },
+                toxicDoses: {
+                    title: "Toxic Doses",
+                    p1: "Theobromine toxicity are reported to be as low as 20 mg/kg, where agitation, hyperactivity and gastrointestinal signs (such as drooling, vomiting, and diarrhea - all which may smell like chocolate) can be seen.",
+                    p2: "At doses > 40 mg/kg, cardiac signs can be seen, and include a racing heart rate, high blood pressure, or even heart arrhythmias.",
+                    p3: "At doses > 60 mg/kg, neurologic signs can be seen, and include tremors, twitching, and even seizures.",
+                    p4: "Fatalities have been seen at around 200 mg/kg (approximately 100 mg/lb), or when complications occur."
+                },
+                signs: {
+                    title: "Signs & Symptoms",
+                    p1: "\"Clinical signs of chocolate poisoning can take hours to develop and last for days.\" Clinical signs of chocolate poisoning can take several hours to develop, and even longer to go away. Clinical signs of chocolate poisoning can last for days, due to the long half-life of theobromine. The theobromine can even be re-absorbed from the bladder, so aggressive IV fluids and frequent walks may be necessary.",
+                    symptoms: {
+                        vomiting: "Vomiting",
+                        diarrhea: "Diarrhea",
+                        temp: "Increased body temperature",
+                        reflex: "Increased reflex responses",
+                        rigidity: "Muscle rigidity",
+                        breathing: "Rapid breathing",
+                        heartRate: "Increased heart rate",
+                        bloodPressure: "Low blood pressure",
+                        seizures: "Seizures",
+                        advanced: "Advanced signs (cardiac failure, weakness, and coma)"
+                    }
+                },
+                cats: {
+                    title: "Chocolate Toxicity in Cats",
+                    p1: "Although they're not normally as curious about people foods as dogs are, cat (and kittens in particular) can sometimes eat things they aren't supposed to eat, including chocolate. Derived from the roasted seeds of the cacao plant, certain properties in chocolate can be toxic to cats when they're ingested, specifically, caffeine and theobromine. Eating these ingredients can lead to a number of medical complications—some of which may be serious—in your cat. These symptoms will be similar as in dogs and vary, based on the amount and type of chocolate that is ingested and can influence the severity of the condition. Varieties of chocolate that can be especially poisonous to cats are milk chocolate, semi-sweet chocolate and baking chocolate."
+                },
+                diagnosis: {
+                    title: "Common Diagnosis",
+                    p1: "If you suspect your pet has ingested chocolate and is experiencing any of the above symptoms, bring it to your veterinarian immediately. You can expect your vet to perform a complete physical exam, including a chemical blood profile, an electrolyte panel, and a urinalysis to help determine if your cat has overdosed on caffeine and theobromine. Your veterinarian may also perform an ECG to help determine if the heart is showing any abnormalities in rhythm or conduction of heart beats. Blood biochemistry and blood profile may also be needed."
+                },
+                treatment: {
+                    title: "General Treatment",
+                    p1: "Treatment depends on the amount and type of chocolate eaten. If treated early, removal of the chocolate from the stomach by administering medications to induce vomiting and administration of activated charcoal to block absorption of theobromine into the body may be all that is necessary. It is very common to provide supportive treatments such as intravenous fluid therapy to help dilute the toxin and promote its excretion. All pets ingesting chocolate should be closely monitored for any signs of agitation, vomiting, diarrhea, nervousness, irregular heart rhythm, and high blood pressure. Often, medications to slow the heart rate (e.g., beta-blockers) may be necessary to treat the elevated heart rate and arrhythmia."
+                },
+                prevention: {
+                    title: "Prevention",
+                    p1: "The best form of preventing chocolate toxicity is to always keep chocolate out of your Pet's reach and be aware of feeding them anything that might contain chocolate."
+                },
+                conclusion: {
+                    title: "Conclusion",
+                    p1: "Remember, with any poisoning, it's always cheaper, less invasive, and has a better prognosis/outcome if you treat early. Once your pet has already developed clinical signs and is affected by the poison, it makes for a much more expensive veterinary visit!"
+                },
+                references: {
+                    title: "References",
+                    p1: "\"CAFFEINE & THEOBROMINE.\" The Hershey Company. N.p., n.d. Web. 12 Sept. 2013."
+                }
+            }
+        },
+        rodenticides: {
+            typeIngested: "Rodenticide Type Ingested",
+            volumeIngested: "Volume of Rodenticide Ingested",
+            rodenticide: "Rodenticide",
+            categories: {
+                bromethalin: "Bromethalin",
+                vitamin_d3: "Vitamin D3",
+                second_gen: "2nd Generation Anticoagulants",
+                first_gen: "1st Generation Anticoagulants"
+            },
+            types: {
+                warfarin_0025: "Warfarin (0.025%)",
+                bromadiolone_0005: "Bromadiolone (0.005%)",
+                cholecalciferol: "Cholecalciferol",
+                bromethalin_001: "Bromethalin (0.01%)",
+                bromethalin_0025: "Bromethalin (0.025%)",
+                difethialone_00025: "Difethialone (0.0025%)",
+                brodifacoum_0005: "Brodifacoum (0.005%)",
+                diphacinone_0005: "Diphacinone (0.005%)",
+                chlorphacinone_0005: "Chlorphacinone (0.005%)",
+            },
+            results: {
+                notes: {
+                    safe: "No treatment may be necessary. Many rodenticide exposures lack information on the total volume ingested.",
+                    mild: "Appropriate supportive treatment with induction of emesis and activated charcoal may be prudent.",
+                    moderate: "Vitamin K1 therapy is recommended. Monitor coagulation parameters (PT) closely.",
+                    severe: "Immediate veterinary intervention is required. Hospitalization, intensive monitoring, and aggressive therapy are necessary."
+                }
+            },
+            infoModal: {
+                title: "Rodenticide Poisoning Information",
+                intro1: "Many different types of rodenticides are available in a wide variety of colors and formulations. Different rodenticides may look alike but contain different types of poison.",
+                intro2: "Accurate identification of the active ingredient is crucial as this will determine the risk and need for treatment. If not clearly visible on the packaging, use the EPA registration number to identify the ingredient.",
+                anticoagulants: {
+                    title: "ANTICOAGULANTS",
+                    main: "Anticoagulant rodenticides are divided into first- (short-acting, e.g., warfarin) and second-generations (long-acting, e.g., brodifacoum). They work by inhibiting Vitamin K1 epoxide reductase, decreasing active clotting factors (2, 7, 9, 10) and causing uncontrolled bleeding. Signs of poisoning typically appear 3-5 days after ingestion.",
+                    signsTitle: "Common Signs:",
+                    signsContent: "Initially, blood loss is internal with signs like lethargy, exercise intolerance, coughing, and pale gums. Less common signs include vomiting, diarrhea, nosebleeds, bruising, bloody urine, swollen joints, and bleeding gums.",
+                    treatmentTitle: "Antidote and Treatment:",
+                    treatmentContent: "Vitamin K1 (phytonadione) is the antidote. Vitamin K3 and dietary vitamin K are not sufficient. Treatment involves oral Vitamin K1 for 5-10 days (short-acting) or 21-30 days (long-acting). Prothrombin time (PT) should be checked two days after the last dose.",
+                    threatTitle: "Threat:",
+                    threatContent: "Cats are more resistant than dogs. The toxic dose varies greatly between ingredients; some require a very small amount to be lethal (e.g., brodifacoum). Animals with liver disease, the very young, or the very old are at higher risk."
+                },
+                cholecalciferol: {
+                    title: "CHOLECALCIFEROL (VITAMIN D3)",
+                    main: "For dogs and cats, this is one of the most dangerous rodenticides on the market and is gaining in popularity due to EPA restrictions on second-generation anticoagulants.",
+                    mechanismTitle: "Mechanism of Action:",
+                    mechanismContent: "This poison causes hypercalcemia and hyperphosphatemia, resulting in acute kidney failure and other tissue damage secondary to metastatic mineralization.",
+                    signsTitle: "Common Signs:",
+                    signsContent: "PU/PD, weakness, lethargy, decreased appetite, and halitosis ('uremic' breath). Acute kidney failure develops 2-3 days after ingestion, by which point significant and permanent damage has often already occurred.",
+                    treatmentTitle: "Antidote and Treatment:",
+                    treatmentContent: "This poisoning is challenging to treat and often requires hospitalization and expensive therapy. There is no specific antidote. Treatment includes aggressive IV fluids and drugs (diuretics, steroids, bisphosphonates) to decrease calcium concentration. Frequent blood work monitoring is needed for 2-6 weeks.",
+                    threatTitle: "Threat:",
+                    threatContent: "Cholecalciferol has a very narrow margin of safety. Even small ingestions can cause severe clinical signs or death. Toxic ingestions must be treated quickly to prevent kidney failure."
+                },
+                bromethalin: {
+                    title: "BROMETHALIN",
+                    main: "This neurotoxic rodenticide causes cerebral edema. Its name can be easily mistaken for long-acting anticoagulants like brodifacoum.",
+                    mechanismTitle: "Mechanism of Action:",
+                    mechanismContent: "Bromethalin works by uncoupling oxidative phosphorylation in the brain and liver mitochondria, which can result in cerebral edema.",
+                    signsTitle: "Common Signs:",
+                    signsContent: "Incoordination (ataxia), tremors, seizures, paralysis, and eventually death. Signs can develop within 2 hours or be delayed for 3-4 days depending on the dose. Medical monitoring for at least 24 hours is often necessary.",
+                    treatmentTitle: "Antidote and Treatment:",
+                    treatmentContent: "In-hospital care for several days may be necessary due to the poison's long half-life. Treatment may include multiple doses of activated charcoal, IV fluids, and specific drugs to decrease brain swelling.",
+                    threatTitle: "Threat:",
+                    threatContent: "Cats are more sensitive to bromethalin than dogs. As this type of rodenticide has a narrow margin of safety, prompt therapy is often needed in all species."
+                }
+            }
+        },
+        xylitol: {
+            aboutTitle: "About Xylitol Toxicity",
+            aboutContent: "Hypoglycemia can occur within 30 minutes of ingestion of xylitol containing products. Signs may include anorexia, vomiting, diarrhea, lethargy, ataxia, restlessness, collapse, seizures, and coma. Dogs with liver involvement may or may not show signs of hypoglycemia prior to developing clinical signs of hepatic insufficiency or failure.Signs of hepatic injury (icterus, vomiting, diarrhea, abdominal pain) may occur within 12-72 hours after exposure. Evidence of other severe complications (Coagulopathy, hepatic encephalopathy) can also develop.",
+            section1Title: "Weight - Species",
+            section2Title: "Volume (mg or grams) per Unit/Serving",
+            mgPerServing: "Mgs per serving",
+            gramsPerServing: "Grams per serving",
+            section3Title: "Number of Units/Servings Ingested",
+            servingsIngested: "Servings or Units Ingested",
+            section4Title: "mg/kg Results",
+            resultsTitle: "Xylitol Toxicity",
+            riskHypoglycemia: "Ingestion of doses > 0.1 g/kg (100 mg/kg) are at risk for developing Hypoglycemia.",
+            riskLiverFailure: "Ingestion of > 0.5 g/kg (500 mg/kg) may develop acute liver failure with or without Hypoglycemia.",
+            signsTitle: "Signs occassionay include:",
+            signsContent: "Agitation, hyperactivity, and possibly drooling",
+            infoModal: {
+                title: "About Xylitol Volume and Units",
+                p1: "Products containing Xylitol list the volume (in grams or mg's) per serving in two ways:",
+                l1Title: "1. As Xylitol only",
+                l1Content: "Use the Xylitol value in Total Carbs. (the value of 0.9 grams or 900mgs of Xylitol per serving in the image below) when entering volume ingested.",
+                l2Title: "2. As Sugar Alcohols",
+                l2Content1: "Sugar Alcohols include both Xylitol and other related sugar alcohols (e.g. Sorbitol).",
+                l2Content2: "If Xylitol is listed first in the ingredients list, use the total Sugar Alcohols volume in your calculation.",
+                l2Content3: "If Xylitol is listed second, divide the total Sugar Alcohol volume by 2 for a rough estimate of Xylitol volume (in the image below, 1 gram ÷ 2 = 500mg of Xylitol per serving)",
+                close: "Close"
+            }
+        }
     },
     // New Translations
     sync: {
@@ -649,7 +946,40 @@ export const translations: { [key: string]: TranslationBlock } = {
         error: {
             requiredFields: "Please fill out all required fields."
         }
-    }
+    },
+    provinces: {
+      "alborz": "Alborz",
+      "ardabil": "Ardabil",
+      "bushehr": "Bushehr",
+      "chaharmahal_bakhtiari": "Chaharmahal and Bakhtiari",
+      "east_azerbaijan": "East Azerbaijan",
+      "fars": "Fars",
+      "gilan": "Gilan",
+      "golestan": "Golestan",
+      "hamadan": "Hamadan",
+      "hormozgan": "Hormozgan",
+      "ilam": "Ilam",
+      "isfahan": "Isfahan",
+      "kerman": "Kerman",
+      "kermanshah": "Kermanshah",
+      "khuzestan": "Khuzestan",
+      "kohgiluyeh_boyer_ahmad": "Kohgiluyeh and Boyer-Ahmad",
+      "kurdistan": "Kurdistan",
+      "lorestan": "Lorestan",
+      "markazi": "Markazi",
+      "mazandaran": "Mazandaran",
+      "north_khorasan": "North Khorasan",
+      "qazvin": "Qazvin",
+      "qom": "Qom",
+      "razavi_khorasan": "Razavi Khorasan",
+      "semnan": "Semnan",
+      "sistan_baluchestan": "Sistan and Baluchestan",
+      "south_khorasan": "South Khorasan",
+      "tehran": "Tehran",
+      "west_azerbaijan": "West Azerbaijan",
+      "yazd": "Yazd",
+      "zanjan": "Zanjan"
+    },
   },
   fa: {
     // General
@@ -662,6 +992,7 @@ export const translations: { [key: string]: TranslationBlock } = {
     saveChanges: "ذخیره تغییرات",
     noBreedsFound: "نژادی یافت نشد",
     moreInfo: "اطلاعات بیشتر",
+    comingSoon: "به زودی...",
 
     // Navigation
     navHome: "خانه",
@@ -709,6 +1040,7 @@ export const translations: { [key: string]: TranslationBlock } = {
     geriatric: "سالمند",
     clinicalSignsOptional: "علائم بالینی (اختیاری)",
     enterClinicalSigns: "مثال: بی‌حالی، استفراغ...",
+    weightErrorInvalid: "لطفاً یک وزن معتبر و مثبت وارد کنید.",
 
     // Vet Tools
     tools: "ابزارهای دامپزشکی",
@@ -747,6 +1079,13 @@ export const translations: { [key: string]: TranslationBlock } = {
         saveProtocol: "ذخیره پروتکل",
     },
     custom: "شخصی",
+    protocol: {
+        error: {
+            titleRequired: "عنوان الزامی است.",
+            descriptionRequired: "توضیحات الزامی است.",
+            contentRequired: "محتوا الزامی است."
+        }
+    },
 
     // My Meds Screen
     myMedList: {
@@ -845,7 +1184,9 @@ export const translations: { [key: string]: TranslationBlock } = {
             back: "استفاده از روش دیگر"
         },
         error: {
-            invalidEmail: "لطفا یک ایمیل یا شماره موبایل معتبر وارد کنید.",
+            invalidEmail: "لطفا یک ایمیل معتبر وارد کنید.",
+            invalidPhone: "لطفا یک شماره موبایل ۱۱ رقمی معتبر وارد کنید (مثال: ۰۹۱۲۳۴۵۶۷۸۹).",
+            invalidIdentity: "لطفا یک ایمیل یا شماره موبایل معتبر وارد کنید.",
             invalidCode: "کد وارد شده صحیح نیست. لطفا دوباره تلاش کنید."
         }
     },
@@ -870,7 +1211,7 @@ export const translations: { [key: string]: TranslationBlock } = {
             studentIdLabel: "شماره دانشجویی",
             studentIdPlaceholder: "شماره دانشجویی خود را وارد کنید",
             provinceLabel: "استان",
-            provincePlaceholder: "مثال: تهران",
+            provincePlaceholder: "یک استان را انتخاب کنید",
             licenseNumberLabel: "شماره نظام دامپزشکی",
             licenseNumberPlaceholder: "شماره نظام خود را وارد کنید",
             role: {
@@ -879,7 +1220,10 @@ export const translations: { [key: string]: TranslationBlock } = {
             }
         },
         error: {
-            required: "این فیلد الزامی است"
+            required: "این فیلد الزامی است",
+            invalidStudentId: "شماره دانشجویی باید فقط شامل عدد باشد.",
+            invalidLicenseNumber: "شماره نظام دامپزشکی باید یک عدد ۷ رقمی باشد.",
+            fullNameInvalid: "لطفاً نام و نام خانوادگی خود را به طور کامل وارد کنید."
         }
     },
 
@@ -1039,12 +1383,6 @@ export const translations: { [key: string]: TranslationBlock } = {
         currentPcv: "PCV فعلی بیمار",
         donorPcv: "PCV اهداکننده",
         bloodVolumeNeeded: "حجم خون مورد نیاز",
-        about: {
-            title: "درباره این ماشین‌حساب",
-            formulaTitle: "فرمول محاسبه",
-            formula: "حجم (میلی‌لیتر) = وزن (کیلوگرم) * N * (PCV هدف - PCV بیمار) / PCV اهداکننده",
-            formulaN: "N = ۹۰ برای سگ، ۶۰ برای گربه (ثابت حجم خون)",
-        },
         rate: {
             title: "نرخ‌های انتقال",
             startLabel: "نرخ شروع (۱۵-۳۰ دقیقه اول)",
@@ -1065,6 +1403,31 @@ export const translations: { [key: string]: TranslationBlock } = {
             title: "واکنش‌های انتقال",
             immuneHemolytic: { title: "همولیتیک حاد با واسطه ایمنی", summary: "شدیدترین. گربه گروه B خون گروه A دریافت کند.", signsTitle: "علائم", signs: "تب، تاکی‌کاردی، افت فشار، استفراغ، کلاپس." },
             immuneNonHemolytic: { title: "تب‌دار غیر همولیتیک", summary: "شایع‌ترین. واکنش به گلبول‌های سفید یا پلاکت‌ها.", signsTitle: "علائم", signs: "تب، کهیر، خارش." },
+        },
+        infoModal: {
+            title: "اطلاعات انتقال خون",
+            aboutTitle: "درباره و فرمول",
+            processingTitle: "فرآوری و نگهداری",
+            crossmatchTitle: "کراس مچینگ",
+            formula: "حجم (میلی‌لیتر) = وزن (کیلوگرم) * N * (PCV هدف - PCV بیمار) / PCV اهداکننده",
+            formulaN: "N = ۹۰ برای سگ، ۶۰ برای گربه (ثابت حجم خون)",
+            contentComingSoon: "اطلاعات دقیق این بخش به زودی اضافه خواهد شد.",
+            canineTitle: "سگ",
+            caninePoint1: "۱۲ گروه خونی در سگ‌ها",
+            caninePoint2: "با نام DEA و یک شماره مشخص می‌شوند (DEA 1, DEA 2, DEA 3, و غیره)",
+            caninePoint3: "مهم‌ترین‌ها DEA 1.1 و 1.2 هستند",
+            caninePoint4: "DEA 1.1 مثبت = گیرنده عمومی",
+            caninePoint5: "DEA 1.1، DEA 1.2 منفی = اهداکننده عمومی",
+            caninePoint6: "کراس مچ برای انتقال خون بار اول نیازی نیست",
+            caninePoint7: "حساس شدن حدود ۳ روز طول می‌کشد",
+            caninePoint8: "کراس مچ ۷۲ ساعت پس از دریافت خون توسط سگ، لازم است",
+            felineTitle: "گربه",
+            felinePoint1: "سیستم گروه خونی AB",
+            felinePoint2: "گروه‌ها: A, B, AB (نادر)",
+            felinePoint3: "دارای آلوآنتی‌بادی‌های طبیعی علیه سایر گروه‌های خونی = اهداکننده عمومی وجود ندارد",
+            felinePoint4: "گروه A: آلوآنتی‌بادی‌های ضد B ضعیف، واکنش خفیف در صورت انتقال خون B",
+            felinePoint5: "گروه B: آلوآنتی‌بادی‌های ضد A قوی، واکنش شدید در صورت انتقال خون A",
+            felinePoint6: "<strong>تمام گربه‌ها باید کراس مچ شوند</strong>"
         }
     },
     errors: {
@@ -1156,6 +1519,267 @@ export const translations: { [key: string]: TranslationBlock } = {
         disclaimer: "این نسخه بر اساس اطلاعات ارائه شده برای بیمار فوق صادر شده و فقط برای استفاده او می‌باشد. لطفاً تمام داروها را طبق دستور مصرف کرده و در صورت داشتن هرگونه سوال یا بدتر شدن وضعیت بیمار با دامپزشک خود تماس بگیرید. تمام داروها را دور از دسترس کودکان و سایر حیوانات نگهداری کنید.",
         printReport: "چاپ گزارش",
         issuedOn: "تاریخ صدور",
+    },
+    // Calories Calculator
+     caloriesCalculator: {
+        title: "محاسبه‌گر کالری",
+        description: "تخمین نیاز روزانه به انرژی",
+        weightAndBcs: "وزن و BCS",
+        bcs: "نمره وضعیت بدنی (BCS)",
+        bcsCharts: "نمودارهای BCS",
+        bcsValue: "BCS: {value}/9",
+        bcsChartTitleCanine: "نمودار نمره وضعیت بدنی سگ",
+        bcsChartTitleFeline: "نمودار نمره وضعیت بدنی گربه",
+        bcsChartAltText: "نمودار نمره وضعیت بدنی",
+        merEstimates: "*معادلات MER تخمینی هستند، حیوانات مختلف می‌توانند تا ۵۰٪ با مقادیر پیش‌بینی شده تفاوت داشته باشند.",
+        canine: "سگ",
+        feline: "گربه",
+        petCriteria: "معیار حیوان",
+        results: "نتایج",
+        rer: "RER",
+        mer: "MER",
+        rerSubtitle: "انرژی استراحت",
+        merSubtitle: "انرژی نگهدارنده",
+        dailyH2O: "نیاز روزانه به آب",
+        feedingPlan: "برنامه غذایی",
+        kcalPerUnit: "کیلوکالری در هر فنجان یا قوطی",
+        enterCaloriesPlaceholder: "مثال: ۳۵۰",
+        foodAmount: "مقدار غذا",
+        idealWeight: "وزن ایده‌آل",
+        bcsDesc: "تخمین بر اساس BCS",
+        bcsLabels: {
+            thin: "لاغر",
+            ideal: "ایده‌آل",
+            heavy: "چاق",
+        },
+        criteria: {
+            neuteredAdultCanine: "بالغ عقیم شده",
+            intactAdultCanine: "بالغ عقیم نشده",
+            inactiveObeseCanine: "غیرفعال/چاق",
+            weightLossCanine: "کاهش وزن",
+            weightGainCanine: "افزایش وزن",
+            puppy0_4Canine: "توله ۰-۴ ماه",
+            puppy4_12Canine: "توله ۴-۱۲ ماه",
+            neuteredAdultFeline: "بالغ عقیم شده",
+            intactAdultFeline: "بالغ عقیم نشده",
+            inactiveObeseFeline: "غیرفعال/چاق",
+            weightLossFeline: "کاهش وزن",
+            weightGainFeline: "افزایش وزن",
+            kittenFeline: "بچه گربه < ۱ سال",
+        }
+    },
+    // Toxicity Calculator
+    toxicity: {
+        title: "مسمومیت",
+        description: "بررسی مسمومیت‌های رایج",
+        tabs: {
+            chocolate: "شکلات",
+            rodenticides: "جونده‌کش‌ها",
+            xylitol: "زایلیتول",
+            plants: "گیاهان"
+        },
+        chocolate: {
+            section1Title: "وزن - گونه",
+            pounds: "پوند",
+            kilograms: "کیلوگرم",
+            selectSpecies: "انتخاب گونه",
+            section2Title: "نوع شکلات مصرفی",
+            chocolate: "شکلات",
+            section3Title: "حجم شکلات مصرفی",
+            ouncesIngested: "اونس مصرفی",
+            gramsIngested: "گرم مصرفی",
+            section4Title: "نتایج",
+            results: {
+                prompt: "وزن و مقدار را برای مشاهده نتایج وارد کنید.",
+                level: {
+                    safe: "بی‌خطر",
+                    mild: "خفیف",
+                    moderate: "متوسط",
+                    severe: "شدید / کشنده"
+                },
+                symptoms: {
+                    safe: "در این دوز اثرات قابل توجهی انتظار نمی‌رود.",
+                    mild: "علائم خفیف مانند استفراغ، اسهال و پرنوشی ممکن است مشاهده شود.",
+                    moderate: "اثرات قلبی-سمی، مانند تاکی‌کاردی و آریتمی، ممکن است رخ دهد.",
+                    severe: "خطر تشنج، کما و نتیجه بالقوه کشنده. مداخله فوری دامپزشکی لازم است."
+                },
+                catWarning: "توجه: گربه‌ها به تئوبرومین حساس‌تر از سگ‌ها هستند. این سطوح سمیت بر اساس سگ‌ها است؛ برای هرگونه مصرف توسط گربه، مشاوره دامپزشکی به شدت توصیه می‌شود."
+            },
+            types: {
+                white: "شکلات سفید",
+                milk: "شکلات شیری",
+                dark: "شکلات تلخ",
+                semisweet: "شکلات نیمه‌شیرین",
+                bakers: "شکلات پخت‌وپز (بدون شکر)",
+                dry_cocoa: "پودر کاکائو خشک",
+                instant_cocoa: "پودر کاکائو فوری",
+                cocoa_beans: "دانه‌های کاکائو",
+                coffee_beans: "دانه‌ها/پودر قهوه",
+                cocoa_hulls: "پوسته/مالچ دانه کاکائو"
+            },
+            infoModal: {
+                title: "اطلاعات شکلات",
+                incidence: {
+                    title: "شیوع/بروز",
+                    p1: "مرکز کنترل سموم حیوانات ASPCA ۲۰۰۶: خطر شماره ۷ که حیوانات خانگی با آن مواجه می‌شوند.",
+                    p2: "شکلات تلخ حدود ۱۰ برابر سمی‌تر از شکلات شیری است.",
+                    p3: "سگ‌های کوچک یا سگ‌هایی با سابقه دیابت، پانکراتیت یا مشکلات قلبی نسبت به سگ‌های بزرگتر و سالم، به شکلات حساس‌تر هستند.",
+                    p4: "بیشترین موارد مسمومیت با شکلات مربوط به سگ‌ها است.",
+                    p5: "در فصول تعطیلات به دلیل افزایش دسترسی، شایع‌تر است.",
+                    p6: "مالچ پوسته کاکائو؛ که محبوبیت آن برای محوطه‌سازی در حال افزایش است."
+                },
+                methylxanthines: {
+                    title: "متیل‌گزانتین‌ها (تئوبرومین و کافئین)",
+                    p1: "شکلات حاوی موادی به نام متیل‌گزانتین‌ها (به ویژه کافئین و تئوبرومین) است که سگ‌ها بسیار بیشتر از انسان‌ها به آن حساس هستند. انواع مختلف شکلات حاوی مقادیر متفاوتی از متیل‌گزانتین‌ها هستند. با این حال، به طور کلی، هر چه شکلات تیره‌تر و تلخ‌تر باشد، خطر آن بیشتر است.",
+                    p2: "مقدار تئوبرومین سمی بسته به نوع شکلات متفاوت است. هر چه شکلات تیره‌تر و تلخ‌تر باشد، برای حیوانات خانگی شما خطرناک‌تر است. شکلات پخت و پز و شکلات تلخ با کیفیت بالا حاوی ۱۳۰-۴۵۰ میلی‌گرم تئوبرومین در هر اونس محصول است، در حالی که شکلات شیری معمولی فقط حدود ۴۴-۵۸ میلی‌گرم در هر اونس دارد.",
+                    p3: "شکلات سفید به سختی تهدیدی برای مسمومیت با شکلات ایجاد می‌کند، زیرا فقط ۰.۲۵ میلی‌گرم تئوبرومین در هر اونس شکلات دارد (با این حال، سگ‌ها همچنان می‌توانند از چربی و قند زیاد آن بیمار شوند و دچار پانکراتیت شوند!).",
+                    p4: "این بدان معناست که برای یک سگ با اندازه متوسط به وزن ۵۰ پوند، تنها ۱ اونس شکلات پخت و پز یا ۸ اونس شکلات شیری برای نشان دادن علائم بالقوه مسمومیت کافی است."
+                },
+                toxicDoses: {
+                    title: "دوزهای سمی",
+                    p1: "سمیت تئوبرومین از دوزهای پایین ۲۰ میلی‌گرم بر کیلوگرم گزارش شده است که در آن بی‌قراری، بیش‌فعالی و علائم گوارشی (مانند آبریزش دهان، استفراغ و اسهال - که همگی ممکن است بوی شکلات بدهند) دیده می‌شود.",
+                    p2: "در دوزهای > ۴۰ میلی‌گرم بر کیلوگرم، علائم قلبی دیده می‌شود و شامل ضربان قلب سریع، فشار خون بالا یا حتی آریتمی قلبی است.",
+                    p3: "در دوزهای > ۶۰ میلی‌گرم بر کیلوگرم، علائم عصبی دیده می‌شود و شامل لرزش، انقباض عضلانی و حتی تشنج است.",
+                    p4: "مرگ و میر در حدود ۲۰۰ میلی‌گرم بر کیلوگرم (تقریباً ۱۰۰ میلی‌گرم بر پوند) یا زمانی که عوارض رخ می‌دهد، دیده شده است."
+                },
+                signs: {
+                    title: "علائم و نشانه‌ها",
+                    p1: "\"علائم بالینی مسمومیت با شکلات ممکن است ساعت‌ها طول بکشد تا ایجاد شود و روزها ادامه یابد.\" علائم بالینی مسمومیت با شکلات می‌تواند چندین ساعت طول بکشد تا ایجاد شود و حتی بیشتر طول بکشد تا از بین برود. به دلیل نیمه‌عمر طولانی تئوبرومین، علائم بالینی مسمومیت با شکلات می‌تواند روزها ادامه یابد. تئوبرومین حتی می‌تواند از مثانه بازجذب شود، بنابراین ممکن است مایعات وریدی تهاجمی و پیاده‌روی‌های مکرر ضروری باشد.",
+                    symptoms: {
+                        vomiting: "استفراغ",
+                        diarrhea: "اسهال",
+                        temp: "افزایش دمای بدن",
+                        reflex: "افزایش پاسخ‌های رفلکسی",
+                        rigidity: "سفتی عضلات",
+                        breathing: "تنفس سریع",
+                        heartRate: "افزایش ضربان قلب",
+                        bloodPressure: "فشار خون پایین",
+                        seizures: "تشنج",
+                        advanced: "علائم پیشرفته (نارسایی قلبی، ضعف و کما)"
+                    }
+                },
+                cats: {
+                    title: "مسمومیت با شکلات در گربه‌ها",
+                    p1: "اگرچه آن‌ها به طور معمول به اندازه سگ‌ها به غذاهای انسانی کنجکاو نیستند، اما گربه‌ها (و به ویژه بچه‌گربه‌ها) گاهی اوقات چیزهایی را که نباید بخورند، از جمله شکلات، می‌خورند. خواص خاصی در شکلات که از دانه‌های بو داده کاکائو به دست می‌آید، می‌تواند هنگام مصرف برای گربه‌ها سمی باشد، به ویژه کافئین و تئوبرومین. خوردن این مواد می‌تواند منجر به تعدادی از عوارض پزشکی شود که برخی از آن‌ها ممکن است در گربه شما جدی باشند. این علائم مشابه سگ‌ها خواهد بود و بسته به مقدار و نوع شکلات مصرفی متفاوت است و می‌تواند بر شدت وضعیت تأثیر بگذارد. انواع شکلات که می‌توانند به خصوص برای گربه‌ها سمی باشند، شکلات شیری، شکلات نیمه شیرین و شکلات پخت و پز هستند."
+                },
+                diagnosis: {
+                    title: "تشخیص رایج",
+                    p1: "اگر مشکوک هستید که حیوان خانگی شما شکلات خورده است و هر یک از علائم فوق را تجربه می‌کند، فوراً آن را نزد دامپزشک خود ببرید. می‌توانید انتظار داشته باشید که دامپزشک شما یک معاینه فیزیکی کامل، شامل پروفایل شیمیایی خون، پانل الکترولیت و آنالیز ادرار انجام دهد تا مشخص شود آیا گربه شما بیش از حد کافئین و تئوبرومین مصرف کرده است یا خیر. دامپزشک شما همچنین ممکن است یک ECG انجام دهد تا مشخص شود آیا قلب ناهنجاری در ریتم یا هدایت ضربان‌ها نشان می‌دهد یا خیر. بیوشیمی خون و پروفایل خون نیز ممکن است مورد نیاز باشد."
+                },
+                treatment: {
+                    title: "درمان عمومی",
+                    p1: "درمان به مقدار و نوع شکلات خورده شده بستگی دارد. در صورت درمان زودهنگام، خارج کردن شکلات از معده با تجویز داروهایی برای ایجاد استفراغ و تجویز زغال فعال برای جلوگیری از جذب تئوبرومین به بدن ممکن است تمام آن چیزی باشد که لازم است. ارائه درمان‌های حمایتی مانند مایع درمانی وریدی برای کمک به رقیق شدن سم و ترویج دفع آن بسیار رایج است. تمام حیوانات خانگی که شکلات مصرف می‌کنند باید از نظر هرگونه علائم بی‌قراری، استفراغ، اسهال، عصبانیت، ریتم نامنظم قلب و فشار خون بالا به دقت تحت نظر باشند. اغلب، داروهایی برای کاهش ضربان قلب (مانند بتا-بلاکرها) ممکن است برای درمان ضربان قلب بالا و آریتمی لازم باشد."
+                },
+                prevention: {
+                    title: "پیشگیری",
+                    p1: "بهترین راه برای پیشگیری از مسمومیت با شکلات این است که همیشه شکلات را دور از دسترس حیوان خانگی خود نگه دارید و از دادن هر چیزی که ممکن است حاوی شکلات باشد به آن‌ها آگاه باشید."
+                },
+                conclusion: {
+                    title: "نتیجه‌گیری",
+                    p1: "به یاد داشته باشید، در مورد هرگونه مسمومیت، اگر زود درمان کنید، همیشه ارزان‌تر، کمتر تهاجمی و با پیش‌آگهی/نتیجه بهتری همراه است. هنگامی که حیوان خانگی شما قبلاً علائم بالینی را ایجاد کرده و تحت تأثیر سم قرار گرفته است، این به یک ویزیت دامپزشکی بسیار گران‌تر تبدیل می‌شود!"
+                },
+                references: {
+                    title: "منابع",
+                    p1: "\"کافئین و تئوبرومین.\" شرکت هرشی. وب. ۱۲ سپتامبر ۲۰۱۳."
+                }
+            }
+        },
+        rodenticides: {
+            typeIngested: "نوع جونده‌کش مصرفی",
+            volumeIngested: "حجم جونده‌کش مصرفی",
+            rodenticide: "جونده‌کش",
+            categories: {
+                bromethalin: "برومتالین",
+                vitamin_d3: "ویتامین D3",
+                second_gen: "ضدانعقادهای نسل دوم",
+                first_gen: "ضدانعقادهای نسل اول"
+            },
+            types: {
+                warfarin_0025: "وارفارین (۰.۰۲۵٪)",
+                bromadiolone_0005: "برومادیولون (۰.۰۰۵٪)",
+                cholecalciferol: "کلکلسیفرول",
+                bromethalin_001: "برومتالین (۰.۰۱٪)",
+                bromethalin_0025: "برومتالین (۰.۰۲۵٪)",
+                difethialone_00025: "دیفتیالون (۰.۰۰۲۵٪)",
+                brodifacoum_0005: "برودیفاکوم (۰.۰۰۵٪)",
+                diphacinone_0005: "دیفاسینون (۰.۰۰۵٪)",
+                chlorphacinone_0005: "کلرفاسینون (۰.۰۰۵٪)",
+            },
+            results: {
+                notes: {
+                    safe: "ممکن است نیازی به درمان نباشد. بسیاری از موارد مسمومیت با جونده‌کش‌ها اطلاعاتی در مورد حجم کل مصرف شده ندارند.",
+                    mild: "درمان حمایتی مناسب با ایجاد استفراغ و تجویز زغال فعال ممکن است محتاطانه باشد.",
+                    moderate: "درمان با ویتامین K1 توصیه می‌شود. پارامترهای انعقادی (PT) را به دقت تحت نظر بگیرید.",
+                    severe: "مداخله فوری دامپزشکی لازم است. بستری شدن، نظارت فشرده و درمان تهاجمی ضروری است."
+                }
+            },
+            infoModal: {
+                title: "اطلاعات مسمومیت با جونده‌کش‌ها",
+                intro1: "انواع مختلفی از جونده‌کش‌ها در رنگ‌ها و فرمولاسیون‌های گوناگون موجود هستند. جونده‌کش‌های مختلف ممکن است ظاهری شبیه به هم داشته باشند اما حاوی سموم متفاوتی باشند.",
+                intro2: "شناسایی دقیق ماده موثره حیاتی است زیرا ریسک و نیاز به درمان را مشخص می‌کند. اگر روی بسته‌بندی مشخص نیست، از شماره ثبت EPA برای شناسایی ماده استفاده کنید.",
+                anticoagulants: {
+                    title: "ضدانعقادها",
+                    main: "جونده‌کش‌های ضدانعقاد به نسل اول (کوتاه‌اثر، مانند وارفارین) و نسل دوم (دیرپا، مانند برودیفاکوم) تقسیم می‌شوند. آن‌ها با مهار آنزیم اپوکسید ردوکتاز ویتامین K1، باعث کاهش فاکتورهای انعقادی فعال (۲، ۷، ۹، ۱۰) و خونریزی کنترل‌نشده می‌شوند. علائم مسمومیت معمولاً ۳-۵ روز پس از مصرف ظاهر می‌شود.",
+                    signsTitle: "علائم رایج:",
+                    signsContent: "در ابتدا، خونریزی داخلی است با علائمی مانند بی‌حالی، عدم تحمل ورزش، سرفه و لثه‌های رنگ‌پریده. علائم کمتر شایع شامل استفراغ، اسهال، خونریزی از بینی، کبودی، ادرار خونی، تورم مفاصل و خونریزی لثه است.",
+                    treatmentTitle: "پادزهر و درمان:",
+                    treatmentContent: "ویتامین K1 (فیتونادیون) پادزهر است. ویتامین K3 و ویتامین K موجود در رژیم غذایی کافی نیستند. درمان شامل ویتامین K1 خوراکی برای ۵-۱۰ روز (کوتاه‌اثر) یا ۲۱-۳۰ روز (دیرپا) است. زمان پروترومبین (PT) باید دو روز پس از آخرین دوز بررسی شود.",
+                    threatTitle: "خطر:",
+                    threatContent: "گربه‌ها مقاوم‌تر از سگ‌ها هستند. دوز سمی بین مواد موثره بسیار متفاوت است؛ برخی برای کشنده بودن به مقدار بسیار کمی نیاز دارند (مانند برودیفاکوم). حیوانات مبتلا به بیماری کبدی، حیوانات بسیار جوان یا بسیار پیر در معرض خطر بیشتری هستند."
+                },
+                cholecalciferol: {
+                    title: "کلکلسیفرول (ویتامین D3)",
+                    main: "برای سگ‌ها و گربه‌ها، این یکی از خطرناک‌ترین جونده‌کش‌های موجود در بازار است و به دلیل محدودیت‌های EPA بر روی ضدانعقادهای نسل دوم، محبوبیت بیشتری پیدا کرده است.",
+                    mechanismTitle: "مکانیسم عمل:",
+                    mechanismContent: "این سم باعث هایپرکلسمی و هایپرفسفاتمی می‌شود که منجر به نارسایی حاد کلیه و آسیب بافتی دیگر به دلیل کانی‌سازی متاستاتیک می‌گردد.",
+                    signsTitle: "علائم رایج:",
+                    signsContent: "پلی‌اوری/پلی‌دیپسی، ضعف، بی‌حالی، کاهش اشتها و هالیتوز (بوی اورمیک). نارسایی حاد کلیه ۲-۳ روز پس از مصرف ایجاد می‌شود که اغلب در این مرحله آسیب قابل توجه و دائمی قبلاً رخ داده است.",
+                    treatmentTitle: "پادزهر و درمان:",
+                    treatmentContent: "درمان این مسمومیت چالش‌برانگیز است و اغلب نیاز به بستری شدن و درمان گران‌قیمت دارد. پادزهر خاصی وجود ندارد. درمان شامل مایع‌درمانی تهاجمی وریدی و داروهایی (دیورتیک‌ها، استروئیدها، بیس‌فسفونات‌ها) برای کاهش غلظت کلسیم است. پایش مکرر آزمایش خون برای ۲-۶ هفته لازم است.",
+                    threatTitle: "خطر:",
+                    threatContent: "کلکلسیفرول حاشیه ایمنی بسیار باریکی دارد. حتی مقادیر کم مصرفی می‌تواند باعث علائم بالینی شدید یا مرگ شود. مصرف سمی باید به سرعت درمان شود تا از نارسایی کلیه جلوگیری شود."
+                },
+                bromethalin: {
+                    title: "برومتالین",
+                    main: "این جونده‌کش نوروتوکسیک باعث ادم مغزی می‌شود. نام آن به راحتی با ضدانعقادهای دیرپا مانند برودیفاکوم اشتباه گرفته می‌شود.",
+                    mechanismTitle: "مکانیسم عمل:",
+                    mechanismContent: "برومتالین با جدا کردن فسفوریلاسیون اکسیداتیو در میتوکندری مغز و کبد عمل می‌کند که می‌تواند منجر به ادم مغزی شود.",
+                    signsTitle: "علائم رایج:",
+                    signsContent: "عدم هماهنگی (آتاکسی)، لرزش، تشنج، فلجی و در نهایت مرگ. علائم می‌توانند ظرف ۲ ساعت ظاهر شوند یا بسته به دوز، ۳-۴ روز به تأخیر بیفتند. نظارت پزشکی برای حداقل ۲۴ ساعت اغلب ضروری است.",
+                    treatmentTitle: "پادزهر و درمان:",
+                    treatmentContent: "مراقبت در بیمارستان برای چند روز ممکن است به دلیل نیمه‌عمر طولانی سم ضروری باشد. درمان ممکن است شامل دوزهای متعدد زغال فعال، مایعات وریدی و داروهای خاص برای کاهش تورم مغز باشد.",
+                    threatTitle: "خطر:",
+                    threatContent: "گربه‌ها به برومتالین حساس‌تر از سگ‌ها هستند. از آنجایی که این نوع جونده‌کش حاشیه ایمنی باریکی دارد، درمان سریع اغلب در همه گونه‌ها لازم است."
+                }
+            }
+        },
+        xylitol: {
+            aboutTitle: "درباره مسمومیت با زایلیتول",
+            aboutContent: "هیپوگلیسمی می‌تواند ظرف ۳۰ دقیقه پس از مصرف محصولات حاوی زایلیتول رخ دهد. علائم ممکن است شامل بی‌اشتهایی، استفراغ، اسهال، بی‌حالی، آتاکسی، بی‌قراری، کلاپس، تشنج و کما باشد. سگ‌های درگیر کبدی ممکن است قبل از بروز علائم بالینی نارسایی کبدی، علائم هیپوگلیسمی را نشان دهند یا ندهند. علائم آسیب کبدی (زردی، استفراغ، اسهال، درد شکم) ممکن است ظرف ۱۲-۷۲ ساعت پس از مواجهه رخ دهد. شواهد عوارض شدید دیگر (کوآگولوپاتی، انسفالوپاتی کبدی) نیز می‌تواند ایجاد شود.",
+            section1Title: "وزن - گونه",
+            section2Title: "حجم (میلی‌گرم یا گرم) در هر واحد/سروینگ",
+            mgPerServing: "میلی‌گرم در هر سروینگ",
+            gramsPerServing: "گرم در هر سروینگ",
+            section3Title: "تعداد واحد/سروینگ مصرفی",
+            servingsIngested: "تعداد سروینگ یا واحد مصرفی",
+            section4Title: "نتایج میلی‌گرم/کیلوگرم",
+            resultsTitle: "مسمومیت با زایلیتول",
+            riskHypoglycemia: "مصرف دوزهای > ۰.۱ گرم/کیلوگرم (۱۰۰ میلی‌گرم/کیلوگرم) در معرض خطر ابتلا به هیپوگلیسمی قرار دارند.",
+            riskLiverFailure: "مصرف > ۰.۵ گرم/کیلوگرم (۵۰۰ میلی‌گرم/کیلوگرم) ممکن است باعث نارسایی حاد کبدی با یا بدون هیپوگلیسمی شود.",
+            signsTitle: "علائم گاهی شامل:",
+            signsContent: "بی‌قراری، بیش‌فعالی و احتمالاً آبریزش دهان",
+            infoModal: {
+                title: "درباره حجم و واحدهای زایلیتول",
+                p1: "محصولات حاوی زایلیتول حجم (به گرم یا میلی‌گرم) در هر سروینگ را به دو روش ذکر می‌کنند:",
+                l1Title: "۱. فقط به عنوان زایلیتول",
+                l1Content: "از مقدار زایلیتول در بخش کربوهیدرات‌های کل استفاده کنید. (مقدار ۰.۹ گرم یا ۹۰۰ میلی‌گرم زایلیتول در هر سروینگ در تصویر زیر) هنگام وارد کردن حجم مصرفی.",
+                l2Title: "۲. به عنوان الکل‌های قندی",
+                l2Content1: "الکل‌های قندی شامل زایلیتول و سایر الکل‌های قندی مرتبط (مانند سوربیتول) می‌شوند.",
+                l2Content2: "اگر زایلیتول در لیست مواد تشکیل‌دهنده اول ذکر شده باشد، از حجم کل الکل‌های قندی در محاسبه خود استفاده کنید.",
+                l2Content3: "اگر زایلیتول دوم ذکر شده باشد، حجم کل الکل قندی را بر ۲ تقسیم کنید تا تخمین تقریبی از حجم زایلیتول به دست آید (در تصویر زیر، ۱ گرم ÷ ۲ = ۵۰۰ میلی‌گرم زایلیتول در هر سروینگ).",
+                close: "بستن"
+            }
+        }
     },
     // New Translations
     sync: {
@@ -1268,7 +1892,7 @@ export const translations: { [key: string]: TranslationBlock } = {
       scheduleRow1Recs: "DHPP (دیستمپر، هپاتیت، پاراآنفلوآنزا، پاروویروس) - دوز اول",
       scheduleRow2Age: "۱۰-۱۲ هفتگی",
       scheduleRow2Recs: "DHPP - دوز دوم. اختیاری: لپتوسپیروز، بوردتلا، آنفلوآنزای سگ‌سانان بر اساس ریسک.",
-      scheduleRow3Age: "۱۴-۱۶ هفتگی",
+      scheduleRow3Age: "۱۴-16 هفتگی",
       scheduleRow3Recs: "DHPP - دوز سوم (آخرین دوز تولگی). هاری (طبق الزامات قانونی، اغلب حدود ۱۶ هفتگی). اختیاری: یادآورهای لپتوسپیروز، بوردتلا، آنفلوآنزای سگ‌سانان.",
       boostersTitle: "واکسن‌های یادآور پس از تولگی",
       boostersDesc: "پس از سری اولیه واکسن‌های تولگی، برای حفظ ایمنی به دوزهای یادآور نیاز است.",
@@ -1292,6 +1916,39 @@ export const translations: { [key: string]: TranslationBlock } = {
         error: {
             requiredFields: "لطفاً تمام فیلدهای الزامی را پر کنید."
         }
-    }
+    },
+    provinces: {
+      "alborz": "البرز",
+      "ardabil": "اردبیل",
+      "bushehr": "بوشهر",
+      "chaharmahal_bakhtiari": "چهارمحال و بختیاری",
+      "east_azerbaijan": "آذربایجان شرقی",
+      "fars": "فارس",
+      "gilan": "گیلان",
+      "golestan": "گلستان",
+      "hamadan": "همدان",
+      "hormozgan": "هرمزگان",
+      "ilam": "ایلام",
+      "isfahan": "اصفهان",
+      "kerman": "کرمان",
+      "kermanshah": "کرمانشاه",
+      "khuzestan": "خوزستان",
+      "kohgiluyeh_boyer_ahmad": "کهگیلویه و بویراحمد",
+      "kurdistan": "کردستان",
+      "lorestan": "لرستان",
+      "markazi": "مرکزی",
+      "mazandaran": "مازندران",
+      "north_khorasan": "خراسان شمالی",
+      "qazvin": "قزوین",
+      "qom": "قم",
+      "razavi_khorasan": "خراسان رضوی",
+      "semnan": "سمنان",
+      "sistan_baluchestan": "سیستان و بلوچستان",
+      "south_khorasan": "خراسان جنوبی",
+      "tehran": "تهران",
+      "west_azerbaijan": "آذربایجان غربی",
+      "yazd": "یزد",
+      "zanjan": "زنجان"
+    },
   }
 };

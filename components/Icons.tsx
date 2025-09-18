@@ -67,3 +67,10 @@ export const FlaskIcon: React.FC<{ className?: string }> = ({ className }) => <I
 export const PrintIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-print" />;
 export const InfoCircleIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-circle-info" />;
 export const WifiIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-wifi" />;
+export const CaloriesIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-utensils" />;
+export const SkullIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-skull-crossbones" />;
+export const DogIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-dog" />;
+export const CatIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-cat" />;
+export const CookieBiteIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-cookie-bite" />;
+export const CandyCaneIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-candy-cane" />;
+export const LeafIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-leaf" />;

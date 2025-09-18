@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import { useLocale } from '../context/LocaleContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PawIcon, GoogleIcon, GlobeIcon } from '../components/Icons';
+import { GoogleIcon, GlobeIcon } from '../components/Icons';
 import { authService } from '../services/authService';
 import IdentityView from '../components/auth/IdentityView';
 import OtpView from '../components/auth/OtpView';
@@ -109,12 +109,11 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onAuthSuccess }) => {
         }
     }
     
-    const handleGoogleSignIn = async () => {
+    // FIX: Corrected the handleGoogleSignIn function. The authService.signInWithGoogle() function initiates a page redirect and returns void, so it should not be awaited. The subsequent lines expecting a result object were incorrect and have been removed. The authentication result is handled by a callback in App.tsx after the redirect.
+    const handleGoogleSignIn = () => {
         dispatch({type: 'SUBMIT_IDENTITY', payload: 'google'});
         try {
-            const result = await authService.signInWithGoogle();
-            onAuthSuccess(result.email);
-            dispatch({ type: 'SUCCESS' });
+            authService.signInWithGoogle();
         } catch (err: any) {
             dispatch({ type: 'ERROR', payload: err.message });
         }
@@ -138,8 +137,8 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onAuthSuccess }) => {
             </div>
             <div className="w-full max-w-sm mx-auto">
                 <div className="flex flex-col items-center justify-center mb-8">
-                    <PawIcon className="text-5xl text-[var(--primary-500)]" />
-                    <h1 className="text-2xl font-bold mt-2 text-heading">{t('auth.welcomeTitle')}</h1>
+                    <img src="https://i.postimg.cc/hjrfP6b4/image.png" alt="App Logo" className="w-28 h-28 animate-float" />
+                    <h1 className="text-2xl font-bold mt-4 text-heading">{t('auth.welcomeTitle')}</h1>
                     <p className="text-muted-foreground text-center">{t('auth.welcomeSubtitle')}</p>
                 </div>
 

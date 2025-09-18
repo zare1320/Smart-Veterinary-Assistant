@@ -31,9 +31,9 @@ export const BackButton: React.FC<BackButtonProps> = ({ onClick }) => {
     );
 };
 
+// FIX: Changed ButtonProps to extend HTMLMotionProps<'button'> to correctly include props like `children` and `className`, fixing numerous type errors.
 interface ButtonProps extends HTMLMotionProps<'button'> {
     variant?: 'primary' | 'secondary';
-    children: React.ReactNode;
 }
 
 export const Button: React.FC<ButtonProps> = ({ variant = 'primary', children, className, ...props }) => {

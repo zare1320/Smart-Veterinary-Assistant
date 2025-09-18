@@ -6,6 +6,7 @@ import type { Gender, AgeGroup } from '../types';
 import { dataService } from '../services/dataService';
 import BreedSelector from './BreedSelector';
 import { useUserStore } from '../stores/useUserStore';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const PatientInfoForm: React.FC = () => {
   const { species, weightInKg, gender, breed, ageGroup, clinicalSigns, updatePatientInfo } = usePatientStore();
@@ -16,6 +17,7 @@ const PatientInfoForm: React.FC = () => {
 
   const weightUnit = user?.settings?.weightUnit || 'kg';
   const [displayWeight, setDisplayWeight] = useState('');
+  const [weightError, setWeightError] = useState<string | null>(null);
   const KG_TO_LB = 2.20462;
 
   useEffect(() => {
@@ -56,11 +58,16 @@ const PatientInfoForm: React.FC = () => {
     const normalizedValue = value.replace(',', '.');
     const parsedValue = parseFloat(normalizedValue);
 
-    if (value === '' || isNaN(parsedValue)) {
+    if (value === '' || (isNaN(parsedValue) && value !== '-')) {
         updatePatientInfo({ weightInKg: null });
-    } else {
+        setWeightError(null);
+    } else if (parsedValue <= 0) {
+        updatePatientInfo({ weightInKg: null });
+        setWeightError(t('weightErrorInvalid'));
+    } else if (!isNaN(parsedValue)) {
         const weightInKgValue = weightUnit === 'lb' ? parsedValue / KG_TO_LB : parsedValue;
         updatePatientInfo({ weightInKg: weightInKgValue });
+        setWeightError(null);
     }
   };
 
@@ -76,6 +83,8 @@ const PatientInfoForm: React.FC = () => {
     { value: 'adult' as AgeGroup, label: t('adult') },
     { value: 'geriatric' as AgeGroup, label: t('geriatric') },
   ];
+  
+  const isWeightValid = displayWeight !== '' && !weightError;
 
   return (
     <div className="space-y-6">
@@ -92,10 +101,22 @@ const PatientInfoForm: React.FC = () => {
             value={displayWeight}
             onChange={handleDisplayWeightChange}
             placeholder={t('enterWeight')}
-            className="custom-form-input text-start"
+            className={`custom-form-input text-start ${weightError ? 'error' : isWeightValid ? 'success' : ''}`}
             step="0.01"
           />
         </div>
+         <AnimatePresence>
+          {weightError && (
+            <motion.p
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="text-sm text-red-500 mt-1 text-start"
+            >
+              {weightError}
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Gender */}
@@ -108,6 +129,16 @@ const PatientInfoForm: React.FC = () => {
         />
       </div>
 
+      {/* Age Group */}
+      <div>
+        <label className="block text-sm font-medium text-card-foreground mb-2 text-start">{t('ageGroup')}</label>
+        <SegmentedControl
+          options={ageGroupOptions}
+          value={ageGroup}
+          onChange={(value) => updatePatientInfo({ ageGroup: value as AgeGroup })}
+        />
+      </div>
+      
       {/* Breed */}
       <div>
         <label htmlFor="breed" className="block text-sm font-medium text-card-foreground mb-1 text-start">
@@ -119,16 +150,6 @@ const PatientInfoForm: React.FC = () => {
             onChange={(breedName) => updatePatientInfo({ breed: breedName })}
             placeholder={breedConfig.placeholder}
             displayInfoKey={breedConfig.key}
-        />
-      </div>
-
-      {/* Age Group */}
-      <div>
-        <label className="block text-sm font-medium text-card-foreground mb-2 text-start">{t('ageGroup')}</label>
-        <SegmentedControl
-          options={ageGroupOptions}
-          value={ageGroup}
-          onChange={(value) => updatePatientInfo({ ageGroup: value as AgeGroup })}
         />
       </div>
 

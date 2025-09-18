@@ -35,7 +35,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, title, children 
           onClick={onClose}
         >
           <motion.div
-            className="bg-card rounded-2xl shadow-xl w-full max-w-md p-6 text-start"
+            className="bg-card rounded-2xl shadow-xl w-full max-w-2xl p-6 text-start"
             variants={modalVariants}
             initial="hidden"
             animate="visible"

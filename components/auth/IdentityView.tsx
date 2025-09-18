@@ -19,15 +19,26 @@ const IdentityView: React.FC<IdentityViewProps> = ({ onSubmit, isLoading, error 
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const isEmail = identity.includes('@');
-        const isPhone = /^\+?[0-9\s-]{7,}$/.test(identity); // A simple phone number validation
+        const value = identity.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneRegex = /^09\d{9}$/;
 
-        if (!isEmail && !isPhone) {
-            setValidationError(t('auth.error.invalidEmail'));
+        if (emailRegex.test(value)) {
+            setValidationError(null);
+            onSubmit(value);
+        } else if (phoneRegex.test(value)) {
+            setValidationError(null);
+            onSubmit(value);
+        } else {
+            if (value.includes('@')) {
+                setValidationError(t('auth.error.invalidEmail'));
+            } else if (/^\d+$/.test(value)) {
+                setValidationError(t('auth.error.invalidPhone'));
+            } else {
+                setValidationError(t('auth.error.invalidIdentity'));
+            }
             return;
         }
-        setValidationError(null);
-        onSubmit(identity);
     };
     
     const displayError = error || validationError;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SyringeIcon, FluidIcon, HeartPulseIcon, BloodIcon, CakeIcon, ArrowLeftIcon, ArrowRightIcon } from './Icons';
+import { SyringeIcon, FluidIcon, HeartPulseIcon, BloodIcon, CakeIcon, ArrowLeftIcon, ArrowRightIcon, CaloriesIcon, SkullIcon } from './Icons';
 import { useLocale } from '../context/LocaleContext';
 import { motion } from 'framer-motion';
 
@@ -25,6 +25,18 @@ const getTools = (t: (key: string) => string): Tool[] => [
         description: t('fluidTherapyDesc'),
         icon: <FluidIcon className="text-2xl text-[var(--primary-500)]" />,
         path: '/calculators/fluid-therapy',
+    },
+    {
+        title: t('caloriesCalculator.title'),
+        description: t('caloriesCalculator.description'),
+        icon: <CaloriesIcon className="text-2xl text-[var(--primary-500)]" />,
+        path: '/calculators/calories',
+    },
+    {
+        title: t('toxicity.title'),
+        description: t('toxicity.description'),
+        icon: <SkullIcon className="text-2xl text-orange-500" />,
+        path: '/calculators/toxicity',
     },
     {
         title: t('bloodPressureCalculator'),

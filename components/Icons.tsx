@@ -76,3 +76,4 @@ export const CandyCaneIcon: React.FC<{ className?: string }> = ({ className }) =
 export const LeafIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-leaf" />;
 export const SmileIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-face-smile" />;
 export const ExternalLinkIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-up-right-from-square" />;
+export const BabyCarriageIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className} iconName="fa-baby-carriage" />;

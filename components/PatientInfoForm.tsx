@@ -7,6 +7,7 @@ import { dataService } from '../services/dataService';
 import BreedSelector from './BreedSelector';
 import { useUserStore } from '../stores/useUserStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CheckIcon } from './Icons';
 
 const PatientInfoForm: React.FC = () => {
   const { species, weightInKg, gender, breed, ageGroup, clinicalSigns, updatePatientInfo } = usePatientStore();
@@ -101,9 +102,22 @@ const PatientInfoForm: React.FC = () => {
             value={displayWeight}
             onChange={handleDisplayWeightChange}
             placeholder={t('enterWeight')}
-            className={`custom-form-input text-start ${weightError ? 'error' : isWeightValid ? 'success' : ''}`}
+            className={`custom-form-input text-start pe-10 ${weightError ? 'error' : isWeightValid ? 'success' : ''}`}
             step="0.01"
           />
+          <AnimatePresence>
+            {isWeightValid && (
+              <motion.div
+                className="absolute end-4 top-1/2 -translate-y-1/2 text-emerald-500"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              >
+                <CheckIcon />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
          <AnimatePresence>
           {weightError && (

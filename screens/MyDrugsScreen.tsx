@@ -7,12 +7,11 @@ import { Button } from '../components/Button';
 import ProfileModal from '../components/ProfileModal';
 import MedicationModal from '../components/MedicationModal';
 import { dataService } from '../services/dataService';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { ProfileChipSkeleton, MedicationItemSkeleton } from '../components/skeletons/MyDrugsSkeletons';
 import { EmptyState } from '../components/EmptyState';
 import toast from 'react-hot-toast';
 
-// FIX: Replaced inline animation props with variants to fix type errors.
 const profileButtonVariants = {
   active: { scale: 1.05 },
   inactive: { scale: 1 },
@@ -27,8 +26,9 @@ const medicationItemVariants = {
   exit: { opacity: 0 },
 };
 
-const toolButtonVariants = {
-  hover: { scale: 1.02 },
+// FIX: Added explicit Variants type to fix framer-motion transition type error.
+const toolButtonVariants: Variants = {
+  hover: { y: -4, scale: 1.02, transition: { type: 'spring', stiffness: 300 } },
   tap: { scale: 0.98 },
 };
 
@@ -56,7 +56,6 @@ const MyDrugsScreen: React.FC = () => {
             setIsLoading(true);
             const [profilesData, medicationsData] = await Promise.all([
                 dataService.getProfiles(t),
-                // FIX: Passed the translation function `t` to `getMedications` to ensure consistent data fetching and initialization logic.
                 dataService.getMedications(t)
             ]);
             setProfiles(profilesData);
@@ -89,7 +88,6 @@ const MyDrugsScreen: React.FC = () => {
 
     // Profile CRUD Handlers
     const handleSaveProfile = async (data: { id?: number; name: string; imageUrl: string }) => {
-        // FIX: Corrected call to `saveProfile` by adding the missing `t` argument, as required by the data service implementation.
         const updatedProfiles = await dataService.saveProfile(data, t);
         setProfiles(updatedProfiles);
         
@@ -105,7 +103,6 @@ const MyDrugsScreen: React.FC = () => {
 
     const handleDeleteProfile = async (profileId: number) => {
         if (window.confirm(t('myMedList.deleteProfileConfirm'))) {
-            // FIX: Corrected call to `deleteProfile` by adding the missing `t` argument, as required by the data service implementation.
             const { profiles: newProfiles, medications: newMedications } = await dataService.deleteProfile(profileId, t);
             setProfiles(newProfiles);
             setMedications(newMedications);
@@ -120,7 +117,6 @@ const MyDrugsScreen: React.FC = () => {
     // Medication CRUD Handlers
     const handleSaveMedication = async (data: { id?: number; name: string; formulation: string; instructions: string }) => {
         if(activeProfileId) {
-            // FIX: Corrected call to `saveMedication` by adding the missing `t` argument, as required by the data service implementation.
             const updatedMeds = await dataService.saveMedication({ ...data, profileId: activeProfileId }, t);
             setMedications(updatedMeds);
         }
@@ -131,7 +127,6 @@ const MyDrugsScreen: React.FC = () => {
 
     const handleDeleteMedication = async (medicationId: number) => {
         if (window.confirm(t('myMedList.deleteMedConfirm'))) {
-            // FIX: Corrected call to `deleteMedication` by adding the missing `t` argument, as required by the data service implementation.
             const updatedMeds = await dataService.deleteMedication(medicationId, t);
             setMedications(updatedMeds);
             toast.success(t('toast.medication.deleted'));
@@ -161,7 +156,7 @@ const MyDrugsScreen: React.FC = () => {
         <div className="min-h-screen">
              <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm">
                 <div className="flex items-center p-4 justify-between">
-                    <h1 className="text-xl font-bold leading-tight tracking-tight text-heading">{t('myMedList.title')}</h1>
+                    <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-heading">{t('myMedList.title')}</h1>
                     <button 
                         onClick={() => openProfileModal(null)}
                         className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition-colors shadow-md"
@@ -172,7 +167,7 @@ const MyDrugsScreen: React.FC = () => {
                 </div>
             </header>
             
-            <main className="p-4 space-y-8">
+            <main className="p-4 sm:p-6 space-y-10">
                 {/* Profile Selector */}
                 <section>
                     <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
@@ -228,15 +223,15 @@ const MyDrugsScreen: React.FC = () => {
                                         initial="hidden"
                                         animate="visible"
                                         exit="exit"
-                                        className="bg-card p-4 flex items-center gap-4"
+                                        className="bg-card p-5 flex items-center gap-4"
                                     >
                                         <div className="flex-shrink-0 bg-secondary text-secondary-foreground p-3 rounded-full">
                                             <PillIcon className="text-2xl"/>
                                         </div>
                                         <div className="flex-1 text-start">
-                                            <h3 className="font-bold text-heading">{med.name}</h3>
+                                            <h3 className="font-bold text-heading text-lg">{med.name}</h3>
                                             <p className="text-sm text-foreground">{med.formulation}</p>
-                                            <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap">{med.instructions}</p>
+                                            <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">{med.instructions}</p>
                                         </div>
                                         <div ref={openMenuId === `med-${med.id}` ? menuRef : null} className="relative">
                                             <button onClick={() => setOpenMenuId(openMenuId === `med-${med.id}` ? null : `med-${med.id}`)} className="text-muted-foreground hover:text-foreground">
@@ -274,7 +269,7 @@ const MyDrugsScreen: React.FC = () => {
 
                  {/* Feature Showcase */}
                 <section>
-                    <h2 className="text-xl font-bold text-start mb-4 text-heading">{t('myMedList.yourTools')}</h2>
+                    <h2 className="text-2xl font-extrabold text-start mb-6 text-heading">{t('myMedList.yourTools')}</h2>
                     <div className="space-y-3">
                         {featureTools.map(tool => {
                             const isReportTool = tool.key === 'reports';
@@ -283,7 +278,7 @@ const MyDrugsScreen: React.FC = () => {
                              return (
                                  <motion.button 
                                     key={tool.title} 
-                                    className="w-full text-start bg-card p-4 flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full text-start bg-card p-5 flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed"
                                     onClick={() => {
                                         if (tool.path === '/medication-report' && activeProfile) {
                                             navigate(tool.path, { state: { profile: activeProfile, medications: activeMedications } });

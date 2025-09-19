@@ -2,7 +2,8 @@ import React from 'react';
 import { useLocale } from '../../context/LocaleContext';
 import { FluidResultsCardProps, ActionTypes } from './FluidCalculatorTypes';
 import { AnimalSpecies } from '../../types';
-import { Icon, Tooltip, ResultPill } from './FluidFormComponents';
+import { Icon, Tooltip } from './FluidFormComponents';
+import AnimatedCounter from '../AnimatedCounter';
 
 const VET_CONSTANTS = {
   [AnimalSpecies.DOG]: {
@@ -23,7 +24,7 @@ const VET_CONSTANTS = {
 };
 
 const SectionCard: React.FC<{ icon: React.ReactNode; title: string; tooltipContent?: React.ReactNode; children: React.ReactNode }> = ({ icon, title, tooltipContent, children }) => (
-  <div className="bg-card/50 p-4 rounded-xl border border-border/50">
+  <div className="bg-card/50 p-5 rounded-xl border border-border/50">
     <div className="flex items-center justify-between border-b border-border/50 pb-3 mb-4">
       <div className="flex items-center gap-3">
         {icon}
@@ -35,7 +36,21 @@ const SectionCard: React.FC<{ icon: React.ReactNode; title: string; tooltipConte
   </div>
 );
 
-const MaintenanceResults: React.FC<any> = ({ state, results, formatNumber, t }) => {
+const clsx = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ');
+
+const ResultPill: React.FC<{ value: number; unit: string; label?: string; className?: string; precision?: number }> = ({ value, unit, label, className, precision = 1 }) => (
+    <div className={clsx("flex flex-col items-center", className)}>
+      {label && <span className="text-xs text-foreground/60 dark:text-foreground/60 mb-1.5 font-medium">{label}</span>}
+      <div className="bg-sky-500/10 dark:bg-sky-500/10 text-sky-800 dark:text-sky-300 font-bold rounded-full px-4 py-1.5 text-center w-full">
+        <span className="text-lg">
+            { isNaN(value) || !isFinite(value) ? '---' : <AnimatedCounter to={value} precision={precision} /> }
+        </span>
+        <span className="text-xs ms-1 opacity-80">{unit}</span>
+      </div>
+    </div>
+);
+
+const MaintenanceResults: React.FC<any> = ({ state, results, t, localizeNumber }) => {
   const speciesKey = state.displaySpecies || AnimalSpecies.OTHER;
   const constants = VET_CONSTANTS[speciesKey];
   const maintenanceRateMlDay = constants.maintenanceFactor * Math.pow(state.weightKg, 0.75);
@@ -53,20 +68,22 @@ const MaintenanceResults: React.FC<any> = ({ state, results, formatNumber, t }) 
             <Icon name={SpeciesIcon} className="w-5 h-5" />
             {t('fluid.maintenance.dosageDaily')}
           </span>
-          <span className="font-mono font-bold text-base">{formatNumber(maintenanceRateMlDay, 0)} ml/day</span>
+          <span className="font-mono font-bold text-base">
+            {localizeNumber(maintenanceRateMlDay.toFixed(0))} ml/day
+          </span>
         </div>
         
         <div className="grid grid-cols-3 gap-3 text-center">
-          <ResultPill label="1X" value={formatNumber(results.maintenanceRateMlHour)} unit="ml/hr" />
-          <ResultPill label="1.5X" value={formatNumber(results.maintenanceRateMlHour * 1.5)} unit="ml/hr" />
-          <ResultPill label="2X" value={formatNumber(results.maintenanceRateMlHour * 2.0)} unit="ml/hr" />
+          <ResultPill label="1X" value={results.maintenanceRateMlHour} unit="ml/hr" />
+          <ResultPill label="1.5X" value={results.maintenanceRateMlHour * 1.5} unit="ml/hr" />
+          <ResultPill label="2X" value={results.maintenanceRateMlHour * 2.0} unit="ml/hr" />
         </div>
         
         {(state.addDehydration || state.addOngoingLosses) && state.deficitTime ? (
            <div className="text-center border-t border-border/50 pt-4">
               <p className="text-sm font-semibold mb-2">{t('fluid.maintenance.initialRate')}</p>
               <div className="flex items-center justify-center gap-2">
-                <ResultPill value={formatNumber(results.totalFluidRateMlHour)} unit="ml/hr" className="w-32" />
+                <ResultPill value={results.totalFluidRateMlHour} unit="ml/hr" className="w-32" />
                 <span className="font-semibold text-sm text-muted-foreground">for {state.deficitTime}h</span>
               </div>
            </div>
@@ -76,7 +93,7 @@ const MaintenanceResults: React.FC<any> = ({ state, results, formatNumber, t }) 
   );
 };
 
-const ShockTherapy: React.FC<any> = ({ state, results, formatNumber, handleNumberChange, t }) => {
+const ShockTherapy: React.FC<any> = ({ state, results, handleNumberChange, t }) => {
   const speciesKey = state.displaySpecies || AnimalSpecies.OTHER;
   const constants = VET_CONSTANTS[speciesKey];
   
@@ -100,15 +117,15 @@ const ShockTherapy: React.FC<any> = ({ state, results, formatNumber, handleNumbe
           />
         </div>
         <div className="grid grid-cols-2 gap-3 text-center w-full md:w-auto">
-          <ResultPill label="Bolus (15min)" value={formatNumber(results.shockVolume25)} unit="ml" />
-          <ResultPill label="Total" value={formatNumber(results.shockVolumeTotal, 0)} unit="ml" />
+          <ResultPill label="Bolus (15min)" value={results.shockVolume25} unit="ml" />
+          <ResultPill label="Total" value={results.shockVolumeTotal} unit="ml" precision={0} />
         </div>
       </div>
     </SectionCard>
   );
 };
 
-const SurgicalFluids: React.FC<any> = ({ state, results, formatNumber, handleNumberChange, t }) => {
+const SurgicalFluids: React.FC<any> = ({ state, results, handleNumberChange, t }) => {
   const speciesKey = state.displaySpecies || AnimalSpecies.OTHER;
   const constants = VET_CONSTANTS[speciesKey];
   
@@ -131,7 +148,7 @@ const SurgicalFluids: React.FC<any> = ({ state, results, formatNumber, handleNum
             className="form-input text-center font-mono !py-1 w-24 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
           />
         </div>
-        <ResultPill value={formatNumber(results.surgicalRateMlHour)} unit="ml/hr" className="w-32"/>
+        <ResultPill value={results.surgicalRateMlHour} unit="ml/hr" className="w-32"/>
       </div>
     </SectionCard>
   );
@@ -140,12 +157,6 @@ const SurgicalFluids: React.FC<any> = ({ state, results, formatNumber, handleNum
 const FluidResultsCard: React.FC<FluidResultsCardProps> = ({ state, dispatch, results }) => {
     const { t, localizeNumber } = useLocale();
 
-    const formatNumber = (num: number, precision = 1) => {
-        if (isNaN(num) || !isFinite(num)) return '---';
-        const numToFixed = Number(num.toFixed(precision));
-        return localizeNumber(numToFixed);
-    };
-
     const handleNumberChange = (actionType: ActionTypes, value: string) => {
         const num = value === '' ? null : parseFloat(value);
         if (num === null || !isNaN(num)) {
@@ -153,11 +164,11 @@ const FluidResultsCard: React.FC<FluidResultsCardProps> = ({ state, dispatch, re
         }
     };
     
-    const sharedProps = { state, results, formatNumber, handleNumberChange, t };
+    const sharedProps = { state, results, handleNumberChange, t, localizeNumber };
 
     return (
         <div className="space-y-4">
-            <h3 className="text-xl font-bold text-heading text-start">{t('fluid.resultsTitle')}</h3>
+            <h3 className="text-2xl font-extrabold text-heading text-start">{t('fluid.resultsTitle')}</h3>
             <MaintenanceResults {...sharedProps} />
             <ShockTherapy {...sharedProps} />
             <SurgicalFluids {...sharedProps} />

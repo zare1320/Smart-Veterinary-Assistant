@@ -8,6 +8,7 @@ import { LabeledInput, LabeledSelect } from '../components/forms';
 import InfoModal from '../components/InfoModal';
 import PatientInfoDisplay from '../components/PatientInfoDisplay';
 import { HeartPulseIcon, FilePenIcon, ChartLineIcon, CircleQuestionIcon } from '../components/Icons';
+import AnimatedCounter from '../components/AnimatedCounter';
 
 // Constants
 const NUM_PRESSURE_READINGS = 10;
@@ -69,7 +70,6 @@ function bpReducer(state: BpState, action: BpAction): BpState {
 const Section: React.FC<{ icon: React.ReactNode; title: string; children: React.ReactNode }> = ({ icon, title, children }) => (
     <div className="bg-card p-6">
         <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border/50">
-            {/* FIX: Corrected incomplete className and provided a consistent style. */}
             <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--primary-500)]/10 text-[var(--primary-500)]">
                 {icon}
             </div>
@@ -79,7 +79,6 @@ const Section: React.FC<{ icon: React.ReactNode; title: string; children: React.
     </div>
 );
 
-// FIX: Added the missing MeasurementDetails component.
 const MeasurementDetails: React.FC<{ state: BpState; onFieldChange: (field: keyof BpState, value: any) => void; t: (key: string) => string }> = ({ state, onFieldChange, t }) => {
   const idPrefix = useId();
   const positionOptions = ['lateral', 'sternal', 'standing', 'sitting'];
@@ -111,7 +110,6 @@ const MeasurementDetails: React.FC<{ state: BpState; onFieldChange: (field: keyo
   );
 };
 
-// FIX: Added the missing PressureReadings component.
 const PressureReadings: React.FC<{
   pressures: string[];
   meanSbp: number | null;
@@ -137,13 +135,15 @@ const PressureReadings: React.FC<{
       </div>
       <div className="mt-6 bg-gradient-to-br from-sky-500 to-indigo-500 rounded-2xl p-4 text-white shadow-lg shadow-sky-500/30 text-center">
           <p className="text-sm opacity-80">{t('bp.meanSystolic')}</p>
-          <p className="text-3xl font-bold font-mono">{meanSbp !== null ? localizeNumber(meanSbp) : '---'} <span className="text-lg opacity-80">mmHg</span></p>
+          <p className="text-3xl font-bold font-mono">
+            {meanSbp !== null ? <AnimatedCounter to={meanSbp} precision={0} /> : '---'}
+            {meanSbp !== null && <span className="text-lg opacity-80 ms-1">mmHg</span>}
+          </p>
       </div>
     </Section>
   );
 };
 
-// FIX: Added the missing RiskClassificationTable component.
 const RiskClassificationTable: React.FC<{ riskCategory: string | null; t: (key: string) => string; }> = ({ riskCategory, t }) => {
   const categories = [
     { key: 'normotensive', riskKey: 'minimal' },

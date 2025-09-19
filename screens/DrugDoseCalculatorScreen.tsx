@@ -12,6 +12,7 @@ import MissingPatientWeightBanner from '../components/MissingPatientWeightBanner
 import PatientInfoDisplay from '../components/PatientInfoDisplay';
 import { DrugCategorySkeleton, DrugListSkeleton } from '../components/skeletons/DrugListSkeleton';
 import { EmptyState } from '../components/EmptyState';
+import AnimatedCounter from '../components/AnimatedCounter';
 
 const speciesGroupMap: { [key: string]: string[] } = {
     dog: ['dog', 'dog_cat'],
@@ -102,9 +103,9 @@ const CalculatorPanel: React.FC<{ drug: Drug; weightKg: number; speciesKey: stri
         }
     }, [relevantDosage]);
 
-    const { totalDoseMg, amountToAdminister } = useMemo(() => {
+    const { totalDoseValue, amountToAdministerValue, amountToAdministerUnit } = useMemo(() => {
         if (!weightKg || !dosePerKg || !selectedFormulation) {
-            return { totalDoseMg: null, amountToAdminister: null };
+            return { totalDoseValue: null, amountToAdministerValue: null, amountToAdministerUnit: '' };
         }
         
         const totalDose = dosePerKg * weightKg;
@@ -126,14 +127,15 @@ const CalculatorPanel: React.FC<{ drug: Drug; weightKg: number; speciesKey: stri
         }
 
         return {
-            totalDoseMg: localizeNumber(totalDose.toFixed(2)),
-            amountToAdminister: amount ? `${localizeNumber(amount.toFixed(2))} ${unit}` : null
+            totalDoseValue: totalDose,
+            amountToAdministerValue: amount,
+            amountToAdministerUnit: unit,
         };
-    }, [weightKg, dosePerKg, selectedFormulation, t, localizeNumber]);
+    }, [weightKg, dosePerKg, selectedFormulation, t]);
 
     return (
         <div className="p-6 space-y-6 flex flex-col h-full">
-            <h3 className="text-2xl font-bold text-heading text-start">{drug.name[locale as keyof typeof drug.name]}</h3>
+            <h3 className="text-2xl font-extrabold text-heading text-start">{drug.name[locale as keyof typeof drug.name]}</h3>
             
             <div className="flex-grow space-y-4">
                 <LabeledSelect label={t('drugCalculator.formulation')} id="formulation" value={selectedFormulationId} onChange={e => setSelectedFormulationId(e.target.value)}>
@@ -182,18 +184,31 @@ const CalculatorPanel: React.FC<{ drug: Drug; weightKg: number; speciesKey: stri
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                 <div className="bg-gradient-to-br from-sky-500 to-indigo-500 rounded-2xl p-4 text-white shadow-lg shadow-sky-500/30 text-center">
                     <p className="text-sm opacity-80">{t('drugCalculator.amountToAdminister')}</p>
-                    <p className="text-3xl font-bold font-mono">{amountToAdminister || '---'}</p>
+                    <p className="text-3xl font-bold font-mono">
+                        {amountToAdministerValue !== null ? (
+                            <>
+                                <AnimatedCounter to={amountToAdministerValue} precision={2} />
+                                <span className="text-lg opacity-80 ms-1">{amountToAdministerUnit}</span>
+                            </>
+                        ) : '---' }
+                    </p>
                 </div>
                  <div className="bg-gradient-to-br from-[#2DD4BF] to-[#29a594] rounded-2xl p-4 text-white shadow-lg shadow-[#2DD4BF]/30 text-center">
                     <p className="text-sm opacity-80">{t('drugCalculator.totalDose')}</p>
-                    <p className="text-3xl font-bold font-mono">{totalDoseMg || '---'} <span className="text-lg opacity-80">mg</span></p>
+                    <p className="text-3xl font-bold font-mono">
+                        {totalDoseValue !== null ? (
+                             <>
+                                <AnimatedCounter to={totalDoseValue} precision={2} />
+                                <span className="text-lg opacity-80"> mg</span>
+                            </>
+                        ) : '---'}
+                    </p>
                 </div>
             </div>
         </div>
     );
 };
 
-// FIX: Replaced inline animation props with variants to fix type errors.
 const drugItemVariants = {
   hidden: { opacity: 0, y: 10 },
   visible: { opacity: 1, y: 0 },
@@ -268,7 +283,7 @@ const DrugDoseCalculatorScreen: React.FC = () => {
                     <BackButton onClick={() => navigate('/')} />
                     <PatientInfoDisplay />
                 </div>
-                <header className="text-center mb-6">
+                <header className="text-center mb-8">
                     <h2 className="text-3xl md:text-4xl font-extrabold text-heading">{t('drugCalculator.title')}</h2>
                 </header>
 

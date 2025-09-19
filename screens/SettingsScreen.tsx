@@ -17,15 +17,14 @@ import {
 import { useTheme } from '../context/ThemeContext';
 import { useLocale } from '../context/LocaleContext';
 import { useUserStore } from '../stores/useUserStore';
-
-// --- Self-contained Components for a Cleaner Structure (Moved outside SettingsScreen) ---
+import { motion } from 'framer-motion';
 
 const SettingsHeader: React.FC = () => {
   const { t } = useLocale();
   return (
     <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm">
         <div className="flex items-center p-4 justify-center relative">
-          <h1 className="text-xl font-bold leading-tight tracking-tight text-heading">{t('navSettings')}</h1>
+          <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-heading">{t('navSettings')}</h1>
         </div>
     </header>
   );
@@ -50,7 +49,7 @@ const ProfileCard: React.FC<{ onNavigate: (path: string) => void }> = ({ onNavig
                     {initials}
                 </div>
                 <div className="flex-grow text-start">
-                    <h2 className="text-xl font-bold text-heading">{user.profile.fullName || 'User'}</h2>
+                    <h2 className="text-2xl font-extrabold text-heading">{user.profile.fullName || 'User'}</h2>
                     <p className="text-sm text-muted-foreground">{user.profile.role ? roleMap[user.profile.role] : 'No role set'}</p>
                 </div>
             </div>
@@ -104,7 +103,13 @@ interface SettingsItemProps {
 
 const SettingsItem: React.FC<SettingsItemProps> = ({ icon, title, description, action, onClick }) => {
     const Component = onClick ? 'button' : 'div';
+    const { locale } = useLocale();
     return (
+      <motion.div
+        whileHover={{ x: locale === 'fa' ? -4 : 4 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+        className="relative"
+      >
         <Component
             onClick={onClick}
             className="flex items-center w-full p-4 text-start transition-colors hover:bg-secondary/50 disabled:hover:bg-transparent"
@@ -113,11 +118,12 @@ const SettingsItem: React.FC<SettingsItemProps> = ({ icon, title, description, a
                 {icon}
             </div>
             <div className="flex-grow mx-4">
-                <p className="font-semibold text-card-foreground">{title}</p>
+                <p className="font-semibold text-card-foreground text-base">{title}</p>
                 <p className="text-sm text-muted-foreground">{description}</p>
             </div>
             {action && <div className="flex-shrink-0 flex items-center gap-2 text-muted-foreground">{action}</div>}
         </Component>
+      </motion.div>
     );
 };
 

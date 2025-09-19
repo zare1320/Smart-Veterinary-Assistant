@@ -16,6 +16,7 @@ import {
     DesktopIcon,
     TriangleExclamationIcon,
 } from '../components/Icons';
+import AnimatedCounter from '../components/AnimatedCounter';
 
 // --- Custom Hook for calculator logic ---
 const useTransfusionCalculator = (patientWeight: number | null, patientSpecies: string | null) => {
@@ -214,11 +215,9 @@ const BloodTransfusionCalculatorScreen: React.FC = () => {
                       <BloodIcon className="text-5xl" />
                       <div>
                         <p className="text-lg opacity-80">{t('transfusion.bloodVolumeNeeded')}</p>
-                        <p>
-                          <span className="text-5xl sm:text-6xl font-mono font-bold tracking-tighter">
-                            {calculatedVolume !== null ? localizeNumber(calculatedVolume.toFixed(1)) : '---'}
-                          </span>
-                          <span className="text-xl sm:text-2xl opacity-80 ms-2">ml</span>
+                        <p className="text-5xl sm:text-6xl font-mono font-bold tracking-tighter">
+                          {calculatedVolume !== null ? <AnimatedCounter to={calculatedVolume} precision={1} /> : '---'}
+                          {calculatedVolume !== null && <span className="text-xl sm:text-2xl opacity-80 ms-2">ml</span>}
                         </p>
                       </div>
                     </div>

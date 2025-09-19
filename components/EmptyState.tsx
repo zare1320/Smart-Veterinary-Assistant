@@ -18,7 +18,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ icon, title, message, ac
       <div className="mx-auto w-20 h-20 flex items-center justify-center rounded-full bg-muted text-muted-foreground/50">
         {icon}
       </div>
-      <h2 className="mt-4 text-xl font-bold text-heading">{title}</h2>
+      <h2 className="mt-6 text-2xl font-extrabold text-heading">{title}</h2>
       <p className="mt-2 text-muted-foreground">{message}</p>
       {action && (
         <Button onClick={action.onClick} variant="primary" className="mt-6">

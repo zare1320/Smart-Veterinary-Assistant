@@ -456,12 +456,17 @@ const ToxicityCalculatorScreen: React.FC = () => {
                     {activeTab !== 'plants' && <PatientInfoDisplay />}
                 </div>
                 <div className="flex justify-around border-b border-border">
-                    {TABS.map(tab => (
-                        <button key={tab.id} onClick={() => setActiveTab(tab.id as ToxinTab)} className={`flex-1 p-3 text-sm font-semibold border-b-2 transition-colors flex flex-col items-center gap-1 ${activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:bg-muted'}`}>
-                           {tab.icon}
-                           <span>{t(tab.labelKey)}</span>
-                        </button>
-                    ))}
+                    {TABS.map(tab => {
+                        const isActive = activeTab === tab.id;
+                        return (
+                            <button key={tab.id} onClick={() => setActiveTab(tab.id as ToxinTab)} className={`flex-1 p-3 text-sm font-semibold border-b-2 transition-colors flex flex-col items-center gap-1 ${isActive ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:bg-muted'}`}>
+                               <motion.div animate={isActive ? { rotate: [0, 10, -8, 6, 0], scale: [1, 1.2, 1] } : {}} transition={{ duration: 0.5 }}>
+                                {tab.icon}
+                               </motion.div>
+                               <span>{t(tab.labelKey)}</span>
+                            </button>
+                        )
+                    })}
                 </div>
             </header>
             

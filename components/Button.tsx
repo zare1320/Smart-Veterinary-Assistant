@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from './Icons';
 import { useLocale } from '../context/LocaleContext';
 // FIX: Updated ButtonProps to extend from framer-motion's HTMLMotionProps to resolve type conflicts between React's button attributes and motion props, particularly with event handlers like onAnimationStart.
-import { motion, HTMLMotionProps } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface BackButtonProps {
     onClick: () => void;
@@ -31,8 +31,9 @@ export const BackButton: React.FC<BackButtonProps> = ({ onClick }) => {
     );
 };
 
-// FIX: Changed ButtonProps to extend HTMLMotionProps<'button'> to correctly include props like `children` and `className`, fixing numerous type errors.
-interface ButtonProps extends HTMLMotionProps<'button'> {
+// FIX: The original `HTMLMotionProps` was not resolving correctly, causing `children` and `className` to be missing from `ButtonProps`.
+// Using `React.ComponentProps<typeof motion.button>` is a more robust way to get all props for the `motion.button` component, which solves the cascading type errors.
+interface ButtonProps extends React.ComponentProps<typeof motion.button> {
     variant?: 'primary' | 'secondary';
 }
 

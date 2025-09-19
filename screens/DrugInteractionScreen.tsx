@@ -76,7 +76,7 @@ const InteractionResultCard: React.FC<{ result: Interaction & { drugNames: [stri
 
     return (
         <motion.div 
-            className={`p-4 rounded-lg border ${severityStyles[result.severity]}`}
+            className={`p-5 rounded-lg border ${severityStyles[result.severity]}`}
             variants={resultCardVariants}
             initial="hidden"
             animate="visible"
@@ -87,11 +87,11 @@ const InteractionResultCard: React.FC<{ result: Interaction & { drugNames: [stri
                 <TriangleExclamationIcon className={`text-xl ${severityTextStyles[result.severity]}`} />
                 <div>
                     <span className={`text-sm font-bold px-2 py-0.5 rounded-full ${severityStyles[result.severity]}`}>{severityLabel}</span>
-                    <h3 className="font-bold mt-1">{result.drugNames.join(' + ')}</h3>
+                    <h3 className="font-bold text-lg mt-1">{result.drugNames.join(' + ')}</h3>
                 </div>
             </div>
-            <p className="mt-2 text-sm font-semibold">{t(result.summaryKey)}</p>
-            <p className="mt-1 text-xs opacity-80">{t(result.detailKey)}</p>
+            <p className="mt-2 text-sm font-semibold leading-relaxed">{t(result.summaryKey)}</p>
+            <p className="mt-1 text-sm opacity-80 leading-relaxed">{t(result.detailKey)}</p>
         </motion.div>
     );
 };

@@ -21,7 +21,7 @@ const FluidInputCard: React.FC<FluidInputCardProps> = ({ state, dispatch, onFlui
     
     return (
         <div className="bg-card p-6">
-            <h3 className="text-xl font-bold text-heading mb-6 text-start">{t('fluid.planTitle')}</h3>
+            <h3 className="text-2xl font-extrabold text-heading mb-6 text-start">{t('fluid.planTitle')}</h3>
             <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {/* FIX: Added missing 'id' props to LabeledSelect components for accessibility. */}

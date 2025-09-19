@@ -5,19 +5,19 @@ import type { Protocol } from '../types';
 import { useLocale } from '../context/LocaleContext';
 import { Button } from '../components/Button';
 import { dataService } from '../services/dataService';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { ProtocolCardSkeleton } from '../components/skeletons/ProtocolCardSkeleton';
 import { EmptyState } from '../components/EmptyState';
 
-// FIX: Replaced inline animation props with variants to fix type errors.
 const cardContainerVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
   exit: { opacity: 0 },
 };
 
-const cardButtonVariants = {
-  hover: { scale: 1.02 },
+// FIX: Added explicit Variants type to fix framer-motion transition type error.
+const cardButtonVariants: Variants = {
+  hover: { y: -4, scale: 1.02, transition: { type: 'spring', stiffness: 300 } },
   tap: { scale: 0.98 },
 };
 
@@ -28,16 +28,16 @@ const ProtocolCard: React.FC<{ protocol: Protocol; onSelect: () => void }> = ({ 
         <motion.div layout variants={cardContainerVariants} initial="hidden" animate="visible" exit="exit">
             <motion.button 
                 onClick={onSelect} 
-                className="bg-card overflow-hidden transition-shadow duration-300 w-full"
+                className="bg-card overflow-hidden transition-shadow duration-300 w-full hover:shadow-lg"
                 variants={cardButtonVariants}
                 whileHover="hover"
                 whileTap="tap"
             >
-                <div className="p-4 flex items-start gap-4 text-start">
+                <div className="p-5 flex items-start gap-5 text-start">
                     <div className="flex-1">
                         <span className={`text-xs font-semibold px-2 py-1 rounded-full ${protocol.category === 'Custom' ? 'bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200' : 'bg-muted text-muted-foreground'}`}>{categoryLabel}</span>
                         <h3 className="text-heading text-lg font-bold leading-tight mt-2">{protocol.title}</h3>
-                        <p className="text-muted-foreground text-sm font-normal leading-normal mt-1">{protocol.description}</p>
+                        <p className="text-muted-foreground text-sm font-normal leading-relaxed mt-1">{protocol.description}</p>
                     </div>
                     <div className="w-24 h-24 bg-center bg-no-repeat bg-cover rounded-lg flex-shrink-0" style={{ backgroundImage: `url("${protocol.imageUrl}")` }}></div>
                 </div>
@@ -91,7 +91,6 @@ const ProtocolsScreen: React.FC = () => {
       navigate('/add-protocol', { state: { initialTitle: title } });
     };
 
-    // FIX: Replaced inline animation props with variants to fix type errors.
     const chipButtonVariants = {
       hover: { scale: 1.05 },
       tap: { scale: 0.95 },
@@ -122,7 +121,7 @@ const ProtocolsScreen: React.FC = () => {
 
         if (filteredProtocols.length > 0) {
             return (
-                 <section className="space-y-4 pb-8">
+                 <section className="space-y-5 pb-8">
                      <AnimatePresence>
                         {filteredProtocols.map(p => <ProtocolCard key={p.id} protocol={p} onSelect={() => navigate(`/protocols/${p.id}`)} />)}
                      </AnimatePresence>
@@ -151,7 +150,7 @@ const ProtocolsScreen: React.FC = () => {
           <button onClick={() => navigate('/')} className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-muted transition-colors">
             {locale === 'fa' ? <ArrowRightIcon className="text-xl" /> : <ArrowLeftIcon className="text-xl" />}
           </button>
-          <h1 className="text-xl font-bold leading-tight tracking-[-0.015em] text-center text-heading">{t('protocolsTitle')}</h1>
+          <h1 className="text-2xl font-extrabold leading-tight tracking-tighter text-center text-heading">{t('protocolsTitle')}</h1>
           <div className="w-10"></div>
         </div>
         <div className="px-4 pb-3">

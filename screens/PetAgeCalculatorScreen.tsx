@@ -5,6 +5,7 @@ import { Icon } from '../components/Icons';
 import InfoModal from '../components/InfoModal';
 import { BackButton } from '../components/Button';
 import ModernDatePicker from '../components/ModernDatePicker';
+import AnimatedCounter from '../components/AnimatedCounter';
 
 // A new, visually prominent component for displaying calculation results
 const CalculationResultCard: React.FC<{ title: string; result: string | null; iconName: string }> = ({ title, result, iconName }) => (
@@ -102,17 +103,17 @@ const CurrentAgeCalculator: React.FC = () => {
 };
 
 const HumanYearsCalculator: React.FC = () => {
-    const { t, localizeNumber } = useLocale();
+    const { t } = useLocale();
 
     const [calculationMethod, setCalculationMethod] = useState<'formula' | 'table'>('formula');
     const [dogAgeFormula, setDogAgeFormula] = useState('');
-    const [humanAgeFormula, setHumanAgeFormula] = useState<string | null>(null);
+    const [humanAgeFormula, setHumanAgeFormula] = useState<number | null>(null);
     const [isFormulaModalOpen, setIsFormulaModalOpen] = useState(false);
     
     const [petAgeTable, setPetAgeTable] = useState('');
     const [species, setSpecies] = useState<'feline' | 'canine'>('feline');
     const [weightRange, setWeightRange] = useState('0-20');
-    const [humanAgeTable, setHumanAgeTable] = useState<string | null>(null);
+    const [humanAgeTable, setHumanAgeTable] = useState<number | null>(null);
     const [isTableModalOpen, setIsTableModalOpen] = useState(false);
 
     const agingTableData = [
@@ -142,11 +143,11 @@ const HumanYearsCalculator: React.FC = () => {
         const age = parseFloat(dogAgeFormula);
         if (age > 0) {
             const humanAge = 16 * Math.log(age) + 31;
-            setHumanAgeFormula(localizeNumber(humanAge.toFixed(1)));
+            setHumanAgeFormula(humanAge);
         } else {
             setHumanAgeFormula(null);
         }
-    }, [dogAgeFormula, localizeNumber]);
+    }, [dogAgeFormula]);
 
     useEffect(() => {
         const age = Math.floor(parseFloat(petAgeTable));
@@ -154,14 +155,14 @@ const HumanYearsCalculator: React.FC = () => {
             const row = agingTableData.find(r => r.pet === age);
             if(row) {
                 const result = species === 'feline' ? row.feline : row.canine[weightRange as keyof typeof row.canine];
-                setHumanAgeTable(result ? localizeNumber(String(result)) : null);
+                setHumanAgeTable(result ? Number(result) : null);
             } else {
                  setHumanAgeTable(null);
             }
         } else {
             setHumanAgeTable(null);
         }
-    }, [petAgeTable, species, weightRange, localizeNumber, agingTableData]);
+    }, [petAgeTable, species, weightRange, agingTableData]);
 
     const activeResult = calculationMethod === 'formula' ? humanAgeFormula : humanAgeTable;
 
@@ -224,11 +225,13 @@ const HumanYearsCalculator: React.FC = () => {
                     </div>
                 )}
 
-                <CalculationResultCard 
-                    title={t('otherPage.ageCalculator.ageInHumanYears')}
-                    result={activeResult}
-                    iconName="fa-paw"
-                />
+                 <div className="bg-gradient-to-br from-[#2DD4BF] to-[#29a594] dark:from-[#2DD4BF] dark:to-[#23b3a0] rounded-2xl p-6 text-white shadow-lg shadow-[#2DD4BF]/30 dark:shadow-[#2DD4BF]/20 h-full flex flex-col justify-center items-center text-center">
+                    <Icon iconName="fa-paw" className="text-4xl mb-2 opacity-80" />
+                    <p className="text-lg opacity-80">{t('otherPage.ageCalculator.ageInHumanYears')}</p>
+                    <p className="text-4xl sm:text-5xl font-bold tracking-tight h-16">
+                        {activeResult !== null ? <AnimatedCounter to={activeResult} precision={1} /> : '—'}
+                    </p>
+                </div>
             </div>
 
             <InfoModal isOpen={isTableModalOpen} onClose={() => setIsTableModalOpen(false)} title={t('otherPage.ageCalculator.traditionalTableTitle')}>
@@ -250,12 +253,12 @@ const HumanYearsCalculator: React.FC = () => {
                         <tbody>
                             {agingTableData.map(row => (
                                 <tr key={row.pet} className="border-b border-border/50 last:border-0 hover:bg-muted/50">
-                                    <td className="p-2 font-mono font-bold border-e border-border">{localizeNumber(row.pet)}</td>
-                                    <td className="p-2 font-mono border-e border-border">{localizeNumber(row.feline)}</td>
-                                    <td className="p-2 font-mono border-e border-border">{localizeNumber(row.canine['0-20'])}</td>
-                                    <td className="p-2 font-mono border-e border-border">{localizeNumber(row.canine['20-50'])}</td>
-                                    <td className="p-2 font-mono border-e border-border">{localizeNumber(row.canine['50-90'])}</td>
-                                    <td className="p-2 font-mono">{row.canine['>90'] ? localizeNumber(row.canine['>90']) : '-'}</td>
+                                    <td className="p-2 font-mono font-bold border-e border-border">{t(String(row.pet))}</td>
+                                    <td className="p-2 font-mono border-e border-border">{t(String(row.feline))}</td>
+                                    <td className="p-2 font-mono border-e border-border">{t(String(row.canine['0-20']))}</td>
+                                    <td className="p-2 font-mono border-e border-border">{t(String(row.canine['20-50']))}</td>
+                                    <td className="p-2 font-mono border-e border-border">{t(String(row.canine['50-90']))}</td>
+                                    <td className="p-2 font-mono">{row.canine['>90'] ? t(String(row.canine['>90'])) : '-'}</td>
                                 </tr>
                             ))}
                         </tbody>

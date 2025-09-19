@@ -79,7 +79,7 @@ const AddProtocolScreen: React.FC = () => {
           <button onClick={() => navigate('/protocols')} className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-muted transition-colors">
             {locale === 'fa' ? <ArrowRightIcon className="text-xl" /> : <ArrowLeftIcon className="text-xl" />}
           </button>
-          <h1 className="text-xl font-bold text-heading">{t('addProtocolTitle')}</h1>
+          <h1 className="text-2xl font-extrabold text-heading">{t('addProtocolTitle')}</h1>
           <div className="w-10"></div>
         </div>
       </header>

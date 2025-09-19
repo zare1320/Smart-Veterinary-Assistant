@@ -8,6 +8,7 @@ import { BackButton } from '../components/Button';
 import PatientInfoDisplay from '../components/PatientInfoDisplay';
 import MissingPatientWeightBanner from '../components/MissingPatientWeightBanner';
 import { motion } from 'framer-motion';
+import AnimatedCounter from '../components/AnimatedCounter';
 
 // --- TYPE DEFINITIONS ---
 type AnimalType = 'canine' | 'feline';
@@ -53,15 +54,15 @@ const initialState: CalculatorState = {
 };
 
 // --- HELPER & UI COMPONENTS ---
-const ResultCard: React.FC<{ label: string; value: string; unit: string; icon: React.ReactNode; }> = ({ label, value, unit, icon }) => (
+const ResultCard: React.FC<{ label: string; value: number | null; unit: string; icon: React.ReactNode; precision?: number }> = ({ label, value, unit, icon, precision = 0 }) => (
     <div className="bg-muted/50 p-3 rounded-lg flex items-center gap-4">
         <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-primary/10 text-primary rounded-lg text-xl">
             {icon}
         </div>
         <div className="text-start flex-grow">
             <p className="text-sm text-muted-foreground">{label}</p>
-            <p>
-                <span className="font-bold text-xl text-heading">{value}</span>
+            <p className="font-bold text-xl text-heading">
+                {value !== null && isFinite(value) ? <AnimatedCounter to={value} precision={precision} /> : '---'}
                 <span className="text-sm text-muted-foreground ms-1">{unit}</span>
             </p>
         </div>
@@ -138,7 +139,7 @@ const CaloriesCalculatorScreen: React.FC = () => {
     
     const foodAmount = useMemo(() => {
         const foodCal = parseFloat(state.foodCalories);
-        return !isNaN(foodCal) && foodCal > 0 && mer > 0 ? (mer / foodCal) : 0;
+        return !isNaN(foodCal) && foodCal > 0 && mer > 0 ? (mer / foodCal) : null;
     }, [mer, state.foodCalories]);
 
     const criteriaOptions = state.animalType === 'canine' ? CANINE_CRITERIA : FELINE_CRITERIA;
@@ -214,10 +215,10 @@ const CaloriesCalculatorScreen: React.FC = () => {
                                 <h2 className="text-lg font-bold text-heading">{t('caloriesCalculator.results')}</h2>
                             </div>
                             <div className="space-y-3">
-                                <ResultCard label={t('caloriesCalculator.rer')} value={localizeNumber(rer.toFixed(0))} unit="kcal/day" icon={<i className="fa-solid fa-moon"></i>} />
-                                <ResultCard label={t('caloriesCalculator.mer')} value={localizeNumber(mer.toFixed(0))} unit="kcal/day" icon={<i className="fa-solid fa-sun"></i>} />
-                                <ResultCard label={t('caloriesCalculator.foodAmount')} value={foodAmount > 0 ? localizeNumber(foodAmount.toFixed(1)) : '---'} unit="cups/day" icon={<i className="fa-solid fa-calculator"></i>} />
-                                <ResultCard label={t('caloriesCalculator.dailyH2O')} value={localizeNumber(mer.toFixed(0))} unit="mL/day" icon={<i className="fa-solid fa-tint"></i>} />
+                                <ResultCard label={t('caloriesCalculator.rer')} value={rer} unit="kcal/day" icon={<i className="fa-solid fa-moon"></i>} />
+                                <ResultCard label={t('caloriesCalculator.mer')} value={mer} unit="kcal/day" icon={<i className="fa-solid fa-sun"></i>} />
+                                <ResultCard label={t('caloriesCalculator.foodAmount')} value={foodAmount} unit="cups/day" icon={<i className="fa-solid fa-calculator"></i>} precision={1} />
+                                <ResultCard label={t('caloriesCalculator.dailyH2O')} value={mer} unit="mL/day" icon={<i className="fa-solid fa-tint"></i>} />
                             </div>
                              <p className="text-xs text-muted-foreground text-center mt-4">{t('caloriesCalculator.merEstimates')}</p>
                         </div>

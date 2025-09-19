@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SyringeIcon, FluidIcon, HeartPulseIcon, BloodIcon, CakeIcon, ArrowLeftIcon, ArrowRightIcon, CaloriesIcon, SkullIcon } from './Icons';
+import { SyringeIcon, FluidIcon, HeartPulseIcon, BloodIcon, CakeIcon, ArrowLeftIcon, ArrowRightIcon, CaloriesIcon, SkullIcon, BabyCarriageIcon } from './Icons';
 import { useLocale } from '../context/LocaleContext';
 import { motion } from 'framer-motion';
 
@@ -51,6 +51,12 @@ const getTools = (t: (key: string) => string): Tool[] => [
         path: '/calculators/blood-transfusion',
     },
     {
+        title: t('pregnancyCalculator.title'),
+        description: t('pregnancyCalculator.description'),
+        icon: <BabyCarriageIcon className="text-2xl text-[var(--primary-500)]" />,
+        path: '/calculators/pregnancy',
+    },
+    {
         title: t('petAgeCalculator'),
         description: t('petAgeDesc'),
         icon: <CakeIcon className="text-2xl text-[var(--primary-500)]" />,
@@ -98,8 +104,8 @@ const VetTools: React.FC = () => {
   const tools = getTools(t);
   return (
     <section>
-      <h2 className="text-xl font-bold text-start mb-4 text-heading">{t('tools')}</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <h2 className="text-2xl font-extrabold text-start mb-6 text-heading">{t('tools')}</h2>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
         {tools.map(tool => (
           <ToolCard 
             key={tool.title} 

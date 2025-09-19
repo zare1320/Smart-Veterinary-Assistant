@@ -818,6 +818,54 @@ export const translations: { [key: string]: TranslationBlock } = {
             family: "Family"
         }
     },
+    pregnancyCalculator: {
+        title: "Pregnancy Calculator",
+        description: "Estimate whelping/queening dates",
+        selectSpecies: "Select Species",
+        canine: "Canine",
+        feline: "Feline",
+        todaysDate: "Today's Date",
+        daysSinceConception: "Days since Conception",
+        chooseConceptionDate: "Choose Conception Date",
+        gestationInfo: "Gestation Info",
+        canineGestation: "Canine: Gestation range: 57-65 days, Average: 63 days.",
+        felineGestation: "Feline: Gestation range: 60-67 days, Average: 64 days.",
+        earlyDueDate: "Early Due Date",
+        lateDueDate: "Late Due Date",
+        likelyDueDate: "Likely Due Date",
+        pregnancyInfoTitle: "Pregnancy Info*",
+        infoPoint1: "Fertilization occurs in the oviducts in both the bitch and queen. Implantation of zygotes in the uterus occurs at ~18 days in the bitch and 14 days in the queen.",
+        infoPoint2: "Palpable at 21 days and these swellings double in diameter every 7 days. After day 35-38, they become indistinct, and palpation becomes difficult until late pregnancy.",
+        infoPoint3: "The fetal skeleton begins to calcify as early as day 28, it is not detectable by routine radiography until approximately day 42-45 and is quite prominent by day 47-48. Radiography at this time is not teratogenic. Late gestational radiography, >55 days is the best method to determine litter size.",
+        infoPoint4: "Ultrasonography is best performed at 25-35 days gestation. Before 21 days, “false-negative” results are seen.",
+        infoPoint5: "Doppler-type instruments allow one to “hear” the fetal heart, which beats 2-3 times faster than that of the dam. Placental sounds may also be heard.",
+        infoPoint6: "Ultrasonography is especially helpful in differentiating pregnancy from other causes of uterine distention (eg, hydrometra, pyometra, mucometra).",
+        source: "*Source: Not specified.",
+        selectConceptionDatePrompt: "Please select a conception date to see the results.",
+        sourceWithLink: "*Source: {link}",
+        mode: {
+            conception: "Due Date from Conception",
+            ultrasound: "Age from Ultrasound"
+        },
+        ultrasound: {
+            title: "Gestational Age from Ultrasound",
+            subtitle: "Enter the measurement in cm to calculate. Results are shown in days.",
+            dogsTitle: "Dogs: Gestational Age ± 3 Days",
+            catsTitle: "Cats: Gestational Age ± 2 Days",
+            formulaLabel: "Formula",
+            gestationalAge: "Gestational Age",
+            daysToParturition: "Days to Parturition",
+            abbreviations: "Abbreviations",
+            abbreviationsList: {
+                "GSD": "GSD: gestational sac diameter, cm",
+                "CRL": "CRL: crown rump length, cm",
+                "BP": "BP: biparietal diameter, cm",
+                "BD": "BD: body diameter at the liver, cm",
+                "HD": "HD: head diameter, cm"
+            },
+            days: "days"
+        }
+    },
     // New Translations
     sync: {
         title: "Data Sync",
@@ -1794,6 +1842,54 @@ export const translations: { [key: string]: TranslationBlock } = {
             commonNames: "نام‌های رایج",
             scientificName: "نام‌های علمی",
             family: "خانواده"
+        }
+    },
+    pregnancyCalculator: {
+        title: "محاسبه‌گر سن حاملگی",
+        description: "تخمین تاریخ زایمان",
+        selectSpecies: "انتخاب گونه",
+        canine: "سگ",
+        feline: "گربه",
+        todaysDate: "تاریخ امروز",
+        daysSinceConception: "روز از لقاح",
+        chooseConceptionDate: "انتخاب تاریخ لقاح",
+        gestationInfo: "اطلاعات آبستنی",
+        canineGestation: "سگ: دوره آبستنی: ۵۷-۶۵ روز، میانگین: ۶۳ روز.",
+        felineGestation: "گربه: دوره آبستنی: ۶۰-۶۷ روز، میانگین: ۶۴ روز.",
+        earlyDueDate: "زایمان زودرس",
+        lateDueDate: "زایمان دیررس",
+        likelyDueDate: "زایمان محتمل",
+        pregnancyInfoTitle: "*اطلاعات بارداری",
+        infoPoint1: "لقاح در هر دو سگ و گربه در لوله‌های رحمی (اویدوکت) رخ می‌دهد. جایگزینی زیگوت‌ها در رحم در سگ حدود روز ۱۸ و در گربه حدود روز ۱۴ اتفاق می‌افتد.",
+        infoPoint2: "در روز ۲۱ قابل لمس است و این تورم‌ها هر ۷ روز قطرشان دو برابر می‌شود. پس از روز ۳۵-۳۸، نامشخص شده و لمس تا اواخر بارداری دشوار می‌شود.",
+        infoPoint3: "اسکلت جنین از روز ۲۸ شروع به کلسیفیه شدن می‌کند، اما تا حدود روز ۴۲-۴۵ با رادیوگرافی معمولی قابل تشخیص نیست و در روز ۴۷-۴۸ کاملاً برجسته است. رادیوگرافی در این زمان تراتوژنیک نیست. رادیوگرافی در اواخر بارداری، >۵۵ روز، بهترین روش برای تعیین تعداد نوزادان است.",
+        infoPoint4: "سونوگرافی بهتر است در روزهای ۲۵-۳۵ بارداری انجام شود. قبل از ۲۱ روز، نتایج «منفی کاذب» دیده می‌شود.",
+        infoPoint5: "ابزارهای نوع داپلر به فرد اجازه می‌دهند ضربان قلب جنین را که ۲-۳ برابر سریع‌تر از مادر است، «بشنود». صداهای جفتی نیز ممکن است شنیده شود.",
+        infoPoint6: "سونوگرافی به ویژه در تمایز بارداری از سایر علل اتساع رحم (مانند هیدرومترا، پیومترا، موکومترا) مفید است.",
+        source: "*منبع: مشخص نشده.",
+        selectConceptionDatePrompt: "لطفاً برای مشاهده نتایج، تاریخ لقاح را انتخاب کنید.",
+        sourceWithLink: "*منبع: {link}",
+        mode: {
+            conception: "تاریخ زایمان از لقاح",
+            ultrasound: "سن از سونوگرافی"
+        },
+        ultrasound: {
+            title: "سن حاملگی از طریق سونوگرافی",
+            subtitle: "اندازه‌گیری را به سانتی‌متر وارد کنید تا محاسبه شود. نتایج به روز نمایش داده می‌شوند.",
+            dogsTitle: "سگ‌ها: سن حاملگی ± ۳ روز",
+            catsTitle: "گربه‌ها: سن حاملگی ± ۲ روز",
+            formulaLabel: "فرمول",
+            gestationalAge: "سن حاملگی",
+            daysToParturition: "روز تا زایمان",
+            abbreviations: "اختصارات",
+            abbreviationsList: {
+                "GSD": "GSD: قطر ساک حاملگی، cm",
+                "CRL": "CRL: طول سر تا کفل، cm",
+                "BP": "BP: قطر دو جداری، cm",
+                "BD": "BD: قطر بدن در ناحیه کبد، cm",
+                "HD": "HD: قطر سر، cm"
+            },
+            days: "روز"
         }
     },
     // New Translations

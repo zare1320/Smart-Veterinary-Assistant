@@ -27,6 +27,7 @@ const BloodTransfusionCalculatorScreen = lazy(() => import('./screens/BloodTrans
 const PetAgeCalculatorScreen = lazy(() => import('./screens/PetAgeCalculatorScreen'));
 const CaloriesCalculatorScreen = lazy(() => import('./screens/CaloriesCalculatorScreen'));
 const ToxicityCalculatorScreen = lazy(() => import('./screens/ToxicityCalculatorScreen'));
+const PregnancyCalculatorScreen = lazy(() => import('./screens/PregnancyCalculatorScreen'));
 const ProtocolDetailScreen = lazy(() => import('./screens/ProtocolDetailScreen'));
 const AddProtocolScreen = lazy(() => import('./screens/AddProtocolScreen'));
 const DrugInteractionScreen = lazy(() => import('./screens/DrugInteractionScreen'));
@@ -112,6 +113,7 @@ const App: React.FC = () => {
         <Route path="/calculators/pet-age" element={<PetAgeCalculatorScreen />} />
         <Route path="/calculators/calories" element={<CaloriesCalculatorScreen />} />
         <Route path="/calculators/toxicity" element={<ToxicityCalculatorScreen />} />
+        <Route path="/calculators/pregnancy" element={<PregnancyCalculatorScreen />} />
         <Route path="/protocols/:protocolId" element={<ProtocolDetailScreen />} />
         <Route path="/add-protocol" element={<AddProtocolScreen />} />
         <Route path="/drug-interaction-checker" element={<DrugInteractionScreen />} />
